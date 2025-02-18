@@ -31,7 +31,7 @@ _"가짜연구소의 개발 문화를 만들어가는 DevFactory"_
 | 역할          | 이름 |  기술 스택 배지                                                                 | 주요 관심 분야                          |
 |---------------|------|-----------------------------------------------------------------------|----------------------------------------|
 | **기획** | 김수현 | ![Python](https://img.shields.io/badge/Python-3776AB) ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C) ![CICD](https://img.shields.io/badge/-CI%2FCD-00A86B?logo=ci-cd&logoColor=white) ![k8s](https://img.shields.io/badge/kubernetes-326CE5?&style=plastic&logo=kubernetes&logoColor=white)  | CI/CD, MLOps 파이프라인 설계             |
-| **기획** | 김예신 | ![SQL](https://img.shields.io/badge/SQL-Advanced-003B57) ![BigQuery](https://img.shields.io/badge/BigQuery-4285F4) | 데이터 파이프라인 설계                  |
+| **기획** | 김예신 | ![Python](https://img.shields.io/badge/Python-3776AB) ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C) ![Django](https://img.shields.io/badge/django-092E20) | NLP, CI/CD                  |
 | **기획** | 김승규 | ![Python](https://img.shields.io/badge/Python-3776AB) ![GoogleCloud](https://img.shields.io/badge/GoogleCloud-4285F4) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1) ![MongoDB](https://img.shields.io/badge/MongoDB-47A248) | 데이터 엔지니어링                  |
 
 ## 🚀 프로젝트 로드맵 (Project Roadmap)
