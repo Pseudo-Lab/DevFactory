@@ -371,19 +371,17 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request-pr">1. Pull Request(PR) 소개</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fork">2. 저장소 Fork</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#git">Git 설치</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Git 설정</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">저장소 포크(Fork)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">저장소 포크(Fork)</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3. 프로필 내용 추가하기</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. 프로필 내용 추가하기</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#badge">Badge 만들기</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">4. 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4. 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request">5. Pull Request 생성</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pr">6. PR 리뷰 및 업데이트</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">7. Pull Request 병합</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">7. Pull Request 병합</a></li>
 </ul>
             </nav>
         </div>
@@ -407,32 +405,32 @@ document.write(`
 </section>
 <section id="fork">
 <h2>2. 저장소 Fork<a class="headerlink" href="#fork" title="Permalink to this heading">#</a></h2>
-<p> Git을 설치하지 않은 경우 다음 내용을 참고해서 설치하시면 됩니다.</p>
+<!--
+&emsp;Git을 설치하지 않은 경우 다음 내용을 참고해서 설치하시면 됩니다.
 <details>
 <summary>Git 설치 및 config 설정 방법</summary>
-<section id="git">
-<h3>Git 설치<a class="headerlink" href="#git" title="Permalink to this heading">#</a></h3>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># Git 설치 (Linux)</span>
-sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>git
 
-<span class="c1"># Git 설치 (MacOS)</span>
-brew<span class="w"> </span>install<span class="w"> </span>git
+### Git 설치
+```sh
+# Git 설치 (Linux)
+sudo apt install git
 
-<span class="c1"># Git 설치 (Windows)</span>
-<span class="c1"># https://git-scm.com/ 에서 다운로드 후 설치</span>
-</pre></div>
-</div>
-</section>
-<section id="id1">
-<h3>Git 설정<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>user.name<span class="w"> </span><span class="s2">&quot;Your Name&quot;</span>
-git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>user.email<span class="w"> </span><span class="s2">&quot;your.email@example.com&quot;</span>
-</pre></div>
-</div>
+# Git 설치 (MacOS)
+brew install git
+
+# Git 설치 (Windows)
+# https://git-scm.com/ 에서 다운로드 후 설치
+```
+
+### Git 설정
+```sh
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
 </details>
-</section>
-<section id="id2">
-<h3>저장소 포크(Fork)<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+-->
+<section id="id1">
+<h3>저장소 포크(Fork)<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
 <ol class="arabic simple">
 <li><p>GitHub에서 저장소로 이동합니다.</p></li>
 <li><p>오른쪽 상단의 <strong>Fork</strong> 버튼을 클릭합니다.
@@ -442,8 +440,8 @@ git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"
 </ol>
 </section>
 </section>
-<section id="id3">
-<h2>3. 프로필 내용 추가하기<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h2>
+<section id="id2">
+<h2>3. 프로필 내용 추가하기<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
 <p> 포크가 완료된 저장소에서 가장 상위에 있는 <a class="reference external" href="http://README.md">README.md</a> 파일을 열고, 프로필 부분에 대한 부분을 찾습니다.
 <br>
  (포크가 완료된 저장소는 본인 Github repository에 존재합니다.)</p>
@@ -463,8 +461,8 @@ git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"
 <p> 새로운 Badge(Icon)을 생성하려면 다음 사이트를 참고해서 추가하시면 됩니다. <a class="reference external" href="https://shields.io/">https://shields.io/</a></p>
 </section>
 </section>
-<section id="id4">
-<h2>4. 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h2>
+<section id="id3">
+<h2>4. 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h2>
 <p> 다음처럼 commit 메시지와 description을 작성하고, <strong>Commit changes</strong> 버튼 클릭</p>
 <ul class="simple">
 <li><p><img alt="" src="../_images/git-tutorial-step6.png" /></p></li>
@@ -490,10 +488,9 @@ git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"
 <ul class="simple">
 <li><p><img alt="" src="../_images/git-tutorial-step10.png" /></p></li>
 </ul>
-<img src="../assets/imgs/git-tutorial/git-tutorial-step10.png" alt="PR 리뷰" style="margin-left: 30px;">
 </section>
-<section id="id5">
-<h2>7. Pull Request 병합<a class="headerlink" href="#id5" title="Permalink to this heading">#</a></h2>
+<section id="id4">
+<h2>7. Pull Request 병합<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h2>
 <p> PR이 승인되면 다음 단계로 병합할 수 있습니다.</p>
 <ol class="arabic simple">
 <li><p>GitHub에서 <strong>Merge Pull Request</strong> 버튼 클릭.</p></li>
@@ -568,19 +565,17 @@ git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request-pr">1. Pull Request(PR) 소개</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fork">2. 저장소 Fork</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#git">Git 설치</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Git 설정</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">저장소 포크(Fork)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">저장소 포크(Fork)</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3. 프로필 내용 추가하기</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. 프로필 내용 추가하기</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#badge">Badge 만들기</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">4. 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4. 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request">5. Pull Request 생성</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pr">6. PR 리뷰 및 업데이트</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">7. Pull Request 병합</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">7. Pull Request 병합</a></li>
 </ul>
   </nav></div>
 
