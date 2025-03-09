@@ -46,7 +46,7 @@ git config --global user.email "your.email@example.com"
 프로필 코드 한줄을 복사하고 본인 프로필에 맞게 내용을 수정하시면 됩니다.
 ![](../assets/imgs/git-tutorial/git-tutorial-step4.png)
 
-변경 후 코드 화면
+내용 변경 후 **Commit changes...** 버튼을 클릭합니다.
 ![](../assets/imgs/git-tutorial/git-tutorial-step5.png)
 
 ### Badge 만들기
@@ -54,23 +54,22 @@ Badge(Icon)을 생성하려면 다음 사이트를 참고해서 추가하시면 
 https://shields.io/ 
 
 ## 4. 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시
-다음과 같이 commit 메시지와 description을 작성하고, **Commit changes** 버튼 클릭
+다음처럼 commit 메시지와 description을 작성하고, **Commit changes** 버튼 클릭
 ![](../assets/imgs/git-tutorial/git-tutorial-step6.png)
 
 커밋이 완료되면, Fork한 저장소에서 다음과 같이 내용이 업데이트 됩니다.
 ![](../assets/imgs/git-tutorial/git-tutorial-step7.png)
 
 ## 5. Pull Request 생성
-현재는 공용으로 사용하는 저장소에는 수정 사항이 반영되지 않았으므로 PR을 생성해야 합니다.
+현재 공용으로 사용하는 저장소에는 수정 사항이 반영되지 않았으므로 PR을 생성해야 합니다.
 1. 같은 화면에서 다음과 같이 **Contribute** 버튼 클릭 -> **Open pull request** 버튼 클릭
 ![](../assets/imgs/git-tutorial/git-tutorial-step8.png)
 
-2. **Create Pull Request** 버튼을 클릭하고 제목과 설명을 추가합니다.
-내용을 모두 작성한 뒤 **Create pull request** 버튼을 클릭합니다.
-![](../assets/imgs/git-tutorial/git-tutorial-step8.png)
+2. 내용을 모두 작성한 뒤 **Create pull request** 버튼을 클릭합니다.
+![](../assets/imgs/git-tutorial/git-tutorial-step9.png)
 
 ## 6. PR 리뷰 및 업데이트
-다음과 같이 PR이 생성되면, 팀원들이 변경된 코드를 검토 뒤 승인을 합니다.
+다음과 같이 PR이 생성되면, 팀원들이 변경된 코드를 검토한 뒤 승인을 합니다.
 ![](../assets/imgs/git-tutorial/git-tutorial-step10.png)
 
 ## 7. Pull Request 병합
