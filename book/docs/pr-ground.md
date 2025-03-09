@@ -8,3 +8,4 @@
 | 이름 | GitHub | 한줄 인사 |
 |-----|--------|-------|
 | 김개발 | [@kim-dev](https://github.com/) | 안녕하세요! 개발 중독자 입니다. |
+| 김예신 | [@yesinkim](https://github.com/yesinkim) | 반갑습니다. 방가방가 :) |
