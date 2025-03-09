@@ -1,4 +1,4 @@
-# GitHub 저장소 프로필 업데이트 하기 
+# GitHub 저장소 프로필 업데이트하기 
 
 ## 1. Pull Request(PR) 소개
 **Pull Request(PR)** 는 저장소에서 변경 사항을 제안하고 다른 사람들과 협업하는 방법입니다. PR을 통해 코드를 병합하기 전에 코드 검토를 받을 수 있습니다.
@@ -57,7 +57,7 @@ https://shields.io/
 다음처럼 commit 메시지와 description을 작성하고, **Commit changes** 버튼 클릭
 ![](../assets/imgs/git-tutorial/git-tutorial-step6.png)
 
-커밋이 완료되면, Fork한 저장소에서 다음과 같이 내용이 업데이트 됩니다.
+커밋 및 Push가 완료되면, Fork한 저장소에서 다음과 같이 내용이 업데이트 됩니다.
 ![](../assets/imgs/git-tutorial/git-tutorial-step7.png)
 
 ## 5. Pull Request 생성
