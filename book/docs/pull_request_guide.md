@@ -1,7 +1,10 @@
-# GitHub 풀 리퀘스트 가이드
+# 프로필 업데이트 하기 
+
+## GitHub 풀 리퀘스트 가이드
 
 ## 1. 소개
 **Pull Request(PR)**는 저장소에서 변경 사항을 제안하고 다른 사람들과 협업하는 방법입니다. PR을 통해 코드를 병합하기 전에 코드 검토를 받을 수 있습니다.
+프로필을 업데이트하는 방법을 통해 Pull Request의 사용법을 익혀보겠습니다.
 
 ## 2. 환경 설정
 ### Git 설치
@@ -22,17 +25,15 @@ git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"
 ```
 
-### 저장소 클론(Clone)
-![](../assets/imgs/github-clone.png)
-```sh
-git clone "저장소 주소"
-```
-
 ### 저장소 포크(Fork)
 1. GitHub에서 저장소로 이동합니다.
-![](../assets/imgs/github-main.png)
+![GitHub 저장소 페이지](../assets/imgs/github-main.png)
 
 2. 오른쪽 상단의 **Fork** 버튼을 클릭합니다.
+![Create fork 사진]()
+
+3. Fork 후 결과 화면
+![Fork 후 결과 사진]()
 
 ## 3. 브랜치 생성
 ```sh
@@ -41,22 +42,29 @@ git clone https://github.com/your-username/repository.git
 cd repository
 
 # 새 브랜치 생성 및 전환
-git checkout -b feature-branch
+git checkout -b add-profile
 ```
 
-## 4. 변경 사항 적용
+## 4. 프로필 내용 추가하기
+가장 상위에 있는 README.md 파일을 열고, 프로필 부분에 대한 부분을 찾습니다.
+위에 이미 작성된 내용처럼, 본인 프로필에 맞게 내용을 수정 및 추가합니다.
+
+### Badge 만들기
+추후 추가
+
+vscode와 같은 Editor를 사용하지 않는다면 cli환경에서도 수정 가능합니다.
 ```sh
 # 파일 수정하기
-nano file.txt  # 파일을 편집
+nano README.md  # 파일을 편집
 
 # 변경 사항 스테이징 및 커밋
-git add file.txt
-git commit -m "새 기능 추가"
+git add README.md
+git commit -m "add profile"
 ```
 
 ## 5. 변경 사항을 GitHub에 푸시
 ```sh
-git push origin feature-branch
+git push origin add-profile
 ```
 
 ## 6. Pull Request 생성
