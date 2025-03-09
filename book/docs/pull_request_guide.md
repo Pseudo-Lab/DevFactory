@@ -36,11 +36,13 @@ git config --global user.email "your.email@example.com"
 2. 오른쪽 상단의 **Fork** 버튼을 클릭합니다.
 ![](../assets/imgs/git-tutorial/git-tutorial-step1.png)
 
-3. **Create Fork** 버튼을 클릭합니다.
+3. **Create fork** 버튼을 클릭합니다.
 ![](../assets/imgs/git-tutorial/git-tutorial-step2.png)
 
 ## 3. 프로필 내용 추가하기
-가장 상위에 있는 README.md 파일을 열고, 프로필 부분에 대한 부분을 찾습니다.
+포크가 완료된 저장소에서 가장 상위에 있는 README.md 파일을 열고, 프로필 부분에 대한 부분을 찾습니다.
+<br>
+(포크가 완료된 저장소는 본인 Github repository에 존재합니다.)
 ![](../assets/imgs/git-tutorial/git-tutorial-step3.png)
 
 프로필 코드 한줄을 복사하고 본인 프로필에 맞게 내용을 수정하시면 됩니다.
@@ -50,7 +52,7 @@ git config --global user.email "your.email@example.com"
 ![](../assets/imgs/git-tutorial/git-tutorial-step5.png)
 
 ### Badge 만들기
-Badge(Icon)을 생성하려면 다음 사이트를 참고해서 추가하시면 됩니다.
+새로운 Badge(Icon)을 생성하려면 다음 사이트를 참고해서 추가하시면 됩니다.
 https://shields.io/ 
 
 ## 4. 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시
@@ -69,11 +71,11 @@ https://shields.io/
 ![](../assets/imgs/git-tutorial/git-tutorial-step9.png)
 
 ## 6. PR 리뷰 및 업데이트
-다음과 같이 PR이 생성되면, 팀원들이 변경된 코드를 검토한 뒤 승인을 합니다.
+다음과 같이 PR이 생성되면, 팀원들이 변경된 코드를 검토한 뒤 문제가 없을시 승인합니다.
 ![](../assets/imgs/git-tutorial/git-tutorial-step10.png)
 
 ## 7. Pull Request 병합
-PR이 승인되면 다음 단계로 병합할 수 있습니다:
+PR이 승인되면 다음 단계로 병합할 수 있습니다.
 1. GitHub에서 **Merge Pull Request** 버튼 클릭.
 2. 더 이상 필요하지 않은 경우 브랜치를 삭제합니다.
 
