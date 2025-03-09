@@ -1,0 +1,39 @@
+#######################################################################################
+# Book settings
+title : PseudoLab Jupyter Book Tutorial
+author: PseudoLab
+logo: 'PseudoLab_logo.png'
+
+# Information about where the book exists on the web
+description: >-
+  Tutorial for using Jupyter Book in Korean
+
+#######################################################################################
+# Execution settings
+execute:
+  execute_notebooks           : off
+
+#######################################################################################
+# HTML-specific settings
+html:
+  home_page_in_navbar         : false
+
+# #######################################################################################
+# Interact link settings
+notebook_interface            : "notebook"
+
+#######################################################################################
+# Launch button settings
+repository:
+  url                         : https://github.com/pseudo-lab/Jupyter-Book-Tutorial
+  path_to_book                : "book"
+
+latex:
+  latex_engine                : "xelatex"
+  latex_documents:
+    targetname: book.tex
+    
+html:
+  favicon: 'PseudoLab_logo.png'
+  use_issues_button: true
+  use_repository_button: true
