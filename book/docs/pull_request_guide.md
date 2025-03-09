@@ -74,6 +74,8 @@ git config --global user.email "your.email@example.com"
 &emsp;다음과 같이 PR이 생성되면, 팀원들이 변경된 코드를 검토한 뒤 문제가 없을시 승인합니다.
 - ![](../assets/imgs/git-tutorial/git-tutorial-step10.png)
 
+<img src="../assets/imgs/git-tutorial/git-tutorial-step10.png" alt="PR 리뷰" style="margin-left: 30px;">
+
 ## 7. Pull Request 병합
 &emsp;PR이 승인되면 다음 단계로 병합할 수 있습니다.
 1. GitHub에서 **Merge Pull Request** 버튼 클릭.
