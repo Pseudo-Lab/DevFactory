@@ -1,7 +1,12 @@
 format: jb-book
 root: intro
 
-chapters:
+parts:
+- caption: "Github 저장소 프로필 업데이트하기"
+  chapters:
   - file: docs/pull_request_guide
+    title: "Github 파일 편집기로 작업하기"
   - file: docs/pr-guide
+    title: "Github.dev 편집기로 작업하기"
   - file: docs/pr-ground
+    title: "직접해보기"
