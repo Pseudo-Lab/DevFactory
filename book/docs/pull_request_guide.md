@@ -8,6 +8,7 @@
 &emsp;프로필을 업데이트하는 방법을 통해 Pull Request 사용법을 익혀보겠습니다.
 
 ## 2. 저장소 Fork
+<!--
 &emsp;Git을 설치하지 않은 경우 다음 내용을 참고해서 설치하시면 됩니다.
 <details>
 <summary>Git 설치 및 config 설정 방법</summary>
@@ -30,7 +31,7 @@ git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"
 ```
 </details>
-
+-->
 ### 저장소 포크(Fork)
 1. GitHub에서 저장소로 이동합니다.
 
@@ -73,8 +74,6 @@ git config --global user.email "your.email@example.com"
 ## 6. PR 리뷰 및 업데이트
 &emsp;다음과 같이 PR이 생성되면, 팀원들이 변경된 코드를 검토한 뒤 문제가 없을시 승인합니다.
 - ![](../assets/imgs/git-tutorial/git-tutorial-step10.png)
-
-<img src="../assets/imgs/git-tutorial/git-tutorial-step10.png" alt="PR 리뷰" style="margin-left: 30px;">
 
 ## 7. Pull Request 병합
 &emsp;PR이 승인되면 다음 단계로 병합할 수 있습니다.
