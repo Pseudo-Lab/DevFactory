@@ -1,4 +1,4 @@
-# GitHub 저장소 프로필 업데이트하기 
+# Github 파일 편집기로 작업하기 🚀
 
 ## 1. Pull Request(PR) 소개
 &emsp;**Pull Request(PR)** 는 저장소에서 변경 사항을 제안하고 다른 사람들과 협업하는 방법입니다.

@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>PR 실습 가이드 🚀 &#8212; PseudoLab Git Tutorial</title>
+    <title>Github.dev 편집기로 작업하기 🚀 &#8212; PseudoLab Git Tutorial</title>
   
   
   
@@ -67,7 +67,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="PR을 실습해보세요! 👥" href="pr-ground.html" />
-    <link rel="prev" title="GitHub 저장소 프로필 업데이트하기" href="pull_request_guide.html" />
+    <link rel="prev" title="Github 파일 편집기로 작업하기 🚀" href="pull_request_guide.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -169,10 +169,11 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="pull_request_guide.html">GitHub 저장소 프로필 업데이트하기</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">PR 실습 가이드 🚀</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pr-ground.html">PR을 실습해보세요! 👥</a></li>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Github 저장소 프로필 업데이트하기</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pull_request_guide.html">Github 파일 편집기로 작업하기</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Github.dev 편집기로 작업하기</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pr-ground.html">직접해보기</a></li>
 </ul>
 
     </div>
@@ -358,7 +359,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>PR 실습 가이드 🚀</h1>
+    <h1>Github.dev 편집기로 작업하기 🚀</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -368,14 +369,11 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">실습 가이드</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional">0. 미리보기 화면 세팅하기 (Optional)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1. 한줄 인사 작성하기</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. 변경사항 추가하기</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">4. 커밋 및 푸시하기</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request">5. Pull Request 생성하기</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional">0. 미리보기 화면 세팅하기 (Optional)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 한줄 인사 작성하기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 변경사항 추가하기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4. 커밋 및 푸시하기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request">5. Pull Request 생성하기</a></li>
 </ul>
             </nav>
         </div>
@@ -387,24 +385,25 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="pr">
-<h1>PR 실습 가이드 🚀<a class="headerlink" href="#pr" title="Permalink to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="github-dev">
+<h1>Github.dev 편집기로 작업하기 🚀<a class="headerlink" href="#github-dev" title="Permalink to this heading">#</a></h1>
 <p>아래의 가이드를 따라하면서 직접 PR을 올려보아요!</p>
-<section id="id1">
-<h2>실습 가이드<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
+<p><strong>실습 가이드</strong></p>
 <blockquote>
-<div><p><strong>NOTE</strong> 위 가이드는 위 튜토리얼의 fork 과정을 거쳐 IDE 사용환경하에 있다는 전제하에 진행됩니다.</p>
+<div><p>이 가이드는 <a class="reference external" href="https://github.com/Pseudo-Lab/DevFactory">DevFactory 리포지토리</a>를 fork하여, IDE 환경에서 진행하는 것을 전제로 작성되었습니다. <br> 자세한 fork 방법은 <a class="reference internal" href="pull_request_guide.html"><span class="doc std std-doc">이 문서</span></a>를 참고하세요.</p>
 </div></blockquote>
+<p><strong>Github.dev 편집기 실행하기</strong></p>
+<p><img alt="Github.dev 편집기 실행하기" src="../_images/guide0.png" /></p>
 <section id="optional">
-<h3>0. 미리보기 화면 세팅하기 (Optional)<a class="headerlink" href="#optional" title="Permalink to this heading">#</a></h3>
+<h2>0. 미리보기 화면 세팅하기 (Optional)<a class="headerlink" href="#optional" title="Permalink to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">book/docs/ground.md</span></code> 파일을 열어 참여자 목록 테이블에 자신의 정보를 <code class="docutils literal notranslate"><span class="pre">markdown</span></code>으로 작성해주세요.
 오른쪽 상단의 미리보기 버튼을 클릭하면 작성한 Markdown이 어떻게 보이는지 확인할 수 있습니다.</p>
 <p><img alt="Markdown 미리보기" src="../_images/guide1.png" /></p>
 <p>작업화면 오른편에 미리보기 화면이 생겼습니다!
 <img alt="미리보기 확인" src="../_images/guide2.png" /></p>
 </section>
-<section id="id2">
-<h3>1. 한줄 인사 작성하기<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<section id="id1">
+<h2>1. 한줄 인사 작성하기<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
 <p>아래 양식을 참고해 작성해보세요!</p>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>| 이름 | GitHub | 한줄 인사 |
 |-----|--------|-------|
@@ -412,23 +411,22 @@ document.write(`
 </pre></div>
 </div>
 </section>
-<section id="id3">
-<h3>2. 변경사항 추가하기<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h3>
+<section id="id2">
+<h2>2. 변경사항 추가하기<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
 <p>아래 처럼 변경사항을 작성했습니다.
 1번을 눌러 코드 관리 툴에 접근해 2번 버튼으로 변경 사항을 추가해주세요.</p>
 <p><img alt="변경사항 커밋" src="../_images/guide3.png" /></p>
 </section>
-<section id="id4">
-<h3>4. 커밋 및 푸시하기<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h3>
+<section id="id3">
+<h2>4. 커밋 및 푸시하기<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h2>
 <p><img alt="PR 생성하기" src="../_images/guide4.png" /></p>
 </section>
 <section id="pull-request">
-<h3>5. Pull Request 생성하기<a class="headerlink" href="#pull-request" title="Permalink to this heading">#</a></h3>
+<h2>5. Pull Request 생성하기<a class="headerlink" href="#pull-request" title="Permalink to this heading">#</a></h2>
 <p>GitHub에서 Pull Request를 생성합니다. PR 제목과 내용을 작성하고 ‘Create pull request’ 버튼을 클릭합니다.</p>
 <blockquote>
-<div><p><strong>TIP</strong> PR 제목은 명확하게, 내용은 상세하게 작성해주세요. 변경사항에 대한 설명과 함께 리뷰어가 이해하기 쉽도록 작성하면 좋습니다.</p>
+<div><p><strong>TIP</strong> <br> PR 제목은 명확하게, 내용은 상세하게 작성해주세요. 변경사항에 대한 설명과 함께 리뷰어가 이해하기 쉽도록 작성하면 좋습니다.</p>
 </div></blockquote>
-</section>
 </section>
 </section>
 
@@ -468,7 +466,7 @@ document.write(`
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">GitHub 저장소 프로필 업데이트하기</p>
+        <p class="prev-next-title">Github 파일 편집기로 작업하기 🚀</p>
       </div>
     </a>
     <a class="right-next"
@@ -495,14 +493,11 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">실습 가이드</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional">0. 미리보기 화면 세팅하기 (Optional)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1. 한줄 인사 작성하기</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. 변경사항 추가하기</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">4. 커밋 및 푸시하기</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request">5. Pull Request 생성하기</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional">0. 미리보기 화면 세팅하기 (Optional)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 한줄 인사 작성하기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 변경사항 추가하기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4. 커밋 및 푸시하기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request">5. Pull Request 생성하기</a></li>
 </ul>
   </nav></div>
 
