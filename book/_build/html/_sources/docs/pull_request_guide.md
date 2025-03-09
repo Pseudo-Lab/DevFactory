@@ -1,9 +1,14 @@
-# GitHub 풀 리퀘스트 가이드
+# GitHub 저장소 프로필 업데이트 하기 
 
-## 1. 소개
-**Pull Request(PR)**는 저장소에서 변경 사항을 제안하고 다른 사람들과 협업하는 방법입니다. PR을 통해 코드를 병합하기 전에 코드 검토를 받을 수 있습니다.
+## 1. Pull Request(PR) 소개
+**Pull Request(PR)** 는 저장소에서 변경 사항을 제안하고 다른 사람들과 협업하는 방법입니다. PR을 통해 코드를 병합하기 전에 코드 검토를 받을 수 있습니다.
+프로필을 업데이트하는 방법을 통해 Pull Request 사용법을 익혀보겠습니다.
 
-## 2. 환경 설정
+## 2. 저장소 Fork
+Git을 설치하지 않은 경우 다음 내용을 참고해서 설치하시면 됩니다.
+<details>
+<summary>Git 설치 및 config 설정 방법</summary>
+
 ### Git 설치
 ```sh
 # Git 설치 (Linux)
@@ -21,95 +26,55 @@ brew install git
 git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"
 ```
-
-### 저장소 클론(Clone)
-![](../assets/imgs/github-clone.png)
-```sh
-git clone "저장소 주소"
-```
+</details>
 
 ### 저장소 포크(Fork)
 1. GitHub에서 저장소로 이동합니다.
-![](../assets/imgs/github-main.png)
 
 2. 오른쪽 상단의 **Fork** 버튼을 클릭합니다.
+![](../assets/imgs/git-tutorial/git-tutorial-step1.png)
 
-## 3. 브랜치 생성
-```sh
-# 포크한 저장소 클론
-git clone https://github.com/your-username/repository.git
-cd repository
+3. **Create fork** 버튼을 클릭합니다.
+![](../assets/imgs/git-tutorial/git-tutorial-step2.png)
 
-# 새 브랜치 생성 및 전환
-git checkout -b feature-branch
-```
+## 3. 프로필 내용 추가하기
+포크가 완료된 저장소에서 가장 상위에 있는 README.md 파일을 열고, 프로필 부분에 대한 부분을 찾습니다.
+<br>
+(포크가 완료된 저장소는 본인 Github repository에 존재합니다.)
+![](../assets/imgs/git-tutorial/git-tutorial-step3.png)
 
-## 4. 변경 사항 적용
-```sh
-# 파일 수정하기
-nano file.txt  # 파일을 편집
+프로필 코드 한줄을 복사하고 본인 프로필에 맞게 내용을 수정하시면 됩니다.
+![](../assets/imgs/git-tutorial/git-tutorial-step4.png)
 
-# 변경 사항 스테이징 및 커밋
-git add file.txt
-git commit -m "새 기능 추가"
-```
+내용 변경 후 **Commit changes...** 버튼을 클릭합니다.
+![](../assets/imgs/git-tutorial/git-tutorial-step5.png)
 
-## 5. 변경 사항을 GitHub에 푸시
-```sh
-git push origin feature-branch
-```
+### Badge 만들기
+새로운 Badge(Icon)을 생성하려면 다음 사이트를 참고해서 추가하시면 됩니다.
+https://shields.io/ 
 
-## 6. Pull Request 생성
-1. GitHub에서 저장소로 이동합니다.
-2. **Pull Requests** → **New Pull Request** 클릭.
-3. 브랜치를 선택하고 변경 사항을 확인합니다.
-4. **Create Pull Request** 버튼을 클릭하고 제목과 설명을 추가합니다.
-5. 검토자를 추가하고 제출합니다.
+## 4. 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시
+다음처럼 commit 메시지와 description을 작성하고, **Commit changes** 버튼 클릭
+![](../assets/imgs/git-tutorial/git-tutorial-step6.png)
 
-## 7. PR 리뷰 및 업데이트
-```sh
-# 최신 변경 사항 가져오기
-git fetch origin
+커밋이 완료되면, Fork한 저장소에서 다음과 같이 내용이 업데이트 됩니다.
+![](../assets/imgs/git-tutorial/git-tutorial-step7.png)
 
-# 브랜치 체크아웃 후 수정
-git checkout feature-branch
-nano file.txt  # 파일 수정
+## 5. Pull Request 생성
+현재 공용으로 사용하는 저장소에는 수정 사항이 반영되지 않았으므로 PR을 생성해야 합니다.
+1. 같은 화면에서 다음과 같이 **Contribute** 버튼 클릭 -> **Open pull request** 버튼 클릭
+![](../assets/imgs/git-tutorial/git-tutorial-step8.png)
 
-# 커밋 수정 또는 새 커밋 생성
-git add file.txt
-git commit --amend -m "기능 세부사항 업데이트"
+2. 내용을 모두 작성한 뒤 **Create pull request** 버튼을 클릭합니다.
+![](../assets/imgs/git-tutorial/git-tutorial-step9.png)
 
-# 변경 사항 푸시
-git push origin feature-branch --force
-```
+## 6. PR 리뷰 및 업데이트
+다음과 같이 PR이 생성되면, 팀원들이 변경된 코드를 검토한 뒤 문제가 없을시 승인합니다.
+![](../assets/imgs/git-tutorial/git-tutorial-step10.png)
 
-## 8. Pull Request 병합
-PR이 승인되면 다음 단계로 병합할 수 있습니다:
+## 7. Pull Request 병합
+PR이 승인되면 다음 단계로 병합할 수 있습니다.
 1. GitHub에서 **Merge Pull Request** 버튼 클릭.
 2. 더 이상 필요하지 않은 경우 브랜치를 삭제합니다.
 
-## 9. 병합 충돌 해결
-```sh
-# 최신 변경 사항 가져오기
-git checkout main
-git pull origin main
-
-# 기능 브랜치 병합
-git merge feature-branch
-
-# 충돌 해결 후 파일 스테이징
-git add conflicted-file.txt
-git commit -m "병합 충돌 해결"
-```
-
-## 10. 고급 기능
-### GitHub CLI 사용
-```sh
-# CLI를 사용하여 PR 생성
-gh pr create --base main --head feature-branch --title "새 기능" --body "변경 사항 설명"
-```
-
-## 11. 결론
-- 의미 있는 커밋 메시지를 사용하고, 작은 PR을 유지하며, 조기에 리뷰를 요청하세요.
-- 브랜치를 최신 상태로 유지하고 충돌을 효과적으로 해결하세요.
-- GitHub Actions를 활용하여 Git 워크플로우를 자동화하는 방법도 고려해 보세요.
+이제 프로필 업데이트가 완료되었습니다!
