@@ -3,3 +3,5 @@ root: intro
 
 chapters:
   - file: docs/pull_request_guide
+  - file: docs/pr-guide
+  - file: docs/pr-ground
