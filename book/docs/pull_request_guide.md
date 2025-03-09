@@ -27,13 +27,10 @@ git config --global user.email "your.email@example.com"
 
 ### 저장소 포크(Fork)
 1. GitHub에서 저장소로 이동합니다.
-![GitHub 저장소 페이지](../assets/imgs/github-main.png)
+![](../assets/imgs/git-tutorial-step1.png)
 
-2. 오른쪽 상단의 **Fork** 버튼을 클릭합니다.
-![Create fork 사진]()
-
-3. Fork 후 결과 화면
-![Fork 후 결과 사진]()
+1. 오른쪽 상단의 **Fork** 버튼을 클릭합니다.
+![](../assets/imgs/git-tutorial-step2.png)
 
 ## 3. 브랜치 생성
 ```sh
@@ -46,6 +43,7 @@ git checkout -b add-profile
 ```
 
 ## 4. 프로필 내용 추가하기
+![](../assets/imgs/git-tutorial-step3.png)
 가장 상위에 있는 README.md 파일을 열고, 프로필 부분에 대한 부분을 찾습니다.
 위에 이미 작성된 내용처럼, 본인 프로필에 맞게 내용을 수정 및 추가합니다.
 
