@@ -1,6 +1,6 @@
 # Github 파일 편집기로 작업하기 🚀
 
-## 1. Pull Request(PR) 소개
+## Pull Request(PR) 소개
 
 **Pull Request(PR)** 는 오픈소스 프로젝트나 조직의 저장소에 직접적인 수정 권한이 없는 사용자가 변경 사항을 제안하고 반영할 수 있도록 하는 협업 도구입니다.
 
@@ -86,7 +86,7 @@ git config --global user.email "your.email@example.com"
 PR이 생성되면 팀원들이 변경된 내용을 검토하고, 문제가 없으면 승인합니다. <BR> 
 ![](../assets/imgs/git-tutorial/git-tutorial-step10.png)
 
-## 6️⃣ Pull Request 병합
+### 6️⃣ Pull Request 병합
 PR이 승인되면 다음 단계로 병합할 수 있습니다.
 1. GitHub에서 **Merge Pull Request** 버튼 클릭.
 2. 더 이상 필요하지 않은 경우 브랜치를 삭제합니다.
