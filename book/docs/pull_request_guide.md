@@ -86,7 +86,7 @@ git config --global user.email "your.email@example.com"
 PR이 생성되면 팀원들이 변경된 내용을 검토하고, 문제가 없으면 승인합니다. <BR> 
 ![](../assets/imgs/git-tutorial/git-tutorial-step10.png)
 
-## 6️⃣ Pull Request 병합
+### 6️⃣ Pull Request 병합
 PR이 승인되면 다음 단계로 병합할 수 있습니다.
 1. GitHub에서 **Merge Pull Request** 버튼 클릭.
 2. 더 이상 필요하지 않은 경우 브랜치를 삭제합니다.
