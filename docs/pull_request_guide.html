@@ -370,18 +370,15 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request-pr">1. Pull Request(PR) 소개</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fork">2. 저장소 Fork</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">저장소 포크(Fork)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pr">PR을 활용해 스터디 리포지토리 프로필 업데이트 하기</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fork">1️⃣ 저장소 포크(Fork)하기</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2️⃣ 프로필 내용 추가하기</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3️⃣ 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시하기</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request">4️⃣ Pull Request 생성</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">5️⃣ PR 리뷰 및 업데이트</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. 프로필 내용 추가하기</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#badge">Badge 만들기</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4. 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request">5. Pull Request 생성</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pr">6. PR 리뷰 및 업데이트</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">7. Pull Request 병합</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">6️⃣ Pull Request 병합</a></li>
 </ul>
             </nav>
         </div>
@@ -397,14 +394,21 @@ document.write(`
 <h1>Github 파일 편집기로 작업하기 🚀<a class="headerlink" href="#github" title="Permalink to this heading">#</a></h1>
 <section id="pull-request-pr">
 <h2>1. Pull Request(PR) 소개<a class="headerlink" href="#pull-request-pr" title="Permalink to this heading">#</a></h2>
-<p> <strong>Pull Request(PR)</strong> 는 저장소에서 변경 사항을 제안하고 다른 사람들과 협업하는 방법입니다.
-<br>
- PR을 통해 코드를 병합하기 전에 코드 검토를 받을 수 있습니다.
-<br>
- 프로필을 업데이트하는 방법을 통해 Pull Request 사용법을 익혀보겠습니다.</p>
+<p><strong>Pull Request(PR)</strong> 는 오픈소스 프로젝트나 조직의 저장소에 직접적인 수정 권한이 없는 사용자가 변경 사항을 제안하고 반영할 수 있도록 하는 협업 도구입니다.</p>
+<p>🚀 PR을 사용하는 주요 이유:</p>
+<ul class="simple">
+<li><p>저장소에 직접적인 쓰기 권한이 없는 경우에도 기여 가능</p></li>
+<li><p>코드 리뷰를 통해 더 나은 품질의 코드 유지</p></li>
+<li><p>여러 기여자가 같은 프로젝트에서 안전하게 협업 가능</p></li>
+</ul>
+<p>보통 팀 프로젝트나 오픈소스 프로젝트에서는 직접 코드 변경이 불가능하기 때문에,
+PR을 생성하고 관리자의 검토 후 병합(merge)하는 방식으로 기여합니다.</p>
+<p>📖 이 가이드에서는 스터디 리포지토리에 프로필을 업데이트하는 과정을 통해 PR 사용법을 익혀보겠습니다.</p>
 </section>
-<section id="fork">
-<h2>2. 저장소 Fork<a class="headerlink" href="#fork" title="Permalink to this heading">#</a></h2>
+<section id="pr">
+<h2>PR을 활용해 스터디 리포지토리 프로필 업데이트 하기<a class="headerlink" href="#pr" title="Permalink to this heading">#</a></h2>
+<p>GitHub에서는 저장소에 <strong>직접적인 수정 권한이 없는 경우</strong>, 변경 사항을 적용하려면 <strong>Pull Request(PR)</strong> 를 통해 기여해야 합니다.
+따라서, 스터디 리포지토리에 수정 권한이 없다면 먼저 자신의 GitHub 계정으로 <strong>Fork(포크)</strong> 해야 합니다.</p>
 <!--
 &emsp;Git을 설치하지 않은 경우 다음 내용을 참고해서 설치하시면 됩니다.
 <details>
@@ -429,69 +433,59 @@ git config --global user.email "your.email@example.com"
 ```
 </details>
 -->
-<section id="id1">
-<h3>저장소 포크(Fork)<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<section id="fork">
+<h3>1️⃣ 저장소 포크(Fork)하기<a class="headerlink" href="#fork" title="Permalink to this heading">#</a></h3>
 <ol class="arabic simple">
-<li><p>GitHub에서 저장소로 이동합니다.</p></li>
-<li><p>오른쪽 상단의 <strong>Fork</strong> 버튼을 클릭합니다.
+<li><p>GitHub에서 본인의 스터디 저장소로 이동합니다. <BR> 본 가이드에서는 <a class="reference external" href="https://github.com/Pseudo-Lab/DevFactory">DevFactory 리포지토리</a>를 예시로 사용합니다.</p></li>
+<li><p>본인이 속한 스터디 저장소에서 오른쪽 상단의 <strong>Fork</strong> 버튼을 클릭합니다.
 <img alt="" src="../_images/git-tutorial-step1.png" /></p></li>
 <li><p><strong>Create fork</strong> 버튼을 클릭합니다.
 <img alt="" src="../_images/git-tutorial-step2.png" /></p></li>
 </ol>
 </section>
+<section id="id1">
+<h3>2️⃣ 프로필 내용 추가하기<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>포크한 저장소의 최상위 디렉터리에서 <a class="reference external" href="https://github.com/Pseudo-Lab/DevFactory/blob/main/README.md">README.md</a> 파일을 열고, 프로필에 해당하는 영역을 찾습니다. <BR>
+📌 포크가 완료된 저장소는 본인 Github 저장소에 존재합니다.<BR>
+<img alt="" src="../_images/git-tutorial-step3.png" /></p></li>
+<li><p>프로필 코드 한줄을 복사하여 본인 프로필에 맞게 내용을 수정하시면 됩니다.<BR>
+<img alt="" src="../_images/git-tutorial-step4.png" /></p></li>
+<li><p>내용 변경 후 <strong>Commit changes…</strong> 버튼을 클릭합니다.<BR>
+<img alt="" src="../_images/git-tutorial-step5.png" /></p></li>
+<li><p><strong>Badge 추가하기(Option)</strong> <BR>
+추가적인 Badge(아이콘)를 생성하려면 <a class="reference external" href="https://shields.io">Shields.io</a>를 참고하세요.<BR>
+이 사이트에서 다양한 스타일의 배지를 만들고, Markdown 형식으로 쉽게 적용할 수 있습니다.</p></li>
+</ol>
 </section>
 <section id="id2">
-<h2>3. 프로필 내용 추가하기<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
-<p> 포크가 완료된 저장소에서 가장 상위에 있는 <a class="reference external" href="http://README.md">README.md</a> 파일을 열고, 프로필 부분에 대한 부분을 찾습니다.
-<br>
- (포크가 완료된 저장소는 본인 Github repository에 존재합니다.)</p>
-<ul class="simple">
-<li><p><img alt="" src="../_images/git-tutorial-step3.png" /></p></li>
-</ul>
-<p> 프로필 코드 한줄을 복사하고 본인 프로필에 맞게 내용을 수정하시면 됩니다.</p>
-<ul class="simple">
-<li><p><img alt="" src="../_images/git-tutorial-step4.png" /></p></li>
-</ul>
-<p> 내용 변경 후 <strong>Commit changes…</strong> 버튼을 클릭합니다.</p>
-<ul class="simple">
-<li><p><img alt="" src="../_images/git-tutorial-step5.png" /></p></li>
-</ul>
-<section id="badge">
-<h3>Badge 만들기<a class="headerlink" href="#badge" title="Permalink to this heading">#</a></h3>
-<p> 새로운 Badge(Icon)을 생성하려면 다음 사이트를 참고해서 추가하시면 됩니다. <a class="reference external" href="https://shields.io/">https://shields.io/</a></p>
-</section>
-</section>
-<section id="id3">
-<h2>4. 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h2>
-<p> 다음처럼 commit 메시지와 description을 작성하고, <strong>Commit changes</strong> 버튼 클릭</p>
-<ul class="simple">
-<li><p><img alt="" src="../_images/git-tutorial-step6.png" /></p></li>
-</ul>
-<p> 커밋 및 Push가 완료되면, Fork한 저장소에서 다음과 같이 내용이 업데이트 됩니다.</p>
-<ul class="simple">
-<li><p><img alt="" src="../_images/git-tutorial-step7.png" /></p></li>
-</ul>
+<h3>3️⃣ 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시하기<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>아래와 같이 commit 메시지와 설명을 작성하고, <strong>Commit changes</strong> 버튼을 클릭합니다.<BR>
+<img alt="" src="../_images/git-tutorial-step6.png" /></p></li>
+<li><p>커밋 및 Push가 완료되면, Fork한 저장소에서 다음과 같이 내용이 업데이트 됩니다.<BR>
+<img alt="" src="../_images/git-tutorial-step7.png" /></p></li>
+</ol>
 </section>
 <section id="pull-request">
-<h2>5. Pull Request 생성<a class="headerlink" href="#pull-request" title="Permalink to this heading">#</a></h2>
-<p> 현재 공용으로 사용하는 저장소에는 수정 사항이 반영되지 않았으므로 PR을 생성해야 합니다.</p>
+<h3>4️⃣ Pull Request 생성<a class="headerlink" href="#pull-request" title="Permalink to this heading">#</a></h3>
 <ol class="arabic simple">
-<li><p>같은 화면에서 다음과 같이 <strong>Contribute</strong> 버튼 클릭 -&gt; <strong>Open pull request</strong> 버튼 클릭
+<li><p>현재 변경 사항은 <strong>포크한 저장소</strong>에만 반영된 상태이므로, 원본 저장소에 적용하려면 PR을 생성해야 합니다.</p></li>
+<li><p><strong>포크한 저장소</strong>에서 <strong>Contribute</strong> 버튼을 클릭한 후, <strong>Open pull request</strong> 버튼 클릭을 선택하여 PR을 생성합니다.<BR>
 <img alt="" src="../_images/git-tutorial-step8.png" /></p></li>
-<li><p>내용을 모두 작성한 뒤 <strong>Create pull request</strong> 버튼을 클릭합니다.
+<li><p>변경사항에 대한 내용을 간략히 작성한 뒤 <strong>Create pull request</strong> 버튼을 클릭합니다.
 <img alt="" src="../_images/git-tutorial-step9.png" /></p></li>
 </ol>
 </section>
-<section id="pr">
-<h2>6. PR 리뷰 및 업데이트<a class="headerlink" href="#pr" title="Permalink to this heading">#</a></h2>
-<p> 다음과 같이 PR이 생성되면, 팀원들이 변경된 코드를 검토한 뒤 문제가 없을시 승인합니다.</p>
-<ul class="simple">
-<li><p><img alt="" src="../_images/git-tutorial-step10.png" /></p></li>
-</ul>
+<section id="id3">
+<h3>5️⃣ PR 리뷰 및 업데이트<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h3>
+<p>PR이 생성되면 팀원들이 변경된 내용을 검토하고, 문제가 없으면 승인합니다. <BR>
+<img alt="" src="../_images/git-tutorial-step10.png" /></p>
+</section>
 </section>
 <section id="id4">
-<h2>7. Pull Request 병합<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h2>
-<p> PR이 승인되면 다음 단계로 병합할 수 있습니다.</p>
+<h2>6️⃣ Pull Request 병합<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h2>
+<p>PR이 승인되면 다음 단계로 병합할 수 있습니다.</p>
 <ol class="arabic simple">
 <li><p>GitHub에서 <strong>Merge Pull Request</strong> 버튼 클릭.</p></li>
 <li><p>더 이상 필요하지 않은 경우 브랜치를 삭제합니다.</p></li>
@@ -564,18 +558,15 @@ git config --global user.email "your.email@example.com"
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request-pr">1. Pull Request(PR) 소개</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fork">2. 저장소 Fork</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">저장소 포크(Fork)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pr">PR을 활용해 스터디 리포지토리 프로필 업데이트 하기</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fork">1️⃣ 저장소 포크(Fork)하기</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2️⃣ 프로필 내용 추가하기</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3️⃣ 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시하기</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request">4️⃣ Pull Request 생성</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">5️⃣ PR 리뷰 및 업데이트</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. 프로필 내용 추가하기</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#badge">Badge 만들기</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4. 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request">5. Pull Request 생성</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pr">6. PR 리뷰 및 업데이트</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">7. Pull Request 병합</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">6️⃣ Pull Request 병합</a></li>
 </ul>
   </nav></div>
 
