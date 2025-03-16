@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - ci/*
+    paths:
+      - 'book/**'
 
 jobs:
   build-and-deploy:
