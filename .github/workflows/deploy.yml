@@ -1,0 +1,35 @@
+name: Build and Deploy Jupyter Book
+
+on:
+  push:
+    branches:
+      - main
+      - ci/*
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Install Jupyter Book
+        run: |
+          pip install -U pip
+          pip install jupyter-book ghp-import
+
+      - name: Build Jupyter Book
+        run: |
+          set -e  # 오류 발생 시 스크립트 중지
+          jupyter-book build book || { echo "Jupyter Book build failed!"; exit 1; }
+
+      - name: Deploy to GitHub Pages
+        run: |
+          COMMIT_ID=$(git rev-parse --short HEAD)
+          ghp-import -n -p -f book/_build/html -m "Deploying Jupyter Book - Commit: $COMMIT_ID"
