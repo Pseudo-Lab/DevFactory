@@ -71,9 +71,22 @@ class CollaborationFramework:
     
     def workflow(self):
         return """주간 사이클:
-        1️⃣ 수요일: 개발 사항 공유 및 코드 리뷰 세션(Live Share)
+        1️⃣ 월요일: 개발 사항 공유 및 코드 리뷰 세션(Live Share)
 ```
 
+## 🛠️ 기술 스택 (Technology Stack)
+| 기술                    | 스택      | 
+| ----------------------- | --------- |
+| Programming Language    | JavaScript, Python |
+| Frontend                | React | 
+| Backend                 | FastAPI | 
+| Database                | PostgreSQL, Notion  | 
+| Version Control         | Github  | 
+| Cloud Services          | Oracle  | 
+| Deployment Tools        | Docker  | 
+| DevOps                  | Github Actions | 
+| Automation/Integration  | Make |
+| Collaboration Tools     | Discord, Notion | 
 
 ## 📈 성과 지표 (Achievement Metrics)
 **2025 주요 KPI**  
