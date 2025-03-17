@@ -83,7 +83,7 @@ git config --global user.email "your.email@example.com"
 ![](../assets/imgs/git-tutorial/git-tutorial-step9.png)
 
 ### 5️⃣ PR 리뷰 및 업데이트
-PR이 생성되면 팀원들이 변경된 내용을 검토하고, 문제가 없으면 승인합니다. <BR> 
+PR이 생성되면 빌더 또는 스터디원이 변경된 내용을 검토하고, 문제가 없으면 승인합니다. <BR> 
 ![](../assets/imgs/git-tutorial/git-tutorial-step10.png)
 
 ### 6️⃣ Pull Request 병합
