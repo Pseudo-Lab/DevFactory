@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Box, Tooltip } from '@mui/material';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useTheme } from '@mui/material/styles';
@@ -25,14 +25,26 @@ const Header: React.FC<HeaderProps> = ({ logoSrc }) => {
               PseudoLab ToolBox
             </Typography>
           </Link>
-          {/* <Typography variant="h4" align="center" gutterBottom>
-            PseudoLab ToolBox
-          </Typography> */}
         </Box>
 
-        <IconButton onClick={toggleColorMode}>
+        {/* <IconButton onClick={toggleColorMode}>
           {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-        </IconButton>
+        </IconButton> */}
+        <Tooltip title={theme.palette.mode === 'dark' ? 'Light Mode' : 'Dark Mode'}>
+          <IconButton
+            onClick={toggleColorMode}
+            sx={{
+              transition: 'all 0.1s ease',
+              color: theme.palette.mode === 'dark' ? theme.palette.custom.primary : '#333',
+            }}
+          >
+            {theme.palette.mode === 'dark' ? (
+              <Brightness7Icon sx={{ transition: 'all 0.1s ease' }} />
+            ) : (
+              <Brightness4Icon sx={{ transition: 'all 0.1s ease' }} />
+            )}
+          </IconButton>
+        </Tooltip>
       </Toolbar>
     </AppBar>
   );
