@@ -15,7 +15,8 @@
     "@mui/icons-material": "^6.4.8",
     "@mui/material": "^6.4.8",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
