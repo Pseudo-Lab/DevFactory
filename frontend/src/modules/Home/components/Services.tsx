@@ -59,6 +59,8 @@ const Services: React.FC<ServicesProps> = ({
                 borderRadius: colors.borderRadius,
                 textTransform: 'none',
                 '&:hover': { opacity: 0.9, transform: 'translateY(-2px)' },
+                padding: '0.8rem 1.5rem',
+                fontWeight: 600
               }}
               onClick={onOpenCert}
             >
@@ -111,6 +113,8 @@ const Services: React.FC<ServicesProps> = ({
                 borderRadius: colors.borderRadius,
                 textTransform: 'none',
                 '&:hover': { opacity: 0.9, transform: 'translateY(-2px)' },
+                padding: '0.8rem 1.5rem',
+                fontWeight: 600
               }}
               onClick={onOpenContent}
             >
@@ -163,6 +167,8 @@ const Services: React.FC<ServicesProps> = ({
                 borderRadius: colors.borderRadius,
                 textTransform: 'none',
                 '&:hover': { opacity: 0.9, transform: 'translateY(-2px)' },
+                padding: '0.8rem 1.5rem',
+                fontWeight: 600
               }}
               onClick={onOpenStudyRoom}
             >
