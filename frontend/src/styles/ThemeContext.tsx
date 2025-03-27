@@ -1,16 +1,13 @@
-import React, { createContext, useMemo, useState, ReactNode, useContext } from 'react';
+import { createContext, useMemo, useState, ReactNode, useContext } from 'react';
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
+import { colors } from './theme';
 
 interface ThemeContextProps {
   toggleColorMode: () => void;
 }
 
-const pseudoLabColors = {
-  primary: '#F2913B',
-  secondary: '#21709A',
-};
 // ex) import { useTheme } from '@mui/material/styles';
-// ex) const theme = useTheme(); + theme.palette.custom.primary
+// ex) const theme = useTheme(); + theme.palette.custom.pseudolabOrange
 const ColorModeContext = createContext<ThemeContextProps | undefined>(undefined);
 
 export const useColorMode = () => {
@@ -42,8 +39,9 @@ export const ColorModeProvider = ({ children }: { children: ReactNode }) => {
                 primary: '#000',
               },
               custom: {
-                primary: pseudoLabColors.primary,
-                secondary: pseudoLabColors.secondary,
+                pseudolabOrange: colors.pseudolabOrange,
+                pseudolabBlue: colors.pseudolabBlue,
+                success: colors.success,
               },
             }
           : {
@@ -55,8 +53,9 @@ export const ColorModeProvider = ({ children }: { children: ReactNode }) => {
                 primary: '#fff',
               },
               custom: {
-                primary: pseudoLabColors.primary,
-                secondary: pseudoLabColors.secondary,
+                pseudolabOrange: colors.pseudolabOrange,
+                pseudolabBlue: colors.pseudolabBlue,
+                success: colors.success,
               },
             }),
       },

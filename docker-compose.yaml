@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"  # 내부 80포트를 8080으로 매핑
+    restart: always
+
+      #  backend:
+      #    build:
+      #      context: ./backend
+      #    container_name: backend
+      #    ports:
+      #      - "8000:8000"
+      #    restart: always
