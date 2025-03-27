@@ -7,7 +7,7 @@ interface ThemeContextProps {
 }
 
 // ex) import { useTheme } from '@mui/material/styles';
-// ex) const theme = useTheme(); + theme.palette.custom.primary
+// ex) const theme = useTheme(); + theme.palette.custom.pseudolabOrange
 const ColorModeContext = createContext<ThemeContextProps | undefined>(undefined);
 
 export const useColorMode = () => {
@@ -39,8 +39,8 @@ export const ColorModeProvider = ({ children }: { children: ReactNode }) => {
                 primary: '#000',
               },
               custom: {
-                primary: colors.primary,
-                secondary: colors.secondary,
+                pseudolabOrange: colors.pseudolabOrange,
+                pseudolabBlue: colors.pseudolabBlue,
                 success: colors.success,
               },
             }
@@ -53,8 +53,8 @@ export const ColorModeProvider = ({ children }: { children: ReactNode }) => {
                 primary: '#fff',
               },
               custom: {
-                primary: colors.primary,
-                secondary: colors.secondary,
+                pseudolabOrange: colors.pseudolabOrange,
+                pseudolabBlue: colors.pseudolabBlue,
                 success: colors.success,
               },
             }),

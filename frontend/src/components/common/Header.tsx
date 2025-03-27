@@ -35,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({ logoSrc }) => {
             onClick={toggleColorMode}
             sx={{
               transition: 'all 0.1s ease',
-              color: theme.palette.mode === 'dark' ? theme.palette.custom.primary : '#333',
+              color: theme.palette.mode === 'dark' ? theme.palette.custom.pseudolabOrange : '#333',
             }}
           >
             {theme.palette.mode === 'dark' ? (

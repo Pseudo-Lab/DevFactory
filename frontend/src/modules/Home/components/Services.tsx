@@ -55,7 +55,7 @@ const Services: React.FC<ServicesProps> = ({
               variant="contained"
               fullWidth
               sx={{
-                backgroundColor: colors.primary,
+                backgroundColor: colors.pseudolabOrange,
                 borderRadius: colors.borderRadius,
                 textTransform: 'none',
                 '&:hover': { opacity: 0.9, transform: 'translateY(-2px)' },
@@ -109,7 +109,7 @@ const Services: React.FC<ServicesProps> = ({
               variant="contained"
               fullWidth
               sx={{
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.pseudolabBlue,
                 borderRadius: colors.borderRadius,
                 textTransform: 'none',
                 '&:hover': { opacity: 0.9, transform: 'translateY(-2px)' },

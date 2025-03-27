@@ -7,7 +7,7 @@ const Hero: React.FC = () => {
     <Box
       component="section"
       sx={{
-        backgroundColor: colors.primary,
+        backgroundColor: colors.pseudolabOrange,
         color: '#fff',
         py: 6,
         mb: 6,
