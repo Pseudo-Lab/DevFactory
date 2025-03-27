@@ -14,13 +14,13 @@ const Features: React.FC = () => {
       icon: '📝',
       title: '간편한 신청',
       description: '몇 번의 클릭만으로 빠르게 서비스를 신청하세요.',
-      color: theme.palette.custom?.primary || '#F2913B',
+      color: theme.palette.custom?.pseudolabOrange || '#F2913B',
     },
     {
       icon: '🎨',
       title: '맞춤형 콘텐츠, 디자인',
       description: '필요한 콘텐츠와 디자인을 요청할 수 있습니다.',
-      color: theme.palette.custom?.secondary || '#21709A',
+      color: theme.palette.custom?.pseudolabBlue || '#21709A',
     },
     {
       icon: '🏢',
