@@ -15,7 +15,7 @@ const Hero: React.FC = () => {
       }}
     >
       <Container>
-        <Box sx={{ maxWidth: 600 }}>
+        <Box sx={{ width: "100%" }}>
           <Typography variant="h3" component="h1" gutterBottom>
             PseudoLab 서비스 툴박스
           </Typography>
