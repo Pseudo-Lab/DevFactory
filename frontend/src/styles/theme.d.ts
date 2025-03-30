@@ -5,12 +5,14 @@ declare module '@mui/material/styles' {
     custom: {
       primary: string;
       secondary: string;
+      success: string;
     };
   }
   interface PaletteOptions {
     custom?: {
       primary: string;
       secondary: string;
+      success: string;
     };
   }
 }

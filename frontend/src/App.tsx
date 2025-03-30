@@ -1,10 +1,19 @@
 import React from 'react';
-import HomePage from './modules/Home';
+import Header from './components/common/Header';
+import Hero from './modules/Home/components/Hero';
+import Homepage from './modules/Home/index';
+import Features from './modules/Home/components/Features';
+import Footer from './components/common/Footer';
+import logo from './assets/logo.png';
 
 const App: React.FC = () => {
   return (
     <>
-      <HomePage />
+      <Header logoSrc={logo}/>
+      <Hero />
+      <Homepage />
+      <Features />
+      <Footer />
     </>
   );
 };
