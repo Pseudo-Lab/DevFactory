@@ -10,3 +10,20 @@ parts:
     title: "Github.dev 편집기로 작업하기"
   - file: docs/pr-ground
     title: "직접해보기"
+
+- caption: "나만의 local ChatGPT 만들기: Docker 실습 튜토리얼"
+  chapters:
+  - file: docker_tutorial/00.pytorch_example
+    title: "Pytorch example"
+  - file: docker_tutorial/01.what_is_docker
+    title: "Docker란 무엇인가?"
+  - file: docker_tutorial/02.image_and_container
+    title: "Docker 기본 명령어 실습"
+  - file: docker_tutorial/03.docker-compose
+    title: "Docker Compose 개념 & 실습"
+  - file: docker_tutorial/04.ollama
+    title: "Ollama로 로컬 LLM 실행"
+  - file: docker_tutorial/05.webui
+    title: "Open-WebUI 실행"
+  - file: docker_tutorial/06.ollama_and_webui
+    title: "Ollama + WebUI (Docker Compose)"
