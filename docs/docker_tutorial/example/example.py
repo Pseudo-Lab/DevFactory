@@ -1,9 +1,3 @@
-# Pytorch example
-
-## pytorch 예시 코드 실행시켜보기
-아래 예제 코드를 현재 환경에서 실행시켜봅시다.
-
-```python
 # -*- coding: utf-8 -*-
 import numpy as np
 import math
@@ -43,13 +37,3 @@ for t in range(2000):
     d -= learning_rate * grad_d
 
 print(f'Result: y = {a} + {b} x + {c} x^2 + {d} x^3')
-```
-
-## 예상되는 결과
-
-
-이렇듯 
-
-
-### Ref.
-PyTorch Tutorials “PyTorch with Examples”, https://tutorials.pytorch.kr/beginner/pytorch_with_examples.html

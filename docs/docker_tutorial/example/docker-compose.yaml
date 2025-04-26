@@ -1,0 +1,24 @@
+version: "3.8"    # Compose 파일 형식 버전
+
+services:
+  web:    # 웹 서버 서비스 정의
+    image: nginx:stable-alpine    # 경량 Alpine 기반 Nginx 공식 이미지 사용
+    ports:
+      - "8080:80"    # 호스트 8080 포트를 컨테이너 80 포트로 포워딩
+    volumes:
+      - ./html:/usr/share/nginx/html:ro  
+        # 로컬의 html/ 디렉터리를 컨테이너의 웹 루트(/usr/share/nginx/html)에 
+        # 읽기 전용(ro)으로 마운트
+    depends_on:
+      - redis    # web 서비스가 시작되기 전에 redis 서비스가 먼저 기동되도록 설정
+
+  redis:   # Redis 서비스 정의 (캐시/데이터 저장소)
+    image: redis:6-alpine   # 경량 Alpine 기반 Redis 6 공식 이미지 사용
+    volumes:
+      - redis-data:/data    # named volume 'redis-data'를 컨테이너의 /data에 마운트하여
+                            # 데이터 영속성 확보
+
+volumes:
+  redis-data:    # named volume 정의
+                 # - Redis 컨테이너가 삭제되어도 데이터가 유지됨
+                 # - 호스트에서 위치는 Docker가 관리하며 필요 시 직접 마운트 가능
