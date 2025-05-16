@@ -9,3 +9,10 @@ PseudoLab 빌더와 러너를 위한 튜토리얼 페이지입니다.
     - Github 파일 편집기로 작업하기<br>
     - Github.dev 편집기로 작업하기<br>
     - 직접해보기
+
+2. 나만의 local ChatGPT 만들기: Docker 실습 튜토리얼<br>
+    - 시작하기<br>
+    - Pytorch example<br>
+    - Docker란 무엇인가?<br>
+    - Docker 기본 명령어 실습<br>
+    - Docker Compose 개념 & 실습<br>
