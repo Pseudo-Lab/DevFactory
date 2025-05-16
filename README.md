@@ -10,7 +10,6 @@
 <a href="https://github.com/Pseudo-Lab/DevFactory/pulls"><img src="https://img.shields.io/github/issues-pr/Pseudo-Lab/DevFactory" alt="Pull Requests Badge"/></a>
 <a href="https://github.com/Pseudo-Lab/DevFactory/issues"><img src="https://img.shields.io/github/issues/Pseudo-Lab/DevFactory" alt="Issues Badge"/></a>
 <a href="https://github.com/Pseudo-Lab/DevFactory/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/Pseudo-Lab/DevFactory?color=2b9348"></a>
-<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fpseudo-lab%2FDevFactory&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
 </div>
 <br>
 
@@ -22,6 +21,7 @@
 ## 🌟 프로젝트 목표 (Project Vision)
 _"가짜연구소의 개발 문화를 만들어가는 DevFactory"_  
 - 신규 러너들의 Git 사용을 위한 Git Tutorial
+- 수도콘 네트워킹 프로그램 개발
 - 가짜연구소 수료증 발급 시스템 개발
 - 가짜연구소 개발 문화를 위해 꾸준히 노력하기
 
@@ -30,9 +30,9 @@ _"가짜연구소의 개발 문화를 만들어가는 DevFactory"_
 
 | 역할          | 이름 |  기술 스택 배지                                                                 | 주요 관심 분야                          | 소개링크 |
 |---------------|------|-----------------------------------------------------------------------|----------------------------------------|---|
-| **Builder** | 김수현 | ![Python](https://img.shields.io/badge/Python-3776AB) ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C) ![CICD](https://img.shields.io/badge/-CI%2FCD-00A86B?logo=ci-cd&logoColor=white) ![k8s](https://img.shields.io/badge/kubernetes-326CE5?&style=plastic&logo=kubernetes&logoColor=white)  | CI/CD, MLOps 파이프라인 설계             | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/soohyun-dev) |
-| **Builder** | 김예신 | ![Python](https://img.shields.io/badge/Python-3776AB) ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C) ![Django](https://img.shields.io/badge/django-092E20) | NLP, CI/CD                  | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/bailando/) |
-| **Runner** | 김승규 | ![Python](https://img.shields.io/badge/Python-3776AB) ![GoogleCloud](https://img.shields.io/badge/GoogleCloud-4285F4) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1) ![MongoDB](https://img.shields.io/badge/MongoDB-47A248) | 데이터 엔지니어링                  | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/seungkyu-kim-9088a21b1/) |
+| **PM / Infra** | 김수현 | ![Python](https://img.shields.io/badge/Python-3776AB) ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C) ![CICD](https://img.shields.io/badge/-CI%2FCD-00A86B?logo=ci-cd&logoColor=white) ![k8s](https://img.shields.io/badge/kubernetes-326CE5?&style=plastic&logo=kubernetes&logoColor=white)  | CI/CD, MLOps 파이프라인 설계             | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/soohyun-dev) |
+| **Backend / DB** | 김예신 | ![Python](https://img.shields.io/badge/Python-3776AB) ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C) ![Django](https://img.shields.io/badge/django-092E20) | NLP, CI/CD                  | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/bailando/) |
+| **Frontend** | 김승규 | ![Python](https://img.shields.io/badge/Python-3776AB) ![GoogleCloud](https://img.shields.io/badge/GoogleCloud-4285F4) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1) ![MongoDB](https://img.shields.io/badge/MongoDB-47A248) | 데이터 엔지니어링                  | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/seungkyu-kim-9088a21b1/) |
 
 ## 🚀 프로젝트 로드맵 (Project Roadmap)
 ```mermaid
@@ -92,8 +92,8 @@ class CollaborationFramework:
 **2025 주요 KPI**  
 | 지표                     | 목표치 | 현재 달성률 |
 |--------------------------|--------|-------------|
-| 튜토리얼 및 데모 제작 수                  | 3개  | 0%         |
-| 커밋 수              | 400    | 1%         | 
+| 튜토리얼 및 데모 제작 수                  | 3개  | 66.6%         |
+| 커밋 수              | 400    | 55%         | 
 | 플랫폼 방문수          | 200회    | 0회         |
 
 
