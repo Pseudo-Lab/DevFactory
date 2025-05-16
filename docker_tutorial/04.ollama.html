@@ -1,0 +1,751 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ollama로 로컬 LLM 실행 &#8212; PseudoLab Git Tutorial</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docker_tutorial/04.ollama';</script>
+    <link rel="shortcut icon" href="../_static/PseudoLab_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Open-WebUI 실행" href="05.webui.html" />
+    <link rel="prev" title="Docker Compose 개념 &amp; 실습" href="03.docker-compose.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/PseudoLab_logo.png" class="logo__image only-light" alt="PseudoLab Git Tutorial - Home"/>
+    <script>document.write(`<img src="../_static/PseudoLab_logo.png" class="logo__image only-dark" alt="PseudoLab Git Tutorial - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    PseudoLab Tutorial
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../docs/github_intro.html">Github 저장소 프로필 업데이트하기</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../docs/pull_request_guide.html">Github 파일 편집기로 작업하기</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docs/pr-guide.html">Github.dev 편집기로 작업하기</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docs/pr-ground.html">직접해보기</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="00.docker_intro.html">나만의 local ChatGPT 만들기: Docker 실습 튜토리얼</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00.pytorch_example.html">Pytorch example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01.what_is_docker.html">Docker란 무엇인가?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.image_and_container.html">Docker 기본 명령어 실습</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.docker-compose.html">Docker Compose 개념 &amp; 실습</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Ollama로 로컬 LLM 실행</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.webui.html">Open-WebUI 실행</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.ollama_and_webui.html">Ollama + WebUI (Docker Compose)</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Pseudo-Lab/DevFactory" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Pseudo-Lab/DevFactory/issues/new?title=Issue%20on%20page%20%2Fdocker_tutorial/04.ollama.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/docker_tutorial/04.ollama.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ollama로 로컬 LLM 실행</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ollama">Ollama란?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ollama-docker">Ollama Docker 이미지 가져오기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Ollama 서버 컨테이너 실행</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Ollama 서버 정상 기동 확인</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">ollama</span></code> 컨테이너 실행 여부 확인</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gemma-3">Gemma 3 모델 다운로드</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">모델 선택하기</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">모델 파라미터 및 크기</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">모델 정보</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bash">bash</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rest-api">REST API</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gemma3">Gemma3 모델로 질문하기</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">bash</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">REST API</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Ollama 서버 주요 기능</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ollama-llm">
+<h1>Ollama로 로컬 LLM 실행<a class="headerlink" href="#ollama-llm" title="Permalink to this heading">#</a></h1>
+<p>이번 세션에서는 Docker를 이용하여 <strong>Ollama 서버</strong>를 띄우고, 로컬 환경에서 대규모 언어 모델(LLM)을 간편하게 실행하는 방법을 실습합니다.</p>
+<hr class="docutils" />
+<section id="ollama">
+<h2>Ollama란?<a class="headerlink" href="#ollama" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>로컬에서 실행 가능한 경량 LLM 서버</strong></p>
+<ul>
+<li><p>ChatGPT 호환 API를 제공해 누구나 자신의 머신에서 손쉽게 LLM을 사용 가능</p></li>
+<li><p>GPU가 있으면 가속 활용 가능, 없으면 CPU로도 실행 가능</p></li>
+</ul>
+</li>
+<li><p>GitHub Repository : <a class="github reference external" href="https://github.com/ollama/ollama">ollama/ollama</a></p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="ollama-docker">
+<h2>Ollama Docker 이미지 가져오기<a class="headerlink" href="#ollama-docker" title="Permalink to this heading">#</a></h2>
+<p>Ollama 팀이 제공하는 <a class="reference external" href="https://hub.docker.com/r/ollama/ollama">공식 이미지</a> 사용</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>ollama/ollama
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>최신 이미지 Pull</p></li>
+<li><p>특정 버전 사용 시:<code class="docutils literal notranslate"><span class="pre">ollama/ollama:&lt;tag&gt;</span></code> 형식으로 지정 가능</p></li>
+</ul>
+</section>
+<section id="id1">
+<h2>Ollama 서버 컨테이너 실행<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-v<span class="w"> </span>ollama:/root/.ollama<span class="w"> </span>-p<span class="w"> </span><span class="m">11434</span>:11434<span class="w"> </span>--name<span class="w"> </span>ollama<span class="w"> </span>ollama/ollama
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d</span></code> : 백그라운드 모드로 실행</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--name</span> <span class="pre">ollama</span></code> : 컨테이너 이름 지정</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v</span> <span class="pre">ollama:/root/.ollama</span></code> : 모델·설정 파일을 named volume에 영구 저장</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">11434:11434</span></code> : 호스트 포트 11434 ↔ 컨테이너 포트 11434 매핑 (API 접근용)</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>Ollama 서버 정상 기동 확인<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
+<p><strong>컨테이너 상태 확인</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>ps
+</pre></div>
+</div>
+<p><strong>예상 출력</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>CONTAINER<span class="w"> </span>ID<span class="w">   </span>IMAGE<span class="w">             </span>COMMAND<span class="w">                   </span>CREATED<span class="w">          </span>STATUS<span class="w">          </span>PORTS<span class="w">                      </span>NAMES
+0cae5a78228c<span class="w">   </span>ollama/ollama<span class="w">     </span><span class="s2">&quot;/bin/ollama serve&quot;</span><span class="w">       </span><span class="m">12</span><span class="w"> </span>seconds<span class="w"> </span>ago<span class="w">   </span>Up<span class="w"> </span><span class="m">12</span><span class="w"> </span>seconds<span class="w">   </span><span class="m">0</span>.0.0.0:11434-&gt;11434/tcp<span class="w">   </span>ollama
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2><code class="docutils literal notranslate"><span class="pre">ollama</span></code> 컨테이너 실행 여부 확인<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h2>
+<p><strong>API 엔드포인트 접근 테스트</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>http://localhost:11434/api/tags
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>설치된 모델 목록이 출력되거나 빈 배열(<code class="docutils literal notranslate"><span class="pre">[]</span></code>) 반환</p></li>
+</ul>
+</section>
+<section id="gemma-3">
+<h2>Gemma 3 모델 다운로드<a class="headerlink" href="#gemma-3" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>개인 PC에서도 사용할 수 있도록 가벼운 gemma 3 모델 다운로드</p></li>
+<li><p>다양한 모델을 다운로드하여 사용 가능</p></li>
+</ul>
+</section>
+<section id="id4">
+<h2>모델 선택하기<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h2>
+<section id="id5">
+<h3>모델 파라미터 및 크기<a class="headerlink" href="#id5" title="Permalink to this heading">#</a></h3>
+<blockquote>
+<div><p>예시에서는 Gemma 3를 사용하지만, 아래의 모델표를 참고하여, 자신의 컴퓨터 사양에 맞는 모델을 선택할 수 있습니다. (추가 모델은 <a class="reference external" href="https://github.com/ollama/ollama?tab=readme-ov-file#model-library">여기</a>에서 확인할 수 있습니다.)</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>사양을 모른다면, 작은 모델 선택을 권장합니다.</p></li>
+</ul>
+</section>
+</section>
+<section id="id6">
+<h2>모델 정보<a class="headerlink" href="#id6" title="Permalink to this heading">#</a></h2>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>모델 이름</p></th>
+<th class="head"><p>파라미터 수</p></th>
+<th class="head"><p>크기</p></th>
+<th class="head"><p>모델 명(코드)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Gemma 3 (1B)</p></td>
+<td><p>1B</p></td>
+<td><p>815MB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gemma3:1b</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Gemma 3 (4B)</p></td>
+<td><p>4B</p></td>
+<td><p>3.3GB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gemma3</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Gemma 3 (12B)</p></td>
+<td><p>12B</p></td>
+<td><p>8.1GB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gemma3:12b</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Gemma 3 (27B)</p></td>
+<td><p>27B</p></td>
+<td><p>17GB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gemma3:27b</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>QwQ</p></td>
+<td><p>32B</p></td>
+<td><p>20GB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">qwq</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>DeepSeek-R1</p></td>
+<td><p>7B</p></td>
+<td><p>4.7GB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">deepseek-r1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>DeepSeek-R1</p></td>
+<td><p>671B</p></td>
+<td><p>404GB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">deepseek-r1:671b</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Llama 3.3</p></td>
+<td><p>70B</p></td>
+<td><p>43GB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">llama3.3</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Llama 3.2 (3B)</p></td>
+<td><p>3B</p></td>
+<td><p>2.0GB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">llama3.2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Llama 3.2 (1B)</p></td>
+<td><p>1B</p></td>
+<td><p>1.3GB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">llama3.2:1b</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Llama 3.2 Vision</p></td>
+<td><p>11B</p></td>
+<td><p>7.9GB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">llama3.2-vision</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<section id="bash">
+<h3>bash<a class="headerlink" href="#bash" title="Permalink to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>ollama<span class="w"> </span>ollama<span class="w"> </span>pull<span class="w"> </span>gemma3
+</pre></div>
+</div>
+</section>
+<section id="rest-api">
+<h3>REST API<a class="headerlink" href="#rest-api" title="Permalink to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>http://localhost:11434/api/pull<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;model&quot;: &quot;gemma3&quot;</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="gemma3">
+<h2>Gemma3 모델로 질문하기<a class="headerlink" href="#gemma3" title="Permalink to this heading">#</a></h2>
+<section id="id7">
+<h3>bash<a class="headerlink" href="#id7" title="Permalink to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>ollama<span class="w"> </span>ollama<span class="w"> </span>generate<span class="w"> </span>-m<span class="w"> </span>gemma3<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;Why is the sky blue?&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h3>REST API<a class="headerlink" href="#id8" title="Permalink to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:11434/api/generate<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  &quot;model&quot;: &quot;gemma3&quot;,</span>
+<span class="s1">  &quot;prompt&quot;: &quot;Why is the sky blue?&quot;,</span>
+<span class="s1">  &quot;options&quot;: {</span>
+<span class="s1">    &quot;num_predict&quot;: 10</span>
+<span class="s1">  }</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id9">
+<h2>Ollama 서버 주요 기능<a class="headerlink" href="#id9" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>모델 다운로드 · 실행 (CLI 명령어, REST API)</p></li>
+<li><p>OpenAI API 호환 서버로 활용 가능</p></li>
+<li><p>로컬 PC 또는 서버에 자체 LLM 인프라 구축 가능</p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>다음 세션</strong>에서는 Ollama 위에 <strong>Open-webui</strong>를 띄워 웹 브라우저로 대화형 AI를 사용해 봅시다.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./docker_tutorial"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="03.docker-compose.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Docker Compose 개념 &amp; 실습</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="05.webui.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Open-WebUI 실행</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ollama">Ollama란?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ollama-docker">Ollama Docker 이미지 가져오기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Ollama 서버 컨테이너 실행</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Ollama 서버 정상 기동 확인</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">ollama</span></code> 컨테이너 실행 여부 확인</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gemma-3">Gemma 3 모델 다운로드</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">모델 선택하기</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">모델 파라미터 및 크기</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">모델 정보</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bash">bash</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rest-api">REST API</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gemma3">Gemma3 모델로 질문하기</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">bash</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">REST API</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Ollama 서버 주요 기능</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By PseudoLab - DevFactory
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

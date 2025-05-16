@@ -1,0 +1,636 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Github 파일 편집기로 작업하기 🚀 &#8212; PseudoLab Git Tutorial</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/pull_request_guide';</script>
+    <link rel="shortcut icon" href="../_static/PseudoLab_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Github.dev 편집기로 작업하기 🚀" href="pr-guide.html" />
+    <link rel="prev" title="Github 저장소 프로필 업데이트하기" href="github_intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/PseudoLab_logo.png" class="logo__image only-light" alt="PseudoLab Git Tutorial - Home"/>
+    <script>document.write(`<img src="../_static/PseudoLab_logo.png" class="logo__image only-dark" alt="PseudoLab Git Tutorial - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    PseudoLab Tutorial
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="github_intro.html">Github 저장소 프로필 업데이트하기</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Github 파일 편집기로 작업하기</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pr-guide.html">Github.dev 편집기로 작업하기</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pr-ground.html">직접해보기</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../docker_tutorial/00.docker_intro.html">나만의 local ChatGPT 만들기: Docker 실습 튜토리얼</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../docker_tutorial/00.pytorch_example.html">Pytorch example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docker_tutorial/01.what_is_docker.html">Docker란 무엇인가?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docker_tutorial/02.image_and_container.html">Docker 기본 명령어 실습</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docker_tutorial/03.docker-compose.html">Docker Compose 개념 &amp; 실습</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docker_tutorial/04.ollama.html">Ollama로 로컬 LLM 실행</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docker_tutorial/05.webui.html">Open-WebUI 실행</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docker_tutorial/06.ollama_and_webui.html">Ollama + WebUI (Docker Compose)</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Pseudo-Lab/DevFactory" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Pseudo-Lab/DevFactory/issues/new?title=Issue%20on%20page%20%2Fdocs/pull_request_guide.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/docs/pull_request_guide.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Github 파일 편집기로 작업하기 🚀</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request-pr">Pull Request(PR) 소개</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pr">PR을 활용해 스터디 리포지토리 프로필 업데이트 하기</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fork">1️⃣ 저장소 포크(Fork)하기</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2️⃣ 프로필 내용 추가하기</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3️⃣ 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시하기</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request">4️⃣ Pull Request 생성</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">5️⃣ PR 리뷰 및 업데이트</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">6️⃣ Pull Request 병합</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="github">
+<h1>Github 파일 편집기로 작업하기 🚀<a class="headerlink" href="#github" title="Permalink to this heading">#</a></h1>
+<section id="pull-request-pr">
+<h2>Pull Request(PR) 소개<a class="headerlink" href="#pull-request-pr" title="Permalink to this heading">#</a></h2>
+<p><strong>Pull Request(PR)</strong> 는 오픈소스 프로젝트나 조직의 저장소에 직접적인 수정 권한이 없는 사용자가 변경 사항을 제안하고 반영할 수 있도록 하는 협업 도구입니다.</p>
+<p>🚀 PR을 사용하는 주요 이유:</p>
+<ul class="simple">
+<li><p>저장소에 직접적인 쓰기 권한이 없는 경우에도 기여 가능</p></li>
+<li><p>코드 리뷰를 통해 더 나은 품질의 코드 유지</p></li>
+<li><p>여러 기여자가 같은 프로젝트에서 안전하게 협업 가능</p></li>
+</ul>
+<p>보통 팀 프로젝트나 오픈소스 프로젝트에서는 직접 코드 변경이 불가능하기 때문에,
+PR을 생성하고 관리자의 검토 후 병합(merge)하는 방식으로 기여합니다.</p>
+<p>📖 이 가이드에서는 스터디 리포지토리에 프로필을 업데이트하는 과정을 통해 PR 사용법을 익혀보겠습니다.</p>
+</section>
+<section id="pr">
+<h2>PR을 활용해 스터디 리포지토리 프로필 업데이트 하기<a class="headerlink" href="#pr" title="Permalink to this heading">#</a></h2>
+<p>GitHub에서는 저장소에 <strong>직접적인 수정 권한이 없는 경우</strong>, 변경 사항을 적용하려면 <strong>Pull Request(PR)</strong> 를 통해 기여해야 합니다.
+따라서, 스터디 리포지토리에 수정 권한이 없다면 먼저 자신의 GitHub 계정으로 <strong>Fork(포크)</strong> 해야 합니다.</p>
+<!--
+&emsp;Git을 설치하지 않은 경우 다음 내용을 참고해서 설치하시면 됩니다.
+<details>
+<summary>Git 설치 및 config 설정 방법</summary>
+
+### Git 설치
+```sh
+# Git 설치 (Linux)
+sudo apt install git
+
+# Git 설치 (MacOS)
+brew install git
+
+# Git 설치 (Windows)
+# https://git-scm.com/ 에서 다운로드 후 설치
+```
+
+### Git 설정
+```sh
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
+</details>
+-->
+<section id="fork">
+<h3>1️⃣ 저장소 포크(Fork)하기<a class="headerlink" href="#fork" title="Permalink to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>GitHub에서 본인의 스터디 저장소로 이동합니다. <BR> 본 가이드에서는 <a class="reference external" href="https://github.com/Pseudo-Lab/DevFactory">DevFactory 리포지토리</a>를 예시로 사용합니다.</p></li>
+<li><p>본인이 속한 스터디 저장소에서 오른쪽 상단의 <strong>Fork</strong> 버튼을 클릭합니다.
+<img alt="" src="../_images/git-tutorial-step1.png" /></p></li>
+<li><p><strong>Create fork</strong> 버튼을 클릭합니다.
+<img alt="" src="../_images/git-tutorial-step2.png" /></p></li>
+</ol>
+</section>
+<section id="id1">
+<h3>2️⃣ 프로필 내용 추가하기<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>포크한 저장소의 최상위 디렉터리에서 <a class="reference external" href="https://github.com/Pseudo-Lab/DevFactory/blob/main/README.md">README.md</a> 파일을 열고, 프로필에 해당하는 영역을 찾습니다. <BR>
+📌 포크가 완료된 저장소는 본인 Github 저장소에 존재합니다.<BR>
+<img alt="" src="../_images/git-tutorial-step3.png" /></p></li>
+<li><p>프로필 코드 한줄을 복사하여 본인 프로필에 맞게 내용을 수정하시면 됩니다.<BR>
+<img alt="" src="../_images/git-tutorial-step4.png" /></p></li>
+<li><p>내용 변경 후 <strong>Commit changes…</strong> 버튼을 클릭합니다.<BR>
+<img alt="" src="../_images/git-tutorial-step5.png" /></p></li>
+<li><p><strong>Badge 추가하기(Option)</strong> <BR>
+추가적인 Badge(아이콘)를 생성하려면 <a class="reference external" href="https://shields.io">Shields.io</a>를 참고하세요.<BR>
+이 사이트에서 다양한 스타일의 배지를 만들고, Markdown 형식으로 쉽게 적용할 수 있습니다.</p></li>
+</ol>
+</section>
+<section id="id2">
+<h3>3️⃣ 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시하기<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>아래와 같이 commit 메시지와 설명을 작성하고, <strong>Commit changes</strong> 버튼을 클릭합니다.<BR>
+<img alt="" src="../_images/git-tutorial-step6.png" /></p></li>
+<li><p>커밋 및 Push가 완료되면, Fork한 저장소에서 다음과 같이 내용이 업데이트 됩니다.<BR>
+<img alt="" src="../_images/git-tutorial-step7.png" /></p></li>
+</ol>
+</section>
+<section id="pull-request">
+<h3>4️⃣ Pull Request 생성<a class="headerlink" href="#pull-request" title="Permalink to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>현재 변경 사항은 <strong>포크한 저장소</strong>에만 반영된 상태이므로, 원본 저장소에 적용하려면 PR을 생성해야 합니다.</p></li>
+<li><p><strong>포크한 저장소</strong>에서 <strong>Contribute</strong> 버튼을 클릭한 후, <strong>Open pull request</strong> 버튼 클릭을 선택하여 PR을 생성합니다.<BR>
+<img alt="" src="../_images/git-tutorial-step8.png" /></p></li>
+<li><p>변경사항에 대한 내용을 간략히 작성한 뒤 <strong>Create pull request</strong> 버튼을 클릭합니다.
+<img alt="" src="../_images/git-tutorial-step9.png" /></p></li>
+</ol>
+</section>
+<section id="id3">
+<h3>5️⃣ PR 리뷰 및 업데이트<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h3>
+<p>PR이 생성되면 빌더 또는 스터디원이 변경된 내용을 검토하고, 문제가 없으면 승인합니다. <BR>
+<img alt="" src="../_images/git-tutorial-step10.png" /></p>
+</section>
+<section id="id4">
+<h3>6️⃣ Pull Request 병합<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h3>
+<p>PR이 승인되면 다음 단계로 병합할 수 있습니다.</p>
+<ol class="arabic simple">
+<li><p>GitHub에서 <strong>Merge Pull Request</strong> 버튼 클릭.</p></li>
+<li><p>더 이상 필요하지 않은 경우 브랜치를 삭제합니다.</p></li>
+</ol>
+<p>이제 프로필 업데이트가 완료되었습니다!</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="github_intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Github 저장소 프로필 업데이트하기</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="pr-guide.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Github.dev 편집기로 작업하기 🚀</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request-pr">Pull Request(PR) 소개</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pr">PR을 활용해 스터디 리포지토리 프로필 업데이트 하기</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fork">1️⃣ 저장소 포크(Fork)하기</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2️⃣ 프로필 내용 추가하기</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3️⃣ 변경 사항 스테이징 및 커밋 + 변경 사항을 GitHub에 푸시하기</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request">4️⃣ Pull Request 생성</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">5️⃣ PR 리뷰 및 업데이트</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">6️⃣ Pull Request 병합</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By PseudoLab - DevFactory
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
