@@ -38,7 +38,9 @@ At DevFactory, we are shaping Pseudo-Lab’s unique developer ecosystem through 
 | 🐳 Tutorial | 🎮 Networking Event (BINGO) | 📦 PseudoLab TOOLBOX |
 |--------------------|----------------------------|----------------------|
 | We design and run a variety of technical tutorials.<BR>From Docker and Git to LLMs, we offer hands-on content and offline workshops where everyone can learn and grow together. | An open-source networking bingo web application, freely available for anyone to use.<BR> It helps spark natural conversations through light, keyword-based topics. | A **support platform** for participating in and managing Pseudo-Lab activities.<BR>This web service handles study applications, certificate issuance, and more. *(In development)* |
-| <img src="docs/imgs/docker-git-tutorial.png" style="max-width:100%; height:auto;"> | <img src="docs/imgs/bingo.png" style="max-width:100%; height:auto;"> | <img src="docs/imgs/Toolbox.png" style="max-width:100%; height:auto;"> |
+| <p align="center"><a href="https://pseudo-lab.github.io/DevFactory/intro.html"><img src="docs/imgs/docker-git-tutorial.png" height="160"/><br><sub>View tutorial</sub></a></p> | <p align="center"><a href="https://github.com/Pseudo-Lab/event-bingo"><img src="docs/imgs/bingo.png" height="160"/><br><sub>View on GitHub</sub></a></p> | <p align="center"><a href="https://www.pseudolab-devfactory.com/"><img src="docs/imgs/Toolbox.png" height="160"/><br><sub>Visit site</sub></a></p> |
+
+
 
 ## 🧑 팀원 소개
 
@@ -101,7 +103,7 @@ At DevFactory, we are shaping Pseudo-Lab’s unique developer ecosystem through 
 
 ## Acknowledgement  🙏
 DevFactory is a development group within Pseudo-Lab, operating as part of its Open Research Initiative.<BR>
-Special thanks to our contributors and the open source community for their valuable insights and contributions.
+Special thanks to our contributors and the open-source community for their valuable insights and contributions.
 
 ## About Pseudo Lab 👋🏼
 
