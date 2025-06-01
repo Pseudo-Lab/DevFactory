@@ -35,12 +35,56 @@
 ## 🌟 Projects  
 At DevFactory, we are shaping Pseudo-Lab’s unique developer ecosystem through the following activities :)
 
-| 🐳 Tutorial | 🎮 Networking Event (BINGO) | 📦 PseudoLab TOOLBOX |
-|--------------------|----------------------------|----------------------|
-| We design and run a variety of technical tutorials.<BR>From Docker and Git to LLMs, we offer hands-on content and offline workshops where everyone can learn and grow together. | An open-source networking bingo web application, freely available for anyone to use.<BR> It helps spark natural conversations through light, keyword-based topics. | A **support platform** for participating in and managing Pseudo-Lab activities.<BR>This web service handles study applications, certificate issuance, and more. *(In development)* |
-| <p align="center"><a href="https://pseudo-lab.github.io/DevFactory/intro.html"><img src="docs/imgs/docker-git-tutorial.png" height="160"/><br><sub>View tutorial</sub></a></p> | <p align="center"><a href="https://github.com/Pseudo-Lab/event-bingo"><img src="docs/imgs/bingo.png" height="160"/><br><sub>View on GitHub</sub></a></p> | <p align="center"><a href="https://www.pseudolab-devfactory.com/"><img src="docs/imgs/Toolbox.png" height="160"/><br><sub>Visit site</sub></a></p> |
+<h2>🌟 Projects</h2>
+<p>At DevFactory, we are shaping Pseudo-Lab’s unique developer ecosystem through the following activities :)</p>
 
-
+<table>
+  <tr>
+    <th align="center">🐳 Tutorial</th>
+    <th align="center">🎮 Networking Event (BINGO)</th>
+    <th align="center">📦 PseudoLab TOOLBOX</th>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      We design and run a variety of technical tutorials.<br>
+      From Docker and Git to LLMs,<br>
+      we offer hands-on content and<br>
+      offline workshops where everyone can learn and grow together.
+    </td>
+    <td align="center" width="33%">
+      An open-source networking bingo web application,<br>
+      freely available for anyone to use.<br>
+      It helps spark natural conversations<br>
+      through light, keyword-based topics.
+    </td>
+    <td align="center" width="33%">
+      A <strong>support platform</strong> for participating in<br>
+      and managing Pseudo-Lab activities.<br>
+      This web service handles study applications,<br>
+      certificate issuance, and more. <em>(In development)</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://pseudo-lab.github.io/DevFactory/intro.html">
+        <img src="docs/imgs/docker-git-tutorial.png" height="160"/><br>
+        <sub>View tutorial</sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Pseudo-Lab/event-bingo">
+        <img src="docs/imgs/bingo.png" height="160"/><br>
+        <sub>View on GitHub</sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.pseudolab-devfactory.com/">
+        <img src="docs/imgs/Toolbox.png" height="160"/><br>
+        <sub>Visit site</sub>
+      </a>
+    </td>
+  </tr>
+</table>
 
 ## 🧑 팀원 소개
 

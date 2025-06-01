@@ -34,10 +34,55 @@
 ## 🌟 프로젝트  
 DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개발 생태계를 만들어가는 중입니다 :)
 
-| 🐳 Tutorial | 🎮 네트워킹 이벤트 (BINGO) | 📦 PseudoLab TOOLBOX |
-|--------------------|----------------------------|----------------------|
-| 다양한 기술 튜토리얼을 기획·운영합니다. Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 통해 함께 배우고 성장합니다. | 누구나 자유롭게 사용할 수 있도록 오픈소스로 공개한 네트워킹 빙고 웹 애플리케이션입니다.<br>키워드 기반의 가벼운 대화를 통해 자연스러운 만남과 네트워킹을 돕습니다. | 가짜연구소 참여·운영을 위한 **지원 플랫폼**입니다. 스터디 신청, 수료증 발급 등을 처리할 수 있는 웹 서비스입니다. *(개발 중)* |
-| <p align="center"><a href="https://pseudo-lab.github.io/DevFactory/intro.html"><img src="docs/imgs/docker-git-tutorial.png" height="160"/><br><sub>튜토리얼 보기</sub></a></p> | <p align="center"><a href="https://github.com/Pseudo-Lab/event-bingo"><img src="docs/imgs/bingo.png" height="160"/><br><sub>GitHub 저장소 열기</sub></a></p> | <p align="center"><a href="https://www.pseudolab-devfactory.com/"><img src="docs/imgs/Toolbox.png" height="160"/><br><sub>웹사이트 열기</sub></a></p> |
+<h2>🌟 프로젝트</h2>
+<p>DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개발 생태계를 만들어가고 있어요 🙂</p>
+
+<table>
+  <tr>
+    <th align="center">🐳 Tutorial</th>
+    <th align="center">🎮 네트워킹 이벤트 (BINGO)</th>
+    <th align="center">📦 PseudoLab TOOLBOX</th>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      다양한 기술 튜토리얼을 기획·운영합니다.<br>
+      Docker, Git, LLM 등 실습 중심의 콘텐츠와<br>
+      오프라인 워크숍을 통해 함께 배우고 성장합니다.
+    </td>
+    <td align="center" width="33%">
+      누구나 자유롭게 사용할 수 있도록<br>
+      오픈소스로 공개한 네트워킹 빙고 웹 애플리케이션입니다.<br>
+      키워드 기반의 가벼운 대화를 통해<br>
+      자연스러운 만남과 네트워킹을 돕습니다.
+    </td>
+    <td align="center" width="33%">
+      가짜연구소 참여·운영을 위한 <strong>지원 플랫폼</strong>입니다.<br>
+      스터디 신청, 수료증 발급 등을 처리할 수 있는<br>
+      웹 서비스입니다. <em>(개발 중)</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://pseudo-lab.github.io/DevFactory/intro.html">
+        <img src="docs/imgs/docker-git-tutorial.png" height="160"/><br>
+        <sub>튜토리얼 보기</sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Pseudo-Lab/event-bingo">
+        <img src="docs/imgs/bingo.png" height="160"/><br>
+        <sub>GitHub 저장소 열기</sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.pseudolab-devfactory.com/">
+        <img src="docs/imgs/Toolbox.png" height="160"/><br>
+        <sub>웹사이트 열기</sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
 
 ### 🔎 기수별 활동
 
