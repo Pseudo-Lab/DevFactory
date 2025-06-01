@@ -116,7 +116,7 @@ DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개�
     <td align="center" width="300px">
       <img src="docs/imgs/members/seungkyu.jpg" width="100%"><br><br>
       <b>김승규</b><br>
-      Frontend<br>
+      <b>Frontend</b><br>
       <b>주요경력</b>: 이마고웍스, Data Engineer<br>
       <img src="https://img.shields.io/badge/React-61DAFB?logoColor=white">
       <img src="https://img.shields.io/badge/Python-3776AB"> 
