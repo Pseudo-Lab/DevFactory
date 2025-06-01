@@ -17,26 +17,27 @@
 
 <!-- sheilds: https://shields.io/ -->
 
-> DevFactory 리포지토리에 오신 것을 환영합니다!  
-> 우리는 다양한 튜토리얼과 AI 서비스 개발 프로젝트를 통해 가짜연구소의 개발 문화를 함께 만들어가고 있습니다.  
->  
-> 배려와 소통, 협업을 바탕으로 모두가 성장하는 개발 문화를 만들어갑니다.
->  
-> 프로젝트 참여는 물론, 작은 아이디어나 의견도 언제든지 환영입니다. 함께하고 싶다면 편하게 연락 주세요!
+> Welcome to the DevFactory repository!
+> We are building Pseudo-Lab’s developer culture through various tutorials and AI service development projects.
+> 
+> With empathy, communication, and collaboration at our core, we aim to create a culture where everyone can grow together.
+> 
+> Whether it’s joining a project or sharing a small idea, your contribution is always welcome.
+> Feel free to reach out if you'd like to be part of the journey!
 
 <details>
   <summary><b>Contact</b></summary>
 
-  - **GitHub Issues**: [의견 남기기](https://github.com/Pseudo-Lab/DevFactory/issues)
-  - **E-mail**: soohyun.dev@gmail.com — Builder: 김수현
+  - **GitHub Issues**: [Leave Feedback](https://github.com/Pseudo-Lab/DevFactory/issues)
+  - **E-mail**: soohyun.dev@gmail.com — Builder: Soohyun Kim
 </details>
 
-## 🌟 프로젝트  
-DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개발 생태계를 만들어가는 중입니다 :)
+## 🌟 Projects  
+At DevFactory, we are shaping Pseudo-Lab’s unique developer ecosystem through the following activities :)
 
-| 🐳 Tutorial | 🎮 네트워킹 이벤트 (BINGO) | 📦 PseudoLab TOOLBOX |
+| 🐳 Tutorial | 🎮 Networking Event (BINGO) | 📦 PseudoLab TOOLBOX |
 |--------------------|----------------------------|----------------------|
-| 다양한 기술 튜토리얼을 기획·운영합니다. Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 통해 함께 배우고 성장합니다. | 누구나 자유롭게 사용할 수 있도록 오픈소스로 공개한 네트워킹 빙고 웹 애플리케이션입니다.<br>키워드 기반의 가벼운 대화를 통해 자연스러운 만남과 네트워킹을 돕습니다. | 가짜연구소 참여·운영을 위한 **지원 플랫폼**입니다. 스터디 신청, 수료증 발급 등을 처리할 수 있는 웹 서비스입니다. *(개발 중)* |
+| We design and run a variety of technical tutorials.<BR>From Docker and Git to LLMs, we offer hands-on content and offline workshops where everyone can learn and grow together. | An open-source networking bingo web application, freely available for anyone to use.<BR> It helps spark natural conversations through light, keyword-based topics. | A **support platform** for participating in and managing Pseudo-Lab activities.<BR>This web service handles study applications, certificate issuance, and more. *(In development)* |
 | <img src="docs/imgs/docker-git-tutorial.png" style="max-width:100%; height:auto;"> | <img src="docs/imgs/bingo.png" style="max-width:100%; height:auto;"> | <img src="docs/imgs/Toolbox.png" style="max-width:100%; height:auto;"> |
 
 ## 🧑 팀원 소개
@@ -45,9 +46,9 @@ DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개�
   <tr>
     <td align="center" width="300px">
       <img src="docs/imgs/members/soohyun.png" width="100%"><br><br>
-      <b>김수현</b><br>
+      <b>Soohyun Kim</b><br>
       <b>PM / Infra</b><br>
-      <b>주요경력</b>: HDC 랩스, AI Engineer<br>
+      <b>Major Experience</b>: HDC Labs, AI Engineer<br>
       <img src="https://img.shields.io/badge/Python-3776AB"> 
       <img src="https://img.shields.io/badge/PyTorch-EE4C2C"> 
       <img src="https://img.shields.io/badge/Linux-FCC624?&logoColor=black"/>
@@ -60,9 +61,9 @@ DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개�
     </td>
     <td align="center" width="300px">
       <img src="docs/imgs/members/yesin.jpg" width="100%"><br><br>
-      <b>김예신</b><br>
+      <b>Yesin Kim</b><br>
       <b>Backend / DB</b><br>
-      <b>주요경력</b>: 에이아이톡, NLP Engineer<br>
+      <b>Major Experience</b>: AI Talk, NLP Engineer<br>
       <img src="https://img.shields.io/badge/Python-3776AB"> 
       <img src="https://img.shields.io/badge/LangChain-informational?style=flat&logoColor=white&color=2bbc8a">       
       <img src="https://img.shields.io/badge/Django-092E20"><br>
@@ -72,9 +73,9 @@ DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개�
     </td>
     <td align="center" width="300px">
       <img src="docs/imgs/members/seungkyu.jpg" width="100%"><br><br>
-      <b>김승규</b><br>
+      <b>Seungkyu Kim</b><br>
       Frontend<br>
-      <b>주요경력</b>: 이마고웍스, Data Engineer<br>
+      <b>Major Experience</b>: Imagoworks , Data Engineer<br>
       <img src="https://img.shields.io/badge/React-61DAFB?logoColor=white">
       <img src="https://img.shields.io/badge/Python-3776AB"> 
       <img src="https://img.shields.io/badge/BigQuery-blue"><br>
@@ -84,8 +85,8 @@ DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개�
   </tr>
 </table>
 
-## 🛠️ 기술 스택
-| 분류                    | 사용 기술 | 
+## 🛠️ Tech Stack
+| Category                | Tools & Technologies | 
 | ----------------------- | --------- |
 | Programming Language    | JavaScript, Python |
 | Frontend                | React | 
@@ -98,14 +99,13 @@ DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개�
 | Automation/Integration  | Make |
 | Collaboration Tools     | Discord, Notion | 
 
-## 감사의 말씀 🙏
-DevFactory는 가짜연구소 소속의 개발 조직으로, Open Research Initiative의 일환으로 운영되고 있습니다. <BR>
-소중한 인사이트와 기여를 보내주신 모든 기여자분들과 오픈소스 커뮤니티에 깊이 감사드립니다.
+## Acknowledgement  🙏
+DevFactory is a development group within Pseudo-Lab, operating as part of its Open Research Initiative.<BR>
+Special thanks to our contributors and the open source community for their valuable insights and contributions.
 
-## 가짜연구소 소개 👋🏼
+## About Pseudo Lab 👋🏼
 
-[가짜연구소](https://pseudo-lab.com/)는 머신러닝과 인공지능 기술의 발전을 목표로 하는 비영리 단체입니다.<BR>
-<b>공유(Sharing), 동기부여(Motivation), 협업의 즐거움(Collaborative Joy)</b>이라는 핵심 가치를 바탕으로 의미 있는 오픈소스 프로젝트를 함께 만들어가고 있으며, 5천 명이 넘는 연구자들과 함께 머신러닝과 AI 분야의 발전에 기여하고 있습니다.
+[Pseudo-Lab](https://pseudo-lab.com/) is a non-profit organization focused on advancing machine learning and AI technologies. Our core values of Sharing, Motivation, and Collaborative Joy drive us to create impactful open-source projects. With over 5k+ researchers, we are committed to advancing machine learning and AI technologies.
 
 <h2>Contributors 😃</h2>
 <a href="https://github.com/Pseudo-Lab/DevFactory/graphs/contributors">
