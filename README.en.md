@@ -33,10 +33,7 @@
 </details>
 
 ## 🌟 Projects  
-At DevFactory, we are shaping Pseudo-Lab’s unique developer ecosystem through the following activities :)
-
-<h2>🌟 Projects</h2>
-<p>At DevFactory, we are shaping Pseudo-Lab’s unique developer ecosystem through the following activities :)</p>
+At DevFactory, we are shaping Pseudo-Lab’s unique developer ecosystem through the following activities 🤗
 
 <table>
   <tr>
@@ -47,21 +44,16 @@ At DevFactory, we are shaping Pseudo-Lab’s unique developer ecosystem through 
   <tr>
     <td align="center" width="33%">
       We design and run a variety of technical tutorials.<br>
-      From Docker and Git to LLMs,<br>
-      we offer hands-on content and<br>
-      offline workshops where everyone can learn and grow together.
+      From Docker and Git to LLMs, we offer hands-on content and offline workshops where everyone can learn and grow together.
     </td>
     <td align="center" width="33%">
-      An open-source networking bingo web application,<br>
-      freely available for anyone to use.<br>
-      It helps spark natural conversations<br>
-      through light, keyword-based topics.
+      An open-source networking bingo web application, freely available for anyone to use.<br>
+      It encourages casual conversations through light, keyword-based bingo games.
     </td>
     <td align="center" width="33%">
-      A <strong>support platform</strong> for participating in<br>
-      and managing Pseudo-Lab activities.<br>
-      This web service handles study applications,<br>
-      certificate issuance, and more. <em>(In development)</em>
+      A <strong>support platform</strong> for participating in and managing Pseudo-Lab activities.<br>
+      This web service handles study applications, certificate issuance, and more.<br>
+      <em>(In development)</em>
     </td>
   </tr>
   <tr>
