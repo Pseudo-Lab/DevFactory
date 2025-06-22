@@ -1,12 +1,30 @@
 format: jb-book
 root: intro
 
-parts:
-- caption: "Github 저장소 프로필 업데이트하기"
-  chapters:
-  - file: docs/pull_request_guide
-    title: "Github 파일 편집기로 작업하기"
-  - file: docs/pr-guide
-    title: "Github.dev 편집기로 작업하기"
-  - file: docs/pr-ground
-    title: "직접해보기"
+chapters:
+- file: docs/github_intro.md
+  title: "Github 저장소 프로필 업데이트하기"
+  sections:
+    - file: docs/pull_request_guide
+      title: "Github 파일 편집기로 작업하기"
+    - file: docs/pr-guide
+      title: "Github.dev 편집기로 작업하기"
+    - file: docs/pr-ground
+      title: "직접해보기"
+- file: docker_tutorial/00.docker_intro.md
+  title: "나만의 local ChatGPT 만들기: Docker 실습 튜토리얼"
+  sections:
+    - file: docker_tutorial/00.pytorch_example
+      title: "Pytorch example"
+    - file: docker_tutorial/01.what_is_docker
+      title: "Docker란 무엇인가?"
+    - file: docker_tutorial/02.image_and_container
+      title: "Docker 기본 명령어 실습"
+    - file: docker_tutorial/03.docker-compose
+      title: "Docker Compose 개념 & 실습"
+    - file: docker_tutorial/04.ollama
+      title: "Ollama로 로컬 LLM 실행"
+    - file: docker_tutorial/05.webui
+      title: "Open-WebUI 실행"
+    - file: docker_tutorial/06.ollama_and_webui
+      title: "Ollama + WebUI (Docker Compose)"
