@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"  # 내부 80포트를 8080으로 매핑
+    restart: always
+
+  webhook:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: webhook
+    ports:
+      - "8800:8000"
+    restart: always
