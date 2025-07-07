@@ -1,0 +1,62 @@
+name: Issue Close to Discussion TODO
+
+on:
+  issues:
+    types: [closed]
+
+permissions:
+  issues: read
+  discussions: write
+
+jobs:
+  check_discussion_todo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check TODO in Discussion
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // 1. 이슈 본문에서 Discussion URL, 체크박스 텍스트 추출
+            const issueBody = context.payload.issue.body;
+            const discussionUrlMatch = issueBody.match(/\(https:\/\/github\.com\/.+\/discussions\/(\d+)\)/);
+            if (!discussionUrlMatch) {
+              console.log("Discussion 링크를 찾을 수 없습니다.");
+              return;
+            }
+            const discussionNumber = discussionUrlMatch[1];
+            const todoText = context.payload.issue.title;
+
+            // 2. GraphQL로 Discussion 본문 읽기
+            const query = `
+              query {
+                repository(owner: "${context.repo.owner}", name: "${context.repo.repo}") {
+                  discussion(number: ${discussionNumber}) {
+                    id
+                    body
+                  }
+                }
+              }
+            `;
+            const result = await github.graphql(query);
+            const discussion = result.repository.discussion;
+            if (!discussion) {
+              console.log("Discussion을 찾을 수 없습니다.");
+              return;
+            }
+            let newBody = discussion.body;
+
+            // 3. 체크박스 텍스트를 [ ] → [x]로 변경
+            const regex = new RegExp(`- \\[ \\] ${todoText}`);
+            newBody = newBody.replace(regex, `- [x] ${todoText}`);
+
+            // 4. GraphQL로 Discussion 본문 수정
+            const mutation = `
+              mutation {
+                updateDiscussion(input: {discussionId: "${discussion.id}", body: """${newBody}"""}) {
+                  discussion {
+                    id
+                  }
+                }
+              }
+            `;
+            await github.graphql(mutation);

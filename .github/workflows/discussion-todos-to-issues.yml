@@ -1,0 +1,95 @@
+name: Discussion TODOs to Issues (New Format)
+
+on:
+  discussion:
+    types: [created]
+
+permissions:
+  issues: write
+  discussions: read
+
+jobs:
+  discussion_todos_to_issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create issues from TODOs and link as sub-issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const discussion = context.payload.discussion;
+            if (discussion.category.name !== "회의록") {
+              console.log("카테고리가 회의록이 아니므로 종료합니다.");
+              return;
+            }
+            const lines = discussion.body.split('\n');
+            let inTodoSection = false;
+            let currentAssignee = null;
+            let parentIssueData = null;
+
+            for (let i = 0; i < lines.length; i++) {
+              const line = lines[i];
+
+              if (/^#+\s*TODO/i.test(line.trim())) {
+                inTodoSection = true;
+                currentAssignee = null;
+                parentIssueData = null;
+                continue;
+              }
+              if (inTodoSection && /^#+\s*\S+/.test(line.trim()) && !/^#+\s*TODO/i.test(line.trim())) {
+                inTodoSection = false;
+                currentAssignee = null;
+                parentIssueData = null;
+                continue;
+              }
+              if (!inTodoSection) continue;
+
+              // [수정된 부분] 담당자를 찾는 새로운 정규식
+              const assigneeMatch = line.trim().match(/\*\*.*\(@(\w+)\)\*\*/);
+              if (assigneeMatch) {
+                currentAssignee = assigneeMatch[1];
+                parentIssueData = null;
+                continue;
+              }
+
+              const todoMatch = line.match(/^(\s*)- \[ \] (.+)/);
+              if (todoMatch && currentAssignee) {
+                const indent = todoMatch[1].length;
+                const todoText = todoMatch[2].trim();
+                
+                // 내용이 없는 체크박스는 이슈로 만들지 않음
+                if (!todoText) continue;
+
+                if (indent === 0) {
+                  // 부모 이슈 생성
+                  const issue = await github.rest.issues.create({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    title: todoText,
+                    body: `이 이슈는 회의록 Discussion에서 자동 생성되었습니다.\n\n[원본 Discussion 링크](${discussion.html_url})`,
+                    assignees: [currentAssignee],
+                    labels: ["회의록-TODO"]
+                  });
+                  parentIssueData = issue.data;
+                } else if (indent >= 2 && parentIssueData) {
+                  // 1. sub-issue 생성
+                  const subIssue = await github.rest.issues.create({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    title: todoText,
+                    body: `부모 이슈: #${parentIssueData.number}\n\n이 이슈는 회의록 Discussion에서 자동 생성되었습니다.\n\n[원본 Discussion 링크](${discussion.html_url})`,
+                    assignees: [currentAssignee],
+                    labels: ["회의록-TODO", "sub-issue"]
+                  });
+
+                  // 2. 부모 이슈 본문에 sub-issue를 체크박스로 추가하여 업데이트
+                  const newBody = parentIssueData.body + `\n- [ ] #${subIssue.data.number}`;
+                  await github.rest.issues.update({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: parentIssueData.number,
+                    body: newBody
+                  });
+                  parentIssueData.body = newBody;
+                }
+              }
+            }
