@@ -43,8 +43,8 @@ jobs:
               }
               if (!inTodoSection) continue;
 
-              // [수정된 부분] 담당자를 찾는 새로운 정규식
-              const assigneeMatch = line.trim().match(/\*\*.*\(@(\w+)\)\*\*/);
+              // 담당자를 찾는 정규식
+              const assigneeMatch = line.trim().match(/\*\*.*\(@([\w-]+)\)\*\*/);
               if (assigneeMatch) {
                 currentAssignee = assigneeMatch[1];
                 parentIssueData = null;
