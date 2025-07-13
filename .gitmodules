@@ -1,3 +1,4 @@
 [submodule "event-bingo"]
 	path = event-bingo
 	url = https://github.com/Pseudo-Lab/event-bingo
+	branch = main
