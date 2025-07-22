@@ -17,13 +17,10 @@
 
 <!-- sheilds: https://shields.io/ -->
 
-> Welcome to the DevFactory repository!
+> Welcome to the DevFactory repository!   
 > We are building Pseudo-Lab’s developer culture through various tutorials and AI service development projects.
-> 
-> With empathy, communication, and collaboration at our core, we aim to create a culture where everyone can grow together.
-> 
-> Whether it’s joining a project or sharing a small idea, your contribution is always welcome.
-> Feel free to reach out if you'd like to be part of the journey!
+> With empathy, communication, and collaboration at our core, we aim to create a culture where everyone can grow together.   
+> Ideas and feedback about our projects are always welcome — feel free to reach out anytime!
 
 <details>
   <summary><b>Contact</b></summary>
