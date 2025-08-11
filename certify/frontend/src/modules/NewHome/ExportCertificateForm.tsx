@@ -15,7 +15,7 @@ import {
   InputAdornment,
   Dialog,
   DialogContent,
-  CircularProgress
+  LinearProgress
 } from '@mui/material';
 import { Search as SearchIcon, Close as CloseIcon, CheckCircle as CheckCircleIcon } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
@@ -99,6 +99,7 @@ const ExportCertificateForm = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const exampleStudies = ['DevFactory', 'JobPT', 'AI Research Club', '3D Vision', 'Test Study'];
   const filteredStudies = exampleStudies.filter(study =>
@@ -121,12 +122,19 @@ const ExportCertificateForm = () => {
     setModalOpen(true);
     setIsLoading(true);
     setIsComplete(false);
-    
-    // 2초 후 로딩 완료
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsComplete(true);
-    }, 2000);
+    setProgress(0);
+
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsLoading(false);
+          setIsComplete(true);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 200);
   };
 
   const handleModalClose = () => {
@@ -383,9 +391,10 @@ const ExportCertificateForm = () => {
             {isLoading ? (
               // 로딩 상태
               <Box>
-                <CircularProgress
-                  size={60}
-                  sx={{ color: '#10b981', mb: 3 }}
+                <LinearProgress
+                  variant="determinate"
+                  value={progress}
+                  sx={{ mb: 3, height: '10px', borderRadius: '5px', backgroundColor: '#e5e7eb' }}
                 />
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
                   수료증 발급 진행중
