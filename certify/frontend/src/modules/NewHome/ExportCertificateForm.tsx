@@ -95,13 +95,18 @@ const ExportCertificateForm = () => {
     searchText: ''
   });
 
-  const [tags, setTags] = useState(['모델 123', '모델 123']);
+  const [tags, setTags] = useState<string[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const exampleStudies = ['DevFactory', 'JobPT', 'AI Research Club', '3D Vision', 'Test Study'];
+  const filteredStudies = exampleStudies.filter(study =>
+    study.toLowerCase().includes(formData.searchText.toLowerCase())
+  );
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { name?: string; value: unknown }>) => {
+    const { name, value } = e.target as HTMLInputElement;
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -133,11 +138,11 @@ const ExportCertificateForm = () => {
   const handleCancel = () => {
     setFormData({
       name: '홍길동',
-      email: 'psuedoLab@naver.com',
+      email: 'pseudoLab@naver.com',
       period: '20',
       searchText: ''
     });
-    setTags(['모델 123', '모델 123']);
+    setTags([]);
   };
 
   return (
@@ -300,6 +305,31 @@ const ExportCertificateForm = () => {
                       ),
                     }}
                   />
+
+                  {/* Filtered Results */}
+                  {filteredStudies.length > 0 && (
+                    <Box sx={{ mt: 2 }}>
+                      {filteredStudies.map((study, index) => (
+                        <Typography
+                          key={index}
+                          variant="body2"
+                          sx={{
+                            padding: '8px',
+                            backgroundColor: '#f3f4f6',
+                            borderRadius: '4px',
+                            marginBottom: '4px',
+                            cursor: 'pointer',
+                            '&:hover': {
+                              backgroundColor: '#e5e7eb',
+                            },
+                          }}
+                          onClick={() => setTags([...tags, study])}
+                        >
+                          {study}
+                        </Typography>
+                      ))}
+                    </Box>
+                  )}
                 </Box>
               </Grid>
             </Grid>
