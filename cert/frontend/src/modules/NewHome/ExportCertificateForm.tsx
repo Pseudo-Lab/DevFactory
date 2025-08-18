@@ -519,7 +519,7 @@ const ExportCertificateForm = () => {
                 {/* PNG 이미지 */}
                 <Box
                   component="img"
-                  src="/loading.png" // public 폴더 안에 넣었다면 /images/... 로 접근
+                  src="/sticky_notes.png" // public 폴더 안에 넣었다면 /images/... 로 접근
                   alt="loading"
                   sx={{
                     width: 120,
