@@ -476,16 +476,16 @@ const ExportCertificateForm = () => {
                   variant="contained"
                   onClick={handleModalClose}
                   sx={{
-                    backgroundColor: '#10b981',
+                    backgroundColor: 'rgb(22, 43, 77)',
                     color: 'white',
                     '&:hover': {
-                      backgroundColor: '#059669',
+                      backgroundColor: 'rgb(14, 30, 56)',
                     },
                     width: '100%',
                     height: '40px'
                   }}
                 >
-                  확인
+                  디스코드 바로가기
                 </StyledButton>
               </Box>
               )
