@@ -15,7 +15,8 @@ import {
   InputAdornment,
   Dialog,
   DialogContent,
-  LinearProgress
+  LinearProgress,
+  Autocomplete, // added
 } from '@mui/material';
 import { Search as SearchIcon, Close as CloseIcon, CheckCircle as CheckCircleIcon } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
@@ -102,9 +103,7 @@ const ExportCertificateForm = () => {
   const [progress, setProgress] = useState(0);
 
   const exampleStudies = ['DevFactory', 'JobPT', 'AI Research Club', '3D Vision', 'Test Study'];
-  const filteredStudies = exampleStudies.filter(study =>
-    study.toLowerCase().includes(formData.searchText.toLowerCase())
-  );
+  // removed filteredStudies; Autocomplete handles filtering
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target as HTMLInputElement;
@@ -259,10 +258,8 @@ const ExportCertificateForm = () => {
                     value={formData.period}
                     onChange={handleInputChange}
                   >
-                    <MenuItem value="20">20</MenuItem>
-                    <MenuItem value="21">21</MenuItem>
-                    <MenuItem value="22">22</MenuItem>
-                    <MenuItem value="23">23</MenuItem>
+                    <MenuItem value="10">10</MenuItem>
+                    <MenuItem value="11">11</MenuItem>
                   </Select>
                 </StyledFormControl>
               </Grid>
@@ -271,73 +268,57 @@ const ExportCertificateForm = () => {
             {/* Study Name Field */}
             <Grid container alignItems="flex-start" spacing={2}>
               <Grid item xs={3}>
-                <Typography variant="body2" sx={{ fontWeight: 500, color: '#374151', mt: 1 }}>
+                <Typography variant="body2" sx={{ fontWeight: 500, color: '#374151', mt: 2 }}>
                   스터디명<span style={{ color: '#ef4444' }}>*</span>
                 </Typography>
               </Grid>
               <Grid item xs={9}>
                 <Box>
-                  {/* Tags */}
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                    {tags.map((tag, index) => (
-                      <Chip
-                        key={index}
-                        label={tag}
-                        onDelete={() => handleTagDelete(tag)}
-                        deleteIcon={<CloseIcon />}
-                        sx={{
-                          backgroundColor: '#10b981',
-                          color: 'white',
-                          '& .MuiChip-deleteIcon': {
+                  {/* Searchable chips inside the input */}
+                  <Autocomplete
+                    multiple
+                    disableCloseOnSelect
+                    options={exampleStudies}
+                    value={tags}
+                    onChange={(_, newValue) => setTags(Array.from(new Set(newValue)))}
+                    inputValue={formData.searchText}
+                    onInputChange={(_, newInputValue) =>
+                      setFormData(prev => ({ ...prev, searchText: newInputValue }))
+                    }
+                    filterOptions={(options, { inputValue }) =>
+                      options.filter(o => o.toLowerCase().includes(inputValue.toLowerCase()))
+                    }
+                    renderTags={(value, getTagProps) =>
+                      value.map((option, index) => (
+                        <Chip
+                          {...getTagProps({ index })}
+                          key={option}
+                          label={option}
+                          sx={{
+                            backgroundColor: '#10b981',
                             color: 'white',
-                          },
+                            '& .MuiChip-deleteIcon': { color: 'white' },
+                          }}
+                        />
+                      ))
+                    }
+                    renderInput={(params) => (
+                      <StyledTextField
+                        {...params}
+                        placeholder={tags.length === 0 ? '스터디명을 검색하세요' : ''}
+                        variant="outlined"
+                        size="medium"
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <SearchIcon sx={{ color: '#9ca3af' }} />
+                            </InputAdornment>
+                          ),
                         }}
                       />
-                    ))}
-                  </Box>
-                  
-                  {/* Search Input */}
-                  <StyledTextField
-                    name="searchText"
-                    value={formData.searchText}
-                    onChange={handleInputChange}
-                    fullWidth
-                    placeholder="스터디명을 검색하세요"
-                    variant="outlined"
-                    size="medium"
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <SearchIcon sx={{ color: '#9ca3af' }} />
-                        </InputAdornment>
-                      ),
-                    }}
+                    )}
                   />
-
-                  {/* Filtered Results */}
-                  {filteredStudies.length > 0 && (
-                    <Box sx={{ mt: 2 }}>
-                      {filteredStudies.map((study, index) => (
-                        <Typography
-                          key={index}
-                          variant="body2"
-                          sx={{
-                            padding: '8px',
-                            backgroundColor: '#f3f4f6',
-                            borderRadius: '4px',
-                            marginBottom: '4px',
-                            cursor: 'pointer',
-                            '&:hover': {
-                              backgroundColor: '#e5e7eb',
-                            },
-                          }}
-                          onClick={() => setTags([...tags, study])}
-                        >
-                          {study}
-                        </Typography>
-                      ))}
-                    </Box>
-                  )}
                 </Box>
               </Grid>
             </Grid>
