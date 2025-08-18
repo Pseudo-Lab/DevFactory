@@ -30,7 +30,7 @@ const StyledContainer = styled(Box)({
   padding: '16px',
 });
 
-const StyledPaper = styled(Paper)({
+const StyledPaper = styled(Paper)(({ theme }) => ({
   paddingTop: '60px',
   paddingBottom: '60px',
   paddingLeft: '60px',
@@ -40,7 +40,12 @@ const StyledPaper = styled(Paper)({
   maxWidth: '600px',
   width: '100%',
   backgroundColor: '#ffffff',
-});
+  // 375px 이하에서만 좌우 패딩 20px
+  '@media (max-width:450px)': {
+    paddingLeft: '20px',
+    paddingRight: '20px',
+  },
+}));
 
 const StyledTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
@@ -108,28 +113,31 @@ const FieldLabel = styled(Typography)({
 const FieldRow: React.FC<{
   label: React.ReactNode;
   children: React.ReactNode;
-  alignTop?: boolean; // 멀티라인/오토컴플리트처럼 상단정렬이 필요한 경우
+  alignTop?: boolean;
 }> = ({ label, children, alignTop }) => (
   <Box
     sx={{
       display: 'grid',
-      gridTemplateColumns: { xs: '1fr', sm: '90px 1fr' }, // xs: 1열, sm+: 2열
-      alignItems: alignTop ? { xs: 'start', sm: 'start' } : { xs: 'start', sm: 'center' },
+      gridTemplateColumns: '90px 1fr',
+      alignItems: alignTop ? 'start' : 'center',
       rowGap: 1.5,
       columnGap: 3,
+      '@media (max-width:375px)': {
+        gridTemplateColumns: '1fr',
+        alignItems: 'start',
+      },
     }}
   >
     <Typography
       variant="body1"
-      sx={{
-        fontWeight: 600,
-        color: '#1f2937',
-        fontSize: '16px'
-      }}
+      sx={{ fontWeight: 600, color: '#1f2937', fontSize: '16px' }}
     >
       {label}
     </Typography>
-    <Box sx={{ width: '100%' }}>{children}</Box>
+
+    <Box sx={{ width: '100%', minWidth: 0 }}>
+      {children}
+    </Box>
   </Box>
 );
 
@@ -225,28 +233,6 @@ const ExportCertificateForm = () => {
         <StyledPaper>
           <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {/* Name Field */}
-            {/* <Box display="flex" alignItems="center" gap={3}>
-              <Typography 
-                variant="body1" 
-                sx={{ 
-                  fontWeight: 600, 
-                  color: '#1f2937',
-                  fontSize: '16px',
-                  minWidth: '100px'
-                }}
-              >
-                이름<span style={{ color: '#ef4444' }}>*</span>
-              </Typography>
-              <StyledTextField
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                fullWidth
-                variant="outlined"
-                placeholder="이름을 입력하세요"
-                size="medium"
-              />
-            </Box> */}
             <FieldRow label={<>이름<span style={{ color: '#ef4444' }}>*</span></>}>
               <StyledTextField
                 name="name"
@@ -260,29 +246,6 @@ const ExportCertificateForm = () => {
             </FieldRow>
 
             {/* Email Field */}
-            {/* <Box display="flex" alignItems="center" gap={3}>
-              <Typography 
-                variant="body1" 
-                sx={{ 
-                  fontWeight: 600, 
-                  color: '#1f2937',
-                  fontSize: '16px',
-                  minWidth: '100px'
-                }}
-              >
-                이메일<span style={{ color: '#ef4444' }}>*</span>
-              </Typography>
-              <StyledTextField
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                fullWidth
-                variant="outlined"
-                placeholder="pseudoLab@naver.com"
-                size="medium"
-              />
-            </Box> */}
             <FieldRow label={<>이메일<span style={{ color: '#ef4444' }}>*</span></>}>
               <StyledTextField
                 name="email"
@@ -297,36 +260,6 @@ const ExportCertificateForm = () => {
             </FieldRow>
 
             {/* Period Field */}
-            {/* <Box display="flex" alignItems="center" gap={3}>
-              <Typography 
-                variant="body1" 
-                sx={{ 
-                  fontWeight: 600, 
-                  color: '#1f2937',
-                  fontSize: '16px',
-                  minWidth: '100px'
-                }}
-              >
-                참여 기수<span style={{ color: '#ef4444' }}>*</span>
-              </Typography>
-              <StyledFormControl fullWidth size="medium">
-                <Select
-                  name="period"
-                  value={formData.period}
-                  onChange={handleInputChange}
-                  displayEmpty
-                  renderValue={(selected) => {
-                    if (!selected) {
-                      return <span style={{ color: '#9ca3af' }}>참여 기수를 선택하세요</span>;
-                    }
-                    return selected;
-                  }}
-                >
-                  <MenuItem value="10">10</MenuItem>
-                  <MenuItem value="11">11</MenuItem>
-                </Select>
-              </StyledFormControl>
-            </Box> */}
             <FieldRow label={<>참여 기수<span style={{ color: '#ef4444' }}>*</span></>}>
               <StyledFormControl fullWidth size="medium">
                 <Select
@@ -345,70 +278,6 @@ const ExportCertificateForm = () => {
             </FieldRow>
 
             {/* Study Name Field */}
-            {/* <Box display="flex" alignItems="flex-start" gap={3}>
-              <Typography 
-                variant="body1" 
-                sx={{ 
-                  fontWeight: 600, 
-                  color: '#1f2937',
-                  fontSize: '16px',
-                  minWidth: '100px',
-                  mt: 2
-                }}
-              >
-                스터디명<span style={{ color: '#ef4444' }}>*</span>
-              </Typography>
-              <Box sx={{ width: '100%' }}>
-                <Autocomplete
-                  multiple
-                  disableCloseOnSelect
-                  options={exampleStudies}
-                  value={tags}
-                  onChange={(_, newValue) => setTags(Array.from(new Set(newValue)))}
-                  inputValue={formData.searchText}
-                  onInputChange={(_, newInputValue) =>
-                    setFormData(prev => ({ ...prev, searchText: newInputValue }))
-                  }
-                  filterOptions={(options, { inputValue }) =>
-                    options.filter(o => o.toLowerCase().includes(inputValue.toLowerCase()))
-                  }
-                  renderTags={(value, getTagProps) =>
-                    value.map((option, index) => (
-                      <Chip
-                        {...getTagProps({ index })}
-                        key={option}
-                        label={option}
-                        sx={{
-                          backgroundColor: '#10b981',
-                          color: 'white',
-                          fontWeight: 500,
-                          '& .MuiChip-deleteIcon': { color: 'white' },
-                        }}
-                      />
-                    ))
-                  }
-                  renderInput={(params) => (
-                    <StyledTextField
-                      {...params}
-                      placeholder={tags.length === 0 ? '스터디 이름을 입력하세요' : ''}
-                      variant="outlined"
-                      size="medium"
-                      InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                          <>
-                            {params.InputProps.endAdornment}
-                            <InputAdornment position="end">
-                              <SearchIcon sx={{ color: '#9ca3af' }} />
-                            </InputAdornment>
-                          </>
-                        ),
-                      }}
-                    />
-                  )}
-                />
-              </Box>
-            </Box> */}
             <FieldRow
               label={<>스터디명<span style={{ color: '#ef4444' }}>*</span></>}
             >
