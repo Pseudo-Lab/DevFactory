@@ -7,7 +7,6 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel,
   Button,
   Chip,
   Paper,
