@@ -1,6 +1,5 @@
-from typing import Optional
 from fastapi import HTTPException
-from ..models.certificate import CertificateResponse, CertificateCreate, ErrorResponse
+from ..models.certificate import CertificateResponse, CertificateData, CertificateStatus, ErrorResponse, Role
 from ..constants.error_codes import ErrorCodes, ErrorMessages
 
 class CertificateService:
@@ -27,23 +26,38 @@ class CertificateService:
             return CertificateResponse(
                 status="200",
                 message="제출하신 이메일로 수료증 발급이 완료되었습니다. 🚀\n메일함을 확인해보세요.",
-                id=1, 
-                certificate_number="CERT-001"
+                data=CertificateData(
+                    id=1, 
+                    name="홍길동",
+                    recipient_email="hong@example.com",
+                    certificate_number="CERT-001",
+                    issue_date="2024-01-15",
+                    certificate_status=CertificateStatus.ISSUED, 
+                    cohort=10,
+                    course_name="Wrapping Up Pseudolab",
+                    role=Role.BUILDER
+                )
             )
             
         except ValueError as e:
             # 수료 이력 없음
-            raise ErrorResponse(
+            raise HTTPException(
+                status_code=404,
+                detail=ErrorResponse(
                     status="fail",
                     error_code=ErrorCodes.NO_CERTIFICATE_HISTORY,
                     message=ErrorMessages.NO_HISTORY
                 )
+            )
         
         except Exception as e:
             # 시스템 오류
             # TODO: 에러 로깅 추가
-            raise ErrorResponse(
+            raise HTTPException(
+                status_code=500,
+                detail=ErrorResponse(
                     status="fail",
                     error_code=ErrorCodes.PIPELINE_ERROR,
                     message=f"{ErrorMessages.PIPELINE_ERROR}\n{ErrorMessages.CONTACT_INFO}"
                 )
+            )
