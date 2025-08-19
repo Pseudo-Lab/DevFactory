@@ -82,17 +82,23 @@ URL : https://cert.pseudolab-devfactory/certs/create
 #### 실패 응답 - 수료 이력 없음 (404)
 ```json
 {
-  "status": "fail",
-  "error_code": "CS0002",
-  "message": "수료 이력이 확인되지 않습니다."
+  "status_code": 404,
+  "detail": {
+    "status": "fail",
+    "error_code": "CS0002",
+    "message": "수료 이력이 확인되지 않습니다."
+  }
 }
 ```
 
 #### 실패 응답 - 서버 오류 (500)
 ```json
 {
-  "status": "fail",
-  "error_code": "CS0003",
-  "message": "발급 처리 중 오류가 발생했습니다."
+  "status_code": 500,
+  "detail": {
+    "status": "fail",
+    "error_code": "CS0003",
+    "message": "발급 처리 중 오류가 발생했습니다."
+  }
 }
 ```
