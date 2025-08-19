@@ -288,4 +288,4 @@ async def receive_webhook(request: Request):
 if __name__ == "__main__":
     # Uvicorn을 사용하여 FastAPI 앱 실행
     # reload 옵션을 사용할 때는 import string 형태로 전달해야 합니다
-    uvicorn.run("test:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
