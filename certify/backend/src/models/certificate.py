@@ -14,26 +14,10 @@ class Role(str, Enum):
 
 class CertificateCreate(BaseModel):
     """수료증 생성 요청 모델"""
-    applicant_name: str = Field(
-        ..., 
-        description="신청자 이름",
-        example="홍길동"
-    )
-    recipient_email: str = Field(
-        ..., 
-        description="수료자 이메일",
-        example="hong@example.com"
-    )
-    course_name: str = Field(
-        ..., 
-        description="스터디명",
-        example="Wrapping Up Pseudolab"
-    )
-    cohort: int = Field(
-        ..., 
-        description="활동기수 (ex. 10)",
-        example=10
-    )
+    applicant_name: str = Field(..., description="신청자 이름", example="홍길동")
+    recipient_email: str = Field(..., description="수료자 이메일", example="hong@example.com")
+    course_name: str = Field(..., description="스터디명", example="Wrapping Up Pseudolab" )
+    cohort: int = Field(..., description="활동기수 (ex. 10)", example=10)
 
 class CertificateData(BaseModel):
     """수료증 데이터 모델 (Notion DB 구조 기반)"""
@@ -54,3 +38,8 @@ class CertificateResponse(BaseModel):
     data: CertificateData = Field(..., description="수료증 데이터")
 
 
+class ErrorResponse(BaseModel):
+    """에러 응답 모델"""
+    status: str = Field(..., example="fail", description="응답 상태")
+    error_code: str = Field(..., example="CS0002", description="에러 코드")
+    message: str = Field(..., example="수료이력이 확인되지 않습니다.", description="에러 메시지")

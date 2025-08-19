@@ -1,3 +1,3 @@
-from . import certificate
+from .certificate import certificate_router
 
-__all__ = ["certificate"]
+__all__ = ["certificate_router"]

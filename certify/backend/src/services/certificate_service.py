@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import HTTPException
-from ..models.certificate import CertificateResponse, CertificateCreate
+from ..models.certificate import CertificateResponse, CertificateCreate, ErrorResponse
 from ..constants.error_codes import ErrorCodes, ErrorMessages
 
 class CertificateService:
@@ -33,20 +33,17 @@ class CertificateService:
             
         except ValueError as e:
             # 수료 이력 없음
-            raise HTTPException(
-                status_code=404,
-                detail={
-                    "error_code": ErrorCodes.NO_CERTIFICATE_HISTORY,
-                    "message": ErrorMessages.NO_HISTORY
-                }
-            )
+            raise ErrorResponse(
+                    status="fail",
+                    error_code=ErrorCodes.NO_CERTIFICATE_HISTORY,
+                    message=ErrorMessages.NO_HISTORY
+                )
+        
         except Exception as e:
             # 시스템 오류
             # TODO: 에러 로깅 추가
-            raise HTTPException(
-                status_code=500,
-                detail={
-                    "error_code": ErrorCodes.PIPELINE_ERROR,
-                    "message": f"{ErrorMessages.PIPELINE_ERROR}\n{ErrorMessages.CONTACT_INFO}"
-                }
-            )
+            raise ErrorResponse(
+                    status="fail",
+                    error_code=ErrorCodes.PIPELINE_ERROR,
+                    message=f"{ErrorMessages.PIPELINE_ERROR}\n{ErrorMessages.CONTACT_INFO}"
+                )
