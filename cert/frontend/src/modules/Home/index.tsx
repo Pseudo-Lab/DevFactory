@@ -435,7 +435,6 @@ const ExportCertificateForm = () => {
                   placeholder="pseudoLab@naver.com"
                   size="medium"
                   error={!!formData.email && !isEmailValid}
-                  helperText={!!formData.email && !isEmailValid ? '올바른 이메일 형식이 아닙니다.' : ' '}
                 />
               </FieldRow>
 
