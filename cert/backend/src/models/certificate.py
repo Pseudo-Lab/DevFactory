@@ -10,7 +10,7 @@ class CertificateStatus(str, Enum):
 class Role(str, Enum):
     """역할 구분"""
     BUILDER = "빌더"
-    RUNNER = "러너"
+    LEARNER = "러너"
 
 class CertificateCreate(BaseModel):
     """수료증 생성 요청 모델"""
@@ -21,7 +21,7 @@ class CertificateCreate(BaseModel):
 
 class CertificateData(BaseModel):
     """수료증 데이터 모델 (Notion DB 구조 기반)"""
-    id: int = Field(..., example=1, description="수료증 신청 ID")
+    id: str = Field(..., example="1", description="수료증 신청 페이지 ID")
     name: str = Field(..., example="홍길동", description="신청자 이름")
     recipient_email: str = Field(..., example="hong@example.com", description="수료자 이메일")
     certificate_number: str = Field(..., example="CERT-2024-001", description="수료증 번호")
