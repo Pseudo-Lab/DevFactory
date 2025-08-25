@@ -563,8 +563,7 @@ const ExportCertificateForm = () => {
           PaperProps={{ sx: { borderRadius: '16px', padding: '24px', minWidth: '320px', textAlign: 'center' } }}
         >
           <DialogContent sx={{ padding: '12px 6px' }}>
-            {isLoading ? (
-              // 로딩 상태
+            {isLoading && (
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 'bold', my: 2, color: '#1f2937' }}>
                   수료증을 발급 중이에요.
@@ -587,8 +586,10 @@ const ExportCertificateForm = () => {
                   }}
                 />
               </Box>
-            ) : returnCode === 200 ? (
-              // 완료 상태
+            )}
+
+            {!isLoading && returnCode === 200 && (
+              /* 성공 */
               <Box>
                 <SuccessIcon />
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, color: '#1f2937' }}>
@@ -617,8 +618,10 @@ const ExportCertificateForm = () => {
                   확인
                 </StyledButton>
               </Box>
-            ) : returnCode === 500 ? (
-              // 일반 실패
+            )}
+
+            {!isLoading && returnCode === 500 && (
+              /* 일반 실패 */
               <Box>
                 <FailIcon />
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, color: '#1f2937' }}>
@@ -635,8 +638,10 @@ const ExportCertificateForm = () => {
                 </Typography>
                 <DiscordButton />
               </Box>
-            ) : (
-              // 그 외(예: 404: 명단 없음)
+            )}
+
+            {!isLoading && returnCode === 404 && (
+              /* 명단 없음 */
               <Box>
                 <FailIcon />
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, color: '#1f2937' }}>
