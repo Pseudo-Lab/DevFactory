@@ -1,12 +1,9 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/common/Header';
-import Hero from './modules/Home/components/Hero';
-import Homepage from './modules/Home/index';
-import Features from './modules/Home/components/Features';
+import logo from './assets/logo.svg';
 import Footer from './components/common/Footer';
-import logo from './assets/logo.png';
-import ExportCertificateForm from './modules/NewHome/ExportCertificateForm';
+import ExportCertificateForm from './modules/Home';
 
 const App: React.FC = () => {
   return (
@@ -15,12 +12,9 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={
           <>
-            <Hero />
-            <Homepage />
-            <Features />
+            <ExportCertificateForm />
           </>
         } />
-        <Route path="/new" element={<ExportCertificateForm />} />
       </Routes>
       <Footer />
     </>
