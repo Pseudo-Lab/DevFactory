@@ -1,9 +1,12 @@
+import uuid
+from datetime import datetime
 from fastapi import HTTPException
 from ..models.certificate import CertificateResponse, CertificateData, CertificateStatus, ErrorResponse, Role
 from ..constants.error_codes import ErrorCodes, ErrorMessages
+from ..utils.notion_client import NotionClient
 
 class CertificateService:
-    """수료증 서비스"""
+    """수료증 서비스"""    
     
     @staticmethod
     async def create_certificate(certificate_data: dict) -> CertificateResponse:
@@ -17,47 +20,89 @@ class CertificateService:
             
         """
         try:
-            # 실제 비즈니스 로직 구현
-            # 1. 사용자 수료 이력 확인
-            # 2. 수료증 생성
-            # 3. 이메일 발송
+            notion_client = NotionClient()
             
-            # 임시로 하드코딩된 값 반환 (나중에 실제 로직으로 교체예정)
+            # 수료증 요청 내역 생성
+            certificate_request = await notion_client.create_certificate_request(certificate_data)
+            
+            if not certificate_request:
+                raise Exception("수료증 신청 기록 생성 실패")
+            
+            request_id = certificate_request.get("id")
+            print(f"수료증 신청 기록 생성 완료: {request_id}")
+            
+            # 사용자 참여 이력 확인
+            participation_info = await notion_client.verify_user_participation(
+                user_name=certificate_data["applicant_name"],
+                course_name=certificate_data["course_name"],
+                cohort=certificate_data["cohort"]
+            )
+            
+            if not participation_info["found"]:
+                raise ValueError("해당 기수/스터디에서 사용자를 찾을 수 없습니다.")     # TODO: Custom Error로 변경할 것
+            
+            # TODO: pdf 수료증 생성
+            # TODO: 이메일 발송
+            
+            # 수료증 상태 업데이트
+            print("수료증 상태 업데이트")
+            # TODO: 임시 값, 추후 수정 필요
+            certificate_number = f"CERT-{datetime.now().strftime('%Y%m')}-{str(uuid.uuid4())[:8].upper()}" 
+            
+            await notion_client.update_certificate_status(
+                page_id=request_id,
+                status="Issued",
+                certificate_number=certificate_number,
+                role=participation_info["user_role"]
+            )
+            
+            print(f"수료증 발급 완료: {certificate_number}")
+            
+            # 5. 성공 응답 반환
             return CertificateResponse(
                 status="200",
-                message="제출하신 이메일로 수료증 발급이 완료되었습니다. 🚀\n메일함을 확인해보세요.",
+                message="제출하신 이메일로 수료증 발급이 완료되었습니다.\n메일함을 확인해보세요.",
                 data=CertificateData(
-                    id=1, 
-                    name="홍길동",
-                    recipient_email="hong@example.com",
-                    certificate_number="CERT-001",
-                    issue_date="2024-01-15",
-                    certificate_status=CertificateStatus.ISSUED, 
-                    cohort=10,
-                    course_name="Wrapping Up Pseudolab",
-                    role=Role.BUILDER
+                    id=request_id,
+                    name=certificate_data["applicant_name"],
+                    recipient_email=certificate_data["recipient_email"],
+                    certificate_number=certificate_number,
+                    issue_date=datetime.now().strftime("%Y-%m-%d"),
+                    certificate_status=CertificateStatus.ISSUED,
+                    cohort=certificate_data["cohort"],
+                    course_name=certificate_data["course_name"],
+                    role=Role.BUILDER if participation_info["user_role"] == "BUILDER" else Role.LEARNER
                 )
             )
             
         except ValueError as e:
             # 수료 이력 없음
+            print(f"수료 이력 확인 실패: {e}")
+            await notion_client.update_certificate_status(
+                page_id=request_id,
+                status="Not Eligible"
+            )
             raise HTTPException(
                 status_code=404,
-                detail=ErrorResponse(
-                    status="fail",
-                    error_code=ErrorCodes.NO_CERTIFICATE_HISTORY,
-                    message=ErrorMessages.NO_HISTORY
-                )
+                detail={
+                    "status": "fail",
+                    "error_code": ErrorCodes.NO_CERTIFICATE_HISTORY,
+                    "message": str(e)
+                }
             )
         
         except Exception as e:
+            await notion_client.update_certificate_status(
+                page_id=request_id,
+                status="System Error"
+            )
             # 시스템 오류
-            # TODO: 에러 로깅 추가
+            print(f"시스템 오류: {e}")
             raise HTTPException(
                 status_code=500,
-                detail=ErrorResponse(
-                    status="fail",
-                    error_code=ErrorCodes.PIPELINE_ERROR,
-                    message=f"{ErrorMessages.PIPELINE_ERROR}\n{ErrorMessages.CONTACT_INFO}"
-                )
+                detail={
+                    "status": "fail",
+                    "error_code": ErrorCodes.PIPELINE_ERROR,
+                    "message": f"{ErrorMessages.PIPELINE_ERROR}"
+                }
             )
