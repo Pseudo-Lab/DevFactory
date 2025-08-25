@@ -57,7 +57,9 @@ async function fetchStudyMeta(): Promise<StudyMeta> {
   };
 }
 
-async function issueCertificate(payload: IssuePayload): Promise<IssueResponse> {
+  async function issueCertificate(payload: IssuePayload): Promise<IssueResponse> {
+    const body = JSON.stringify(payload);
+    console.log('body', body);
   // const res = await fetch('/api/certificates/issue', {
   //   method: 'POST',
   //   headers: { 'Content-Type': 'application/json' },
@@ -109,7 +111,7 @@ const StyledContainer = styled(Box)({
   padding: '16px',
 });
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
+const StyledPaper = styled(Paper)(() => ({
   paddingTop: '60px',
   paddingBottom: '60px',
   paddingLeft: '60px',
@@ -179,13 +181,6 @@ const StyledButton = styled(Button)<ButtonProps<"a">>({
   padding: '8px 16px',
   fontWeight: 600,
   textTransform: 'none',
-  fontSize: '16px',
-});
-
-const FieldLabel = styled(Typography)({
-  fontWeight: 600,
-  color: '#1f2937',
-  marginBottom: '12px',
   fontSize: '16px',
 });
 
@@ -313,11 +308,6 @@ const ExportCertificateForm = () => {
     return /\S+@\S+\.\S+/.test(formData.email);
   }, [formData.email]);
   
-
-  const handleTagDelete = (tagToDelete: string) => {
-    setTags(prevTags => prevTags.filter(tag => tag !== tagToDelete));
-  };
-
   const isFormValid = useMemo(() => {
     return (
       !!formData.name.trim() &&
