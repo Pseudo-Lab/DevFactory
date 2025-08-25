@@ -470,6 +470,7 @@ const ExportCertificateForm = () => {
                   filterOptions={(options, { inputValue }) =>
                     options.filter(o => o.toLowerCase().includes(inputValue.toLowerCase()))
                   }
+                  popupIcon={null}
                   renderTags={(value, getTagProps) =>
                     value.map((option, index) => (
                       <Chip
@@ -493,12 +494,12 @@ const ExportCertificateForm = () => {
                       size="medium"
                       InputProps={{
                         ...params.InputProps,
-                        endAdornment: (
+                        startAdornment: (
                           <>
-                            {params.InputProps.endAdornment}
-                            <InputAdornment position="end">
-                              <SearchIcon sx={{ color: '#9ca3af' }} />
+                            <InputAdornment position="start">
+                              <SearchIcon sx={{ ml: 1, color: '#9ca3af' }} />
                             </InputAdornment>
+                            {params.InputProps.startAdornment}
                           </>
                         ),
                       }}
