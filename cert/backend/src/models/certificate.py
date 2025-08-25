@@ -21,7 +21,7 @@ class CertificateCreate(BaseModel):
 
 class CertificateData(BaseModel):
     """수료증 데이터 모델 (Notion DB 구조 기반)"""
-    id: str = Field(..., example="1", description="수료증 신청 페이지 ID")
+    id: str = Field(..., example="2533a2a2-eed5-81fa-9921-c14d2cd117b7", description="수료증 신청 페이지 ID")
     name: str = Field(..., example="홍길동", description="신청자 이름")
     recipient_email: str = Field(..., example="hong@example.com", description="수료자 이메일")
     certificate_number: str = Field(..., example="CERT-2024-001", description="수료증 번호")
