@@ -220,7 +220,7 @@ const FieldRow: React.FC<{
   </Box>
 );
 
-const DiscordButton: React.FC = () => {
+const DiscordButton: React.FC<{ onClick?: () => void }> = ({ onClick }) => {
   return (
     <StyledButton
       variant="contained"
@@ -237,6 +237,7 @@ const DiscordButton: React.FC = () => {
         width: "100%",
         height: "40px",
       }}
+      onClick={onClick}
     >
       디스코드 바로가기
     </StyledButton>
@@ -636,7 +637,7 @@ const ExportCertificateForm = () => {
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                   질문게시판에 문의해주세요.
                 </Typography>
-                <DiscordButton />
+                <DiscordButton onClick={handleModalClose}/>
               </Box>
             )}
 
@@ -656,7 +657,7 @@ const ExportCertificateForm = () => {
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                   질문게시판에 문의해주세요.
                 </Typography>
-                <DiscordButton />
+                <DiscordButton onClick={handleModalClose}/>
               </Box>
             )}
           </DialogContent>
