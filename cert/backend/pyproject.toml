@@ -1,0 +1,17 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "PseudoLab 수료증 발급 시스템 백엔드"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.109.1",
+    "pillow>=10.1.0",
+    "pydantic>=2.5.3",
+    "pydantic-settings>=2.1.0",
+    "python-dotenv>=1.0.1",
+    "python-multipart>=0.0.6",
+    "reportlab>=4.0.7",
+    "requests>=2.32.3",
+    "uvicorn[standard]>=0.27.0",
+]
