@@ -4,7 +4,7 @@ import { colors } from '../../styles/theme';
 
 const Footer: React.FC = () => {
   return (
-    <Box component="footer" sx={{ backgroundColor: colors.dark, color: '#fff', py: 4, mt: 6 }}>
+    <Box component="footer" sx={{ backgroundColor: colors.dark, color: '#fff', py: 4, mt: 0.5 }}>
       <Container>
         <Grid container spacing={4} className="footer-content">
           <Grid item xs={12} md={4} className="footer-section">
