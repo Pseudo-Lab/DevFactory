@@ -1,8 +1,8 @@
 import uuid
 from datetime import datetime
 from fastapi import HTTPException
-from ..models.certificate import CertificateResponse, CertificateData, CertificateStatus, ErrorResponse, Role
-from ..constants.error_codes import ErrorCodes, ErrorMessages
+from ..models.certificate import CertificateResponse, CertificateData, CertificateStatus, Role
+from ..constants.error_codes import ErrorCodes, ErrorMessages, NotEligibleError
 from ..utils.notion_client import NotionClient
 
 class CertificateService:
@@ -39,7 +39,7 @@ class CertificateService:
             )
             
             if not participation_info["found"]:
-                raise ValueError("해당 기수/스터디에서 사용자를 찾을 수 없습니다.")     # TODO: Custom Error로 변경할 것
+                raise NotEligibleError("해당 기수/스터디에서 사용자를 찾을 수 없습니다.")
             
             # TODO: pdf 수료증 생성
             # TODO: 이메일 발송
@@ -75,9 +75,9 @@ class CertificateService:
                 )
             )
             
-        except ValueError as e:
+        except NotEligibleError:
             # 수료 이력 없음
-            print(f"수료 이력 확인 실패: {e}")
+            print(f"수료 이력 확인 실패: {NotEligibleError}")
             await notion_client.update_certificate_status(
                 page_id=request_id,
                 status="Not Eligible"
@@ -87,7 +87,7 @@ class CertificateService:
                 detail={
                     "status": "fail",
                     "error_code": ErrorCodes.NO_CERTIFICATE_HISTORY,
-                    "message": str(e)
+                    "message": str(NotEligibleError)
                 }
             )
         
