@@ -35,7 +35,7 @@ class CertificateService:
             participation_info = await notion_client.verify_user_participation(
                 user_name=certificate_data["applicant_name"],
                 course_name=certificate_data["course_name"],
-                cohort=certificate_data["cohort"]
+                season=certificate_data["season"]
             )
             
             if not participation_info["found"]:
@@ -69,7 +69,7 @@ class CertificateService:
                     certificate_number=certificate_number,
                     issue_date=datetime.now().strftime("%Y-%m-%d"),
                     certificate_status=CertificateStatus.ISSUED,
-                    cohort=certificate_data["cohort"],
+                    season=certificate_data["season"],
                     course_name=certificate_data["course_name"],
                     role=Role.BUILDER if participation_info["user_role"] == "BUILDER" else Role.LEARNER
                 )

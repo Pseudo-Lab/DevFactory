@@ -10,7 +10,7 @@ class NotionClient:
         self.notion_token = os.getenv("NOTION_API_KEY")
         # 데이터베이스 ID들을 환경 변수로 관리
         self.databases = {
-            "completion_history": os.getenv("NOTION_PROJ_DB_ID"),
+            "project_history": os.getenv("NOTION_PROJ_DB_ID"),
             "certificate_requests": os.getenv("NOTION_CERT_DB_ID")
         }
         self.base_url = "https://api.notion.com/v1"
@@ -24,12 +24,12 @@ class NotionClient:
         self,
         user_name: str,
         course_name: str,
-        cohort: int
+        season: int
     ) -> Dict[str, Any]:
         """사용자 참여 이력 확인 (빌더/러너 확인)"""
         try:
             async with aiohttp.ClientSession() as session:
-                url = f"{self.base_url}/databases/{self.databases['completion_history']}/query"
+                url = f"{self.base_url}/databases/{self.databases['project_history']}/query"
                 
                 payload = {
                     "filter": {
@@ -37,7 +37,7 @@ class NotionClient:
                             {
                                 "property": "기수",
                                 "multi_select": {   # NOTE: select, multi_select 등 속성 값 명확하게
-                                    "contains": f"{cohort}기"
+                                    "contains": f"{season}기"
                                 }
                             },
                             {
@@ -54,6 +54,8 @@ class NotionClient:
                     if response.status == 200:
                         data = await response.json()
                         if data["results"]:
+                            if len(data["results"]) > 1:
+                                print(f"다 수{(len(data['results']))}의 결과가 검색되었습니다.")
                             project = data["results"][0]
                             properties = project.get("properties", {})
                             
@@ -149,9 +151,9 @@ class NotionClient:
                                 }
                             ]
                         },
-                        "Cohort": {
+                        "Season": {
                             "select": { 
-                                "name": f"{certificate_data['cohort']}기"
+                                "name": f"{certificate_data['season']}기"
                             }
                         },
                         "Certificate Status": {
@@ -228,7 +230,7 @@ class NotionClient:
             print(f"상태 업데이트 중 오류: {e}")
             return False
 
-    async def get_database_structure(self, database_type: str = "completion_history") -> Optional[Dict[str, Any]]:
+    async def get_database_structure(self, database_type: str = "project_history") -> Optional[Dict[str, Any]]:
         """데이터베이스 구조 조회 (디버깅용)"""
         try:
             async with aiohttp.ClientSession() as session:
