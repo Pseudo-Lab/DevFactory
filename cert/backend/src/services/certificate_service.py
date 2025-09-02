@@ -1,10 +1,28 @@
 import uuid
 from datetime import datetime
+from typing import Optional, List
 from fastapi import HTTPException
+
+from ..models.project import SeasonGroup, Project, ProjectsBySeasonResponse
 from ..models.certificate import CertificateResponse, CertificateData, CertificateStatus, Role
 from ..constants.error_codes import ErrorCodes, ErrorMessages, NotEligibleError
 from ..utils.notion_client import NotionClient
 
+class ProjectService:
+    """프로젝트 서비스"""
+
+    @staticmethod
+    async def get_all_projects() -> Optional[List[Project]]:
+        """모든 프로젝트 조회"""
+        notion_client = NotionClient()
+        return await notion_client.get_all_projects()
+    
+    @staticmethod
+    async def get_projects_by_season() -> Optional[ProjectsBySeasonResponse]:
+        """기수별 프로젝트 조회"""
+        notion_client = NotionClient()
+        return await notion_client.get_projects_by_season()
+    
 class CertificateService:
     """수료증 서비스"""    
     
