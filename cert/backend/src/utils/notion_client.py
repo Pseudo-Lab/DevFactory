@@ -1,13 +1,24 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import aiohttp
 from typing import Optional, Dict, Any, List
 from ..models.project import Project, SeasonGroup, ProjectsBySeasonResponse
 
 class NotionClient:
-    """Notion API 클라이언트 (직접 HTTP 호출)"""
+    """Notion API 클라이언트 (캐싱 포함)"""
+    
+    _instance = None
+    _initialized = False
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
     
     def __init__(self):
+        if self._initialized:
+            return
+            
         self.notion_token = os.getenv("NOTION_API_KEY")
         # 데이터베이스 ID들을 환경 변수로 관리
         self.databases = {
@@ -20,6 +31,13 @@ class NotionClient:
             "Notion-Version": "2022-06-28",
             "Content-Type": "application/json"
         }
+        
+        # 캐시 설정
+        self._cache = {}
+        self._cache_timestamps = {}
+        self._projects_loaded = False  # 서버 시작 후 한 번만 로드
+        
+        self._initialized = True
     
     async def verify_user_participation(
         self,
@@ -231,13 +249,49 @@ class NotionClient:
             print(f"상태 업데이트 중 오류: {e}")
             return False
 
-    # TODO: 많은 API요청으로 캐싱 필요... (너무 많은 시간소요...)
+    def _get_cached_projects(self) -> Optional[List[Project]]:
+        """캐시된 프로젝트 목록 가져오기"""
+        cache_key = "all_projects"
+        
+        print(f"🔍 캐시 확인: {cache_key}")
+        print(f"   - 캐시 존재: {cache_key in self._cache}")
+        print(f"   - 로드 완료: {self._projects_loaded}")
+        
+        if cache_key in self._cache and self._projects_loaded:
+            print(f"=== 캐시에서 프로젝트 로드: {len(self._cache[cache_key])}개 ===")
+            return self._cache[cache_key]
+        
+        print("❌ 캐시 없음 - API 호출 필요")
+        return None
+    
+    def _set_cached_projects(self, projects: List[Project]):
+        """프로젝트 목록을 캐시에 저장"""
+        cache_key = "all_projects"
+        self._cache[cache_key] = projects
+        self._cache_timestamps[cache_key] = datetime.now()
+        self._projects_loaded = True  # 한 번 로드 완료
+        print(f"=== 프로젝트 캐시 저장: {len(projects)}개 ===")
+    
+    def clear_cache(self):
+        """캐시 삭제"""
+        self._cache.clear()
+        self._cache_timestamps.clear()
+        self._projects_loaded = False
+        print("=== 캐시 삭제 완료 ===")
+
     async def get_all_projects(self) -> Optional[list[Project]]:
-        """모든 프로젝트 조회 (페이지네이션 처리)"""
+        """모든 프로젝트 조회 (페이지네이션 처리 + 캐싱)"""
+        # 캐시 확인
+        cached_projects = self._get_cached_projects()
+        if cached_projects:
+            return cached_projects
+        
         try:
             async with aiohttp.ClientSession() as session:
                 url = f"{self.base_url}/databases/{self.databases['project_history']}/query"
-                                
+                
+                print("🔄 Notion API에서 프로젝트 조회 중...")
+                
                 all_projects = []
                 has_more = True
                 start_cursor = None
@@ -332,6 +386,10 @@ class NotionClient:
                             return None
                 
                 print(f"🎉 총 {len(all_projects)}개 프로젝트 조회 완료")
+                
+                # 캐시에 저장
+                self._set_cached_projects(all_projects)
+                
                 return all_projects
             
         except Exception as e:
