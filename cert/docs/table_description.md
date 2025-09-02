@@ -53,7 +53,7 @@
 ## 수료증 신청 DB 상세 구조:
 총 속성 수: 9
 - Issue Date (date)
-- Cohort (select)
+- Season (select)
   - 옵션: 10기
 - Certificate Number (rich_text)
 - Recipient Email (email)
