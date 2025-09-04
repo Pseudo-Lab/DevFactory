@@ -89,38 +89,40 @@ class CertificateService:
                     certificate_status=CertificateStatus.ISSUED,
                     season=certificate_data["season"],
                     course_name=certificate_data["course_name"],
-                    role=Role.BUILDER if participation_info["user_role"] == "BUILDER" else Role.LEARNER
+                    role=Role.BUILDER if participation_info["user_role"] == "BUILDER" else Role.RUNNER
                 )
             )
             
-        except NotEligibleError:
-            # 수료 이력 없음
-            print(f"수료 이력 확인 실패: {NotEligibleError}")
-            await notion_client.update_certificate_status(
-                page_id=request_id,
-                status="Not Eligible"
-            )
-            raise HTTPException(
-                status_code=404,
-                detail={
-                    "status": "fail",
-                    "error_code": ErrorCodes.NO_CERTIFICATE_HISTORY,
-                    "message": str(NotEligibleError)
-                }
-            )
-        
         except Exception as e:
-            await notion_client.update_certificate_status(
-                page_id=request_id,
-                status="System Error"
-            )
-            # 시스템 오류
-            print(f"시스템 오류: {e}")
-            raise HTTPException(
-                status_code=500,
-                detail={
-                    "status": "fail",
-                    "error_code": ErrorCodes.PIPELINE_ERROR,
-                    "message": f"{ErrorMessages.PIPELINE_ERROR}"
-                }
-            )
+            if isinstance(e, NotEligibleError):
+                # 수료 이력 없음
+                print(f"수료 이력 확인 실패: {str(e)}")
+                await notion_client.update_certificate_status(
+                    page_id=request_id,
+                    status="Not Eligible"
+                )
+                raise HTTPException(
+                    status_code=404,
+                    detail={
+                        "status": "fail",
+                        "error_code": ErrorCodes.NO_CERTIFICATE_HISTORY,
+                        "message": str(e)
+                    }
+                )
+            else:   
+                # 시스템 오류
+                print(f"시스템 오류: {e}")
+                await notion_client.update_certificate_status(
+                    page_id=request_id,
+                    status="System Error"
+                )
+                # 시스템 오류
+                print(f"시스템 오류: {e}")
+                raise HTTPException(
+                    status_code=500,
+                    detail={
+                        "status": "fail",
+                        "error_code": ErrorCodes.PIPELINE_ERROR,
+                        "message": f"{ErrorMessages.PIPELINE_ERROR}"
+                    }
+                )
