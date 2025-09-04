@@ -10,7 +10,7 @@ class CertificateStatus(str, Enum):
 class Role(str, Enum):
     """역할 구분"""
     BUILDER = "빌더"
-    LEARNER = "러너"
+    RUNNER = "러너"
 
 class CertificateCreate(BaseModel):
     """수료증 생성 요청 모델"""

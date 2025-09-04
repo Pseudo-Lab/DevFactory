@@ -94,7 +94,7 @@ class NotionClient:
                             if user_name in builder_names:
                                 user_role = "BUILDER"
                             elif user_name in runner_names:
-                                user_role = "LEARNER"
+                                user_role = "RUNNER"
                             
                             # 2. 사용자가 이탈자에 있는지 확인
                             if user_name in dropout_names:
