@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 import os
 import aiohttp
 from typing import Optional, Dict, Any, List
+
+from ..constants.error_codes import NotEligibleError
 from ..models.project import Project, SeasonGroup, ProjectsBySeasonResponse
 
 class NotionClient:
@@ -98,23 +100,11 @@ class NotionClient:
                             
                             # 2. 사용자가 이탈자에 있는지 확인
                             if user_name in dropout_names:
-                                print(f"사용자 {user_name}이(가) 이탈자 목록에 있습니다.")
-                                return {
-                                    "found": False,
-                                    "user_role": None,
-                                    "project_data": None,
-                                    "reason": "이탈자"
-                                }
+                                raise NotEligibleError(f"사용자 {user_name}이(가) 이탈자 목록에 있습니다.")
                             
                             # 3. 사용자가 참여자 목록에 있는지 확인
                             if user_role is None:
-                                print(f"사용자 {user_name}이(가) 참여자 목록에 없습니다.")
-                                return {
-                                    "found": False,
-                                    "user_role": None,
-                                    "project_data": None,
-                                    "reason": "참여자 아님"
-                                }
+                                raise NotEligibleError(f"사용자 {user_name}이(가) 참여자 목록에 없습니다.")
                             
                             print(f"사용자 {user_name} 검증 성공: {user_role}")
                             return {
