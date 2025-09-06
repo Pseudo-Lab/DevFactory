@@ -74,6 +74,7 @@ class NotionClient:
                 async with session.post(url, headers=self.headers, json=payload) as response:
                     if response.status == 200:
                         data = await response.json()
+                        print("data: ", data)
                         if data["results"]:
                             if len(data["results"]) > 1:
                                 print(f"다 수{(len(data['results']))}의 결과가 검색되었습니다.")
@@ -113,9 +114,10 @@ class NotionClient:
                                 "user_role": user_role,
                                 "project_data": project
                             }
-                    
-                    return {"found": False, "user_role": None, "project_data": None}
-                    
+                        else:
+                            # 프로젝트가 검색되지 않은 경우 (Edge case)
+                            print(f"프로젝트 검색 결과 없음: {user_name}, {season}기, {course_name}")
+                            raise Exception("해당 프로젝트가 검색되지 않습니다. \nDevFactory로 연락부탁드립니다.")
         except Exception as e:
             print(f"사용자 참여 이력 확인 중 오류: {e}")
             return {"found": False, "user_role": None, "project_data": None}
@@ -177,14 +179,13 @@ class NotionClient:
                     if response.status == 200:
                         return await response.json()
                     else:
-                        print(f"수료증 신청 생성 오류: {response.status}")
                         error_text = await response.text()
-                        print(f"오류 내용: {error_text}")
-                    return None
+                        
+                        raise Exception(f"Notion API 오류 ({response.status}): {error_text}")
                     
         except Exception as e:
             print(f"수료증 신청 생성 중 오류: {e}")
-            return None
+            raise e
     
     async def update_certificate_status(
         self,

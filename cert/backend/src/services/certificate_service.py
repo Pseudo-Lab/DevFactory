@@ -3,11 +3,12 @@ from datetime import datetime
 from typing import Optional, List
 from fastapi import HTTPException
 
-from ..models.project import SeasonGroup, Project, ProjectsBySeasonResponse
+
+from ..models.project import Project, ProjectsBySeasonResponse
 from ..models.certificate import CertificateResponse, CertificateData, CertificateStatus, Role
 from ..constants.error_codes import ErrorCodes, ErrorMessages, NotEligibleError
 from ..utils.notion_client import NotionClient
-
+from ..utils.pdf_generator import PDFGenerator
 class ProjectService:
     """프로젝트 서비스"""
 
@@ -55,11 +56,31 @@ class CertificateService:
                 course_name=certificate_data["course_name"],
                 season=certificate_data["season"]
             )
+
+            print(f"participation_info: {participation_info}")
             
+            # 프로젝트가 검색되지 않은 경우 처리 (*Edge case*)
             if not participation_info["found"]:
-                raise NotEligibleError("해당 기수/스터디에서 사용자를 찾을 수 없습니다.")
-            
-            # TODO: pdf 수료증 생성
+                await notion_client.update_certificate_status(
+                    page_id=request_id,
+                    status="Not Eligible"
+                )
+                raise HTTPException(
+                    status_code=404,
+                    detail={
+                        "status": "fail",
+                        "error_code": ErrorCodes.NO_CERTIFICATE_HISTORY,
+                        "message": f"해당 기수({certificate_data['season']}기)의 [{certificate_data['course_name']}] 프로젝트를 찾을 수 없습니다."
+                    }
+                )
+            # PDF 수료증 생성
+            pdf_generator = PDFGenerator()
+            pdf_bytes = pdf_generator.create_certificate(
+                name=certificate_data["applicant_name"],
+                season=f"Season {certificate_data['season']}",
+                course_name=certificate_data["course_name"],
+                role=participation_info["user_role"]
+            )
             # TODO: 이메일 발송
             
             # 수료증 상태 업데이트
@@ -112,17 +133,16 @@ class CertificateService:
             else:   
                 # 시스템 오류
                 print(f"시스템 오류: {e}")
-                await notion_client.update_certificate_status(
-                    page_id=request_id,
-                    status="System Error"
-                )
-                # 시스템 오류
-                print(f"시스템 오류: {e}")
+                if request_id:  # request_id가 존재하는 경우에만 상태 업데이트
+                    await notion_client.update_certificate_status(
+                        page_id=request_id,
+                        status="System Error"
+                    )
                 raise HTTPException(
                     status_code=500,
                     detail={
                         "status": "fail",
                         "error_code": ErrorCodes.PIPELINE_ERROR,
-                        "message": f"{ErrorMessages.PIPELINE_ERROR}"
+                        "message": f"{str(e)}"
                     }
                 )
