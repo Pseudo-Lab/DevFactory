@@ -3,7 +3,8 @@ import os
 import aiohttp
 from typing import Optional, Dict, Any, List
 
-from ..constants.error_codes import NotEligibleError
+from ..constants.error_codes import NotEligibleError, ResponseStatus
+from ..models.certificate import CertificateStatus
 from ..models.project import Project, SeasonGroup, ProjectsBySeasonResponse
 
 class NotionClient:
@@ -169,7 +170,7 @@ class NotionClient:
                         },
                         "Certificate Status": {
                             "status": {
-                                "name": "Pending"
+                                "name": CertificateStatus.PENDING
                             }
                         }
                     }
@@ -422,7 +423,7 @@ class NotionClient:
             
             # 응답 생성
             response = ProjectsBySeasonResponse(
-                status="success",
+                status=ResponseStatus.SUCCESS,
                 total_projects=len(all_projects),
                 total_seasons=len(season_list),
                 seasons=season_list,

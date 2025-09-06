@@ -3,9 +3,10 @@ from enum import Enum
 
 class CertificateStatus(str, Enum):
     """수료증 상태"""
-    PENDING = "대기중"
-    ISSUED = "발급 완료"
-    FAILED = "발급 실패"
+    PENDING = "Pending"
+    NOT_ELIGIBLE = "Not Eligible"
+    ISSUED = "Issued"
+    SYSTEM_ERROR = "System Error"
 
 class Role(str, Enum):
     """역할 구분"""

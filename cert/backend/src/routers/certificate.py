@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from ..models.project import Project, ProjectsBySeasonResponse
 from ..models.certificate import CertificateCreate, CertificateResponse, ErrorResponse
 from ..services.certificate_service import CertificateService, ProjectService
-from ..utils.notion_client import NotionClient
+from ..constants.error_codes import ResponseStatus
 
 certificate_router = APIRouter(prefix="/certs", tags=["certs"])
 
@@ -73,7 +73,7 @@ async def get_projects_by_season():
     response = await ProjectService.get_projects_by_season()
     if response is None:
         return ProjectsBySeasonResponse(
-            status="error",
+            status=ResponseStatus.ERROR,
             total_projects=0,
             total_seasons=0,
             seasons=[],
@@ -84,6 +84,5 @@ async def get_projects_by_season():
 @certificate_router.post("/clear-cache")
 async def clear_cache():
     """캐시 삭제"""
-    notion_client = NotionClient()
-    notion_client.clear_cache()
+    ProjectService.clear_cache()
     return {"message": "캐시 삭제 완료"}

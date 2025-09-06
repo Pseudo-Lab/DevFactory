@@ -6,7 +6,7 @@ from fastapi import HTTPException
 
 from ..models.project import Project, ProjectsBySeasonResponse
 from ..models.certificate import CertificateResponse, CertificateData, CertificateStatus, Role
-from ..constants.error_codes import ErrorCodes, ErrorMessages, NotEligibleError
+from ..constants.error_codes import ErrorCodes, ResponseStatus
 from ..utils.notion_client import NotionClient
 from ..utils.pdf_generator import PDFGenerator
 class ProjectService:
@@ -24,6 +24,12 @@ class ProjectService:
         notion_client = NotionClient()
         return await notion_client.get_projects_by_season()
     
+    @staticmethod
+    def clear_cache():
+        """캐시 삭제"""
+        notion_client = NotionClient()
+        notion_client.clear_cache()
+    
 class CertificateService:
     """수료증 서비스"""    
     
@@ -38,8 +44,9 @@ class CertificateService:
             수료증 생성 결과
             
         """
+        notion_client = NotionClient()
+        
         try:
-            notion_client = NotionClient()
             
             # 수료증 요청 내역 생성
             certificate_request = await notion_client.create_certificate_request(certificate_data)
@@ -63,12 +70,12 @@ class CertificateService:
             if not participation_info["found"]:
                 await notion_client.update_certificate_status(
                     page_id=request_id,
-                    status="Not Eligible"
+                    status=CertificateStatus.NOT_ELIGIBLE
                 )
                 raise HTTPException(
                     status_code=404,
                     detail={
-                        "status": "fail",
+                        "status": ResponseStatus.FAIL,
                         "error_code": ErrorCodes.NO_CERTIFICATE_HISTORY,
                         "message": f"해당 기수({certificate_data['season']}기)의 [{certificate_data['course_name']}] 프로젝트를 찾을 수 없습니다."
                     }
@@ -90,7 +97,7 @@ class CertificateService:
             
             await notion_client.update_certificate_status(
                 page_id=request_id,
-                status="Issued",
+                status=CertificateStatus.ISSUED,
                 certificate_number=certificate_number,
                 role=participation_info["user_role"]
             )
@@ -115,34 +122,18 @@ class CertificateService:
             )
             
         except Exception as e:
-            if isinstance(e, NotEligibleError):
-                # 수료 이력 없음
-                print(f"수료 이력 확인 실패: {str(e)}")
+            # 시스템 오류
+            print(f"시스템 오류: {e}")
+            if request_id:  # request_id가 존재하는 경우에만 상태 업데이트
                 await notion_client.update_certificate_status(
                     page_id=request_id,
-                    status="Not Eligible"
+                    status=CertificateStatus.SYSTEM_ERROR
                 )
-                raise HTTPException(
-                    status_code=404,
-                    detail={
-                        "status": "fail",
-                        "error_code": ErrorCodes.NO_CERTIFICATE_HISTORY,
-                        "message": str(e)
-                    }
-                )
-            else:   
-                # 시스템 오류
-                print(f"시스템 오류: {e}")
-                if request_id:  # request_id가 존재하는 경우에만 상태 업데이트
-                    await notion_client.update_certificate_status(
-                        page_id=request_id,
-                        status="System Error"
-                    )
-                raise HTTPException(
-                    status_code=500,
-                    detail={
-                        "status": "fail",
-                        "error_code": ErrorCodes.PIPELINE_ERROR,
-                        "message": f"{str(e)}"
-                    }
-                )
+            raise HTTPException(
+                status_code=500,
+                detail={
+                    "status": ResponseStatus.FAIL,
+                    "error_code": ErrorCodes.PIPELINE_ERROR,
+                    "message": f"{str(e)}"
+                }
+            )
