@@ -3,9 +3,12 @@ import requests
 import zipfile
 import subprocess
 from io import BytesIO
+
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+
+from template_content import TemplateContent
 
 class PDFGenerator:
     """PDF 인증서 """
@@ -44,7 +47,7 @@ class PDFGenerator:
         
         # 텍스트 설정
         self.line_height_ratio = 1.5
-        self.char_width_ratio = 0.6
+        self.char_width_ratio = 0.5  # 0.6에서 0.5로 줄임
         self.chars_per_line = 80
         self.text_wrap_threshold = 45
         
@@ -60,8 +63,8 @@ class PDFGenerator:
         
         # 기본 템플릿
         self.default_template = "default.png"
-        self.runner_template = "default0.png"
-        self.builder_template = "default1.png"
+        self.builder_template = "default0.png"
+        self.runner_template = "default1.png"
         
         # 폰트 로드 상태
         self._fonts_loaded = False
@@ -90,20 +93,12 @@ class PDFGenerator:
         else:
             raise ValueError(f"알 수 없는 자산 타입: {asset_type}")
 
-    def get_runner_template(self):
-        """러너 템플릿 경로 반환"""
-        return self.get_asset_path("runner_template")
-    
-    def get_builder_template(self):
-        """빌더 템플릿 경로 반환"""
-        return self.get_asset_path("builder_template")
-
     def _download_english_font(self, font_dir):
         """영어 폰트 자동 다운로드 및 압축 해제"""
         zip_path = os.path.join(font_dir, "hepta-slab.zip")
         
         try:
-            # wget으로 다운로드
+            # TODO: 영어 폰트 임의로 다운로드 해줘야 함. (아래 로직 작동되지 않음)
             print("영어 폰트 다운로드 중...")
             subprocess.run([
                 "wget", 
@@ -118,15 +113,15 @@ class PDFGenerator:
                 zip_ref.extractall(font_dir)
             print("압축 해제 완료")
             
-            # HeptaSlab-Medium.ttf 파일 찾기
+            # HeptaSlab-SemiBold.ttf 파일 찾기
             for root, dirs, files in os.walk(font_dir):
                 for file in files:
-                    if "HeptaSlab-Medium.ttf" in file:
+                    if "HeptaSlab-SemiBold.ttf" in file:
                         source_path = os.path.join(root, file)
-                        target_path = os.path.join(font_dir, "HeptaSlab-Medium.ttf")
+                        target_path = os.path.join(font_dir, "HeptaSlab-Bold.ttf")
                         if source_path != target_path:
                             os.rename(source_path, target_path)
-                        print("HeptaSlab-Medium.ttf 파일 준비 완료")
+                        print("HeptaSlab-Bold.ttf 파일 준비 완료")
                         break
             
             # 임시 파일 정리
@@ -166,15 +161,15 @@ class PDFGenerator:
                 print(f"{name} 폰트 등록 완료")
         
         # 영어 폰트 자동 다운로드 및 등록
-        english_font_path = os.path.join(font_dir, "HeptaSlab-Medium.ttf")
+        english_font_path = os.path.join(font_dir, "HeptaSlab-SemiBold.ttf")
         if not os.path.exists(english_font_path):
             self._download_english_font(font_dir)
         
         if os.path.exists(english_font_path):
-            pdfmetrics.registerFont(TTFont('HeptaSlab-Medium', english_font_path))
-            print("HeptaSlab-Medium 폰트 등록 완료")
+            pdfmetrics.registerFont(TTFont('HeptaSlab-SemiBold', english_font_path))
+            print("HeptaSlab-SemiBold 폰트 등록 완료")
         else:
-            print("HeptaSlab-Medium.ttf 파일을 찾을 수 없습니다.")
+            print("HeptaSlab-SemiBold.ttf 파일을 찾을 수 없습니다.")
         
         self._fonts_loaded = True
 
@@ -235,13 +230,17 @@ class PDFGenerator:
                 self._draw_text(canvas_obj, line, x, line_y, font_name, font_size, char_space)
 
 
-    def create_certificate(self, name, season, course_name, role, template_path=None, save_file=False, output_path=None):
+    def create_certificate(self, name:str, season: int, course_name:str, role:str, period:str="", save_file:bool=False, output_path:str=None):
         """인증서 생성 (기본적으로 bytes 반환, 옵션으로 파일 저장)"""
         self._download_fonts()
         
         # 경로 설정
-        if template_path is None:
-            template_path = self.get_asset_path("template_file")
+        if role == "BUILDER":
+            template_path = self.get_asset_path("builder_template")
+        elif role == "RUNNER":
+            template_path = self.get_asset_path("runner_template")
+        else:
+            template_path = self.get_asset_path("default_template")
         
         # 이미지 크기 확인
         width, height = self._get_image_size(template_path)
@@ -257,12 +256,12 @@ class PDFGenerator:
         else:
             raise ValueError("템플릿 이미지를 찾을 수 없습니다.")
         
-        # TODO: season에 날짜정보 추가하기
-        season_english = season
+        # Season 정보 설정
+        season_english = f"Season {season} ({period['start']} ~ {period['end']}) / "
         season_korean = course_name
         
         # 폰트 설정
-        english_font = 'HeptaSlab-Medium' if 'HeptaSlab-Medium' in pdfmetrics.getRegisteredFontNames() else 'Helvetica'
+        english_font = 'HeptaSlab-SemiBold' if 'HeptaSlab-SemiBold' in pdfmetrics.getRegisteredFontNames() else 'Helvetica'
         korean_font = 'IBMPlexSansKR-Regular' if 'IBMPlexSansKR-Regular' in pdfmetrics.getRegisteredFontNames() else 'Helvetica'
         korean_bold_font = 'IBMPlexSansKR-Bold' if 'IBMPlexSansKR-Bold' in pdfmetrics.getRegisteredFontNames() else 'Helvetica'
         
@@ -274,17 +273,18 @@ class PDFGenerator:
         season_char_space = season_config.get('char_space', 0)
         
         self._draw_text(c, season_english, season_x, season_y, english_font, season_font_size, season_char_space)
-        self._draw_text(c, season_korean, season_x + len(season_english) * season_font_size * self.char_width_ratio, season_y, korean_bold_font, season_font_size, season_char_space)
+        self._draw_text(c, season_korean, season_x + (len(season_english) - 0.5) * season_font_size * self.char_width_ratio, season_y, korean_bold_font, season_font_size, season_char_space)
         
-        season_info = f"{season} ({course_name})"
-        content = TemplateContent.get_content(name, season_info, role)
+        
+        # 2. 내용
+        content = TemplateContent.get_content(name, season, role)
         
         content_config = self.positions['content']
         content_x = content_config['x']
         content_y = content_config['y']
         content_font_size = content_config['font_size']
         content_max_width = content_config['max_width']
-        content_char_space = content_config.get('char_space')
+        content_char_space = content_config.get('char_space', 0)
         
         self._draw_multiline_text(c, content, content_x, content_y, content_max_width, korean_font, content_font_size, content_char_space)
         
@@ -293,7 +293,7 @@ class PDFGenerator:
         name_x = name_config['x']
         name_y = name_config['y']
         name_font_size = name_config['font_size']
-        name_char_space = name_config.get('char_space')
+        name_char_space = name_config.get('char_space', 0)
         
         self._draw_text(c, name, name_x, name_y, korean_font, name_font_size, name_char_space)
         
@@ -321,24 +321,14 @@ class PDFGenerator:
 
 
 
-class TemplateContent:
-    @staticmethod
-    def get_content(
-        name: str,
-        season_info: str,
-        role: str,
-    ) -> str:
-        return f"""{name}은 가짜연구소 {season_info} {role}로서 열정적인 참여와 뛰어난 성과를 보여주었으며, 성장이 멈추는 벽을 부수며 비선형적 성장을 이뤄내고, 우연한 혁명을 이뤄가는 한걸음을 함께 내딛었습니다.
-본 수료증은 비영리 연구 공동체에서의 자발적 학습과 협력적 성장을 통해 얻은 소중한 경험과 성취를 증명하며, 기술과 데이터 중심의 의사결정 능력을 기반으로 인간 중심의 인공지능을 이끌어갈 글로벌 테크 리더로 성장할 잠재력을 보여주었습니다. 이를 통해 사회적 가치 창출과 긍정적 임팩트를 만들어가며, 커뮤니티의 지속적인 발전에 기여한 것을 인정합니다."""
-
-
 if __name__ == "__main__":
     # 테스트
     generator = PDFGenerator()
     generator.create_certificate(
         name="김예신",
-        season="Season 11",
-        course_name="AI 프로젝트",
+        season=11,
+        course_name="DevFactory 기술과사고력이 쑥쑥 넘쳐나는 곳",
         role="BUILDER",
+        period={"start": "2025-01-01", "end": "2025-01-01"},
         save_file=True
     )

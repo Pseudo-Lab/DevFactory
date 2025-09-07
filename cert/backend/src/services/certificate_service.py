@@ -63,8 +63,6 @@ class CertificateService:
                 course_name=certificate_data["course_name"],
                 season=certificate_data["season"]
             )
-
-            print(f"participation_info: {participation_info}")
             
             # 프로젝트가 검색되지 않은 경우 처리 (*Edge case*)
             if not participation_info["found"]:
@@ -84,9 +82,10 @@ class CertificateService:
             pdf_generator = PDFGenerator()
             pdf_bytes = pdf_generator.create_certificate(
                 name=certificate_data["applicant_name"],
-                season=f"Season {certificate_data['season']}",
+                season=certificate_data['season'],
                 course_name=certificate_data["course_name"],
-                role=participation_info["user_role"]
+                role=participation_info["user_role"],
+                period=participation_info["period"],
             )
             # TODO: 이메일 발송
             

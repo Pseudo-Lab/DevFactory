@@ -108,12 +108,19 @@ class NotionClient:
                             if user_role is None:
                                 raise NotEligibleError(f"사용자 {user_name}이(가) 참여자 목록에 없습니다.")
                             
+                            period = project.get("properties", {}).get("기간", {}).get("date", {})
+
+                            if not period:
+                                # TODO: 추후 처리 필요
+                                raise SystemError("기간 정보가 없습니다.")
+
                             print(f"사용자 {user_name} 검증 성공: {user_role}")
                             return {
                                 "found": True,
                                 "project_id": project.get("id"),
+                                "project_data": project,
                                 "user_role": user_role,
-                                "project_data": project
+                                "period": period,
                             }
                         else:
                             # 프로젝트가 검색되지 않은 경우 (Edge case)
@@ -121,10 +128,10 @@ class NotionClient:
                             raise Exception("해당 프로젝트가 검색되지 않습니다. \nDevFactory로 연락부탁드립니다.")
         except Exception as e:
             print(f"사용자 참여 이력 확인 중 오류: {e}")
-            return {"found": False, "user_role": None, "project_data": None}
+            return {"found": False, "user_role": None, "project_data": None, "period": None}
     
     async def create_certificate_request(
-        self,
+        self,   
         certificate_data: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
         """수료증 신청 기록 생성 (수료증 DB에)"""
