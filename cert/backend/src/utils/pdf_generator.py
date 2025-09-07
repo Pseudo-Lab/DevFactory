@@ -8,7 +8,7 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
-from template_content import TemplateContent
+from .template_content import TemplateContent
 
 class PDFGenerator:
     """PDF 인증서 """
