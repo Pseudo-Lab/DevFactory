@@ -1,14 +1,12 @@
 import os
 import requests
-import zipfile
-import subprocess
 from io import BytesIO
 
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
-from .template_content import TemplateContent
+from template_content import TemplateContent
 
 class PDFGenerator:
     """PDF 인증서 """
@@ -93,47 +91,6 @@ class PDFGenerator:
         else:
             raise ValueError(f"알 수 없는 자산 타입: {asset_type}")
 
-    def _download_english_font(self, font_dir):
-        """영어 폰트 자동 다운로드 및 압축 해제"""
-        zip_path = os.path.join(font_dir, "hepta-slab.zip")
-        
-        try:
-            # TODO: 영어 폰트 임의로 다운로드 해줘야 함. (아래 로직 작동되지 않음)
-            print("영어 폰트 다운로드 중...")
-            subprocess.run([
-                "wget", 
-                "https://fontmeme.com/fonts/download/305890/hepta-slab.zip",
-                "-O", zip_path
-            ], check=True)
-            print("영어 폰트 다운로드 완료")
-            
-            # 압축 해제
-            print("압축 해제 중...")
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(font_dir)
-            print("압축 해제 완료")
-            
-            # HeptaSlab-SemiBold.ttf 파일 찾기
-            for root, dirs, files in os.walk(font_dir):
-                for file in files:
-                    if "HeptaSlab-SemiBold.ttf" in file:
-                        source_path = os.path.join(root, file)
-                        target_path = os.path.join(font_dir, "HeptaSlab-Bold.ttf")
-                        if source_path != target_path:
-                            os.rename(source_path, target_path)
-                        print("HeptaSlab-Bold.ttf 파일 준비 완료")
-                        break
-            
-            # 임시 파일 정리
-            if os.path.exists(zip_path):
-                os.remove(zip_path)
-            
-        except subprocess.CalledProcessError:
-            print("wget 명령어 실행 실패. wget이 설치되어 있는지 확인해주세요.")
-        except zipfile.BadZipFile:
-            print("압축 파일이 손상되었습니다.")
-        except Exception as e:
-            print(f"영어 폰트 다운로드 중 오류 발생: {e}")
 
     def _download_fonts(self):
         """폰트 다운로드 및 등록"""
@@ -160,10 +117,8 @@ class PDFGenerator:
                 pdfmetrics.registerFont(TTFont(name, font_path))
                 print(f"{name} 폰트 등록 완료")
         
-        # 영어 폰트 자동 다운로드 및 등록
+        # 영어 폰트 등록
         english_font_path = os.path.join(font_dir, "HeptaSlab-SemiBold.ttf")
-        if not os.path.exists(english_font_path):
-            self._download_english_font(font_dir)
         
         if os.path.exists(english_font_path):
             pdfmetrics.registerFont(TTFont('HeptaSlab-SemiBold', english_font_path))
