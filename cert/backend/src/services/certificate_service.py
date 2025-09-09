@@ -4,11 +4,13 @@ from typing import Optional, List
 from fastapi import HTTPException
 
 
+
 from ..models.project import Project, ProjectsBySeasonResponse
 from ..models.certificate import CertificateResponse, CertificateData, CertificateStatus, Role
 from ..constants.error_codes import ErrorCodes, ResponseStatus
 from ..utils.notion_client import NotionClient
 from ..utils.pdf_generator import PDFGenerator
+from ..utils.email_sender import EmailSender
 class ProjectService:
     """프로젝트 서비스"""
 
@@ -78,6 +80,9 @@ class CertificateService:
                         "message": f"해당 기수({certificate_data['season']}기)의 [{certificate_data['course_name']}] 프로젝트를 찾을 수 없습니다."
                     }
                 )
+            # TODO: 임시 값, 추후 수정 필요
+            certificate_number = f"CERT-{datetime.now().strftime('%Y%m')}-{str(uuid.uuid4())[:8].upper()}"
+
             # PDF 수료증 생성
             pdf_generator = PDFGenerator()
             pdf_bytes = pdf_generator.create_certificate(
@@ -87,12 +92,20 @@ class CertificateService:
                 role=participation_info["user_role"],
                 period=participation_info["period"],
             )
-            # TODO: 이메일 발송
+            # 이메일 발송
+            email_sender = EmailSender()
+            await email_sender.send_certificate_email(
+                recipient_email=certificate_data["recipient_email"],
+                recipient_name=certificate_data["applicant_name"],
+                course_name=certificate_data["course_name"],
+                season=certificate_data["season"],
+                role=participation_info["user_role"],
+                certificate_bytes=pdf_bytes
+            )
             
             # 수료증 상태 업데이트
             print("수료증 상태 업데이트")
-            # TODO: 임시 값, 추후 수정 필요
-            certificate_number = f"CERT-{datetime.now().strftime('%Y%m')}-{str(uuid.uuid4())[:8].upper()}" 
+
             
             await notion_client.update_certificate_status(
                 page_id=request_id,
