@@ -6,7 +6,7 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
-from template_content import TemplateContent
+from .template_content import TemplateContent
 
 class PDFGenerator:
     """PDF 인증서 """
@@ -39,15 +39,15 @@ class PDFGenerator:
         # 텍스트 위치 설정
         self.positions = {
             "season": {"x": 299, "y": 1080 - 326 - 30, "font_size": 32, "char_space": -1.2},
-            "content": {"x": 299, "y": 1080 - 385 - 65, "font_size": 20, "max_width": 1131, "char_space": -0.5},
+            "content": {"x": 299, "y": 1080 - 385 - 65, "font_size": 20, "char_space": -0.5},
             "name": {"x": 299, "y": 1080 - 902 - 65, "font_size": 72, "char_space": -1.2},
         }
         
         # 텍스트 설정
         self.line_height_ratio = 1.5
         self.char_width_ratio = 0.5  # 0.6에서 0.5로 줄임
-        self.chars_per_line = 80
-        self.text_wrap_threshold = 45
+        self.chars_per_line = 75
+        self.text_wrap_threshold = 30
         
         # 파일명 설정
         self.certificate_prefix = "certificate_"
@@ -156,17 +156,19 @@ class PDFGenerator:
                 return output_path
             counter += 1
 
-    def _draw_text(self, canvas_obj, text, x, y, font_name, font_size, char_space=0):
-        """텍스트 그리기"""
-        textobject = canvas_obj.beginText()
-        textobject.setTextOrigin(x, y)
-        textobject.setFont(font_name, font_size)
-        textobject.setCharSpace(char_space)
-        textobject.setFillColorRGB(*self.text_color)
-        textobject.textLine(text)
-        canvas_obj.drawText(textobject)
+    def _draw_text(self, canvas_obj, text, x, y, font_name, font_size, char_space=0, auto_font=False, korean_font=None, english_font=None):
+        """텍스트 그리기 (통합 함수)"""
+        # 색상 설정
+        canvas_obj.setFillColorRGB(*self.text_color)
+        
+        if auto_font and korean_font and english_font:
+            # 프로젝트 이름용: 한/영 자동 폰트 선택
+            self._draw_text_with_spacing(canvas_obj, text, x, y, font_size, korean_font, english_font, char_space)
+        else:
+            # 일반 텍스트용: 지정된 폰트 사용
+            self._draw_text_with_spacing(canvas_obj, text, x, y, font_size, font_name, font_name, char_space)
 
-    def _draw_multiline_text(self, canvas_obj, text, x, y, max_width, font_name, font_size, char_space=0):
+    def _draw_multiline_text(self, canvas_obj, text, x, y, font_name, font_size, char_space=0):
         """여러 줄 텍스트 그리기"""
         lines = text.split('\n')
         line_height = font_size * self.line_height_ratio
@@ -178,12 +180,76 @@ class PDFGenerator:
             
             if len(line) > self.text_wrap_threshold:
                 for j in range(0, len(line), self.chars_per_line):
-                    chunk = line[j:j + self.chars_per_line]
+                    chunk = line[j:j + self.chars_per_line].strip()
                     self._draw_text(canvas_obj, chunk, x, line_y, font_name, font_size, char_space)
                     line_y -= line_height
             else:
                 self._draw_text(canvas_obj, line, x, line_y, font_name, font_size, char_space)
 
+    def _draw_text_with_spacing(self, canvas, text, x, y, font_size, korean_font, english_font, char_space=0):
+        """텍스트 그리기 (자간 조정 포함)"""
+        current_x = x
+        
+        for i, char in enumerate(text):
+            # 폰트 선택
+            if "가" <= char <= "힣":  # 한글
+                canvas.setFont(korean_font, font_size)
+            else:  # 영어/숫자/기호
+                canvas.setFont(english_font, font_size)
+            
+            # 문자 그리기
+            char_width = canvas.stringWidth(char)
+            canvas.drawString(current_x, y, char)
+            
+            # 자간 조정
+            current_x += char_width + (char_space if i < len(text) - 1 else 0)
+        
+        return current_x - x
+
+    def _measure_text_width(self, text, font_size, korean_font, english_font, char_space=0):
+        """텍스트의 전체 너비 측정"""
+        total_width = 0
+        for i, char in enumerate(text):
+            if "가" <= char <= "힣":
+                # 한글 폰트로 너비 측정 (임시 캔버스 사용)
+                temp_canvas = canvas.Canvas(BytesIO())
+                temp_canvas.setFont(korean_font, font_size)
+                char_width = temp_canvas.stringWidth(char)
+            else:
+                # 영어 폰트로 너비 측정
+                temp_canvas = canvas.Canvas(BytesIO())
+                temp_canvas.setFont(english_font, font_size)
+                char_width = temp_canvas.stringWidth(char)
+            
+            total_width += char_width + (char_space if i < len(text) - 1 else 0)
+        
+        return total_width
+
+    def _wrap_text_by_width(self, text, font_size, korean_font, english_font, char_space=0, max_width=1000):
+        """텍스트를 너비에 맞게 자동 개행"""
+        words = text.split()
+        lines = []
+        current_line = ""
+        
+        for word in words:
+            test_line = current_line + (" " if current_line else "") + word
+            test_width = self._measure_text_width(test_line, font_size, korean_font, english_font, char_space)
+            
+            if test_width <= max_width:
+                current_line = test_line
+            else:
+                if current_line:
+                    lines.append(current_line)
+                    current_line = word
+                else:
+                    # 단어 자체가 너무 긴 경우 강제로 자르기
+                    lines.append(word)
+                    current_line = ""
+        
+        if current_line:
+            lines.append(current_line)
+        
+        return lines
 
     def create_certificate(self, name:str, season: int, course_name:str, role:str, period:str="", save_file:bool=False, output_path:str=None):
         """인증서 생성 (기본적으로 bytes 반환, 옵션으로 파일 저장)"""
@@ -227,21 +293,57 @@ class PDFGenerator:
         season_font_size = season_config['font_size']
         season_char_space = season_config.get('char_space', 0)
         
-        self._draw_text(c, season_english, season_x, season_y, english_font, season_font_size, season_char_space)
-        self._draw_text(c, season_korean, season_x + (len(season_english) - 0.5) * season_font_size * self.char_width_ratio, season_y, korean_bold_font, season_font_size, season_char_space)
+        # 프로젝트 이름: 기수는 고정, 코스명만 개행 처리
+        project_x = season_x
+        project_y = season_y
+        
+        # 첫 번째 줄: 기수 정보 (예: "10기 /")
+        first_line = season_english + " "
+        self._draw_text(c, first_line, project_x, project_y, english_font, season_font_size, season_char_space)
+        
+        # 코스명 길이 측정
+        course_width = self._measure_text_width(season_korean, season_font_size, korean_bold_font, english_font, season_char_space)
+        first_line_width = self._measure_text_width(first_line, season_font_size, english_font, english_font, season_char_space)
+        remaining_width = 1000 - first_line_width  # 첫 줄 이후 남은 너비
+        
+        if course_width <= remaining_width:
+            # 코스명이 남은 공간에 들어가면 같은 줄에 그리기
+            course_x = project_x + first_line_width
+            self._draw_text(c, season_korean, course_x, project_y, None, season_font_size, season_char_space,
+                          auto_font=True, korean_font=korean_bold_font, english_font=english_font)
+            total_extra_height = 0
+        else:
+            # 코스명이 길면 다음 줄부터 개행
+            lines = self._wrap_text_by_width(season_korean, season_font_size, korean_bold_font, english_font, season_char_space, 1200)
+            normal_line_height = season_font_size * 1.2
+            tight_line_height = season_font_size * 1.0
+            
+            for i, line in enumerate(lines):
+                if i == 0:
+                    # 첫 번째 개행: 일반 행간
+                    line_y = project_y - normal_line_height
+                else:
+                    # 두 번째 개행부터: 축소된 행간
+                    line_y = project_y - normal_line_height - (i * tight_line_height)
+                
+                self._draw_text(c, line, project_x, line_y, None, season_font_size, season_char_space,
+                              auto_font=True, korean_font=korean_bold_font, english_font=english_font)
+            
+            # 총 높이 계산: 첫 개행(일반) + 나머지 개행(축소)
+            total_extra_height = normal_line_height + (len(lines) - 1) * tight_line_height
+
         
         
-        # 2. 내용
+        # 2. 내용 (프로젝트 이름 길이에 따라 위치 조정)
         content = TemplateContent.get_content(name, season, role)
         
         content_config = self.positions['content']
         content_x = content_config['x']
-        content_y = content_config['y']
+        content_y = content_config['y'] - total_extra_height  # 프로젝트 이름이 길면 아래로 이동
         content_font_size = content_config['font_size']
-        content_max_width = content_config['max_width']
         content_char_space = content_config.get('char_space', 0)
         
-        self._draw_multiline_text(c, content, content_x, content_y, content_max_width, korean_font, content_font_size, content_char_space)
+        self._draw_multiline_text(c, content, content_x, content_y, korean_font, content_font_size, content_char_space)
         
         # 3. 이름
         name_config = self.positions['name']
@@ -278,12 +380,21 @@ class PDFGenerator:
 
 if __name__ == "__main__":
     # 테스트
+
+    long_name_project = ["From Fixed to Flexible: Your Guide to Adaptive & Master Protocol",
+                         "< Bridging >",
+                         "DevFactory",
+                         "Marketing Science : Marketing Data Analytics & Bayesian Statistics",
+                         "Developer can link the world : 세상을 잇다"
+    ]
+
     generator = PDFGenerator()
     generator.create_certificate(
         name="김예신",
         season=11,
-        course_name="DevFactory 기술과사고력이 쑥쑥 넘쳐나는 곳",
-        role="BUILDER",
+        course_name=long_name_project[2],
+        role="RUNNER",
         period={"start": "2025-01-01", "end": "2025-01-01"},
-        save_file=True
+        save_file=True,
     )
+
