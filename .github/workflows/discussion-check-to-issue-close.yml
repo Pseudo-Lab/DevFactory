@@ -1,0 +1,95 @@
+name: Discussion Check to Issue Close
+
+on:
+  discussion:
+    types: [edited]
+
+permissions:
+  issues: write
+  discussions: read
+
+jobs:
+  check_discussion_todos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check TODO changes and close corresponding issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const discussion = context.payload.discussion;
+            
+            // 회의록 카테고리가 아니면 종료
+            if (discussion.category.name !== "회의록") {
+              console.log("카테고리가 회의록이 아니므로 종료합니다.");
+              return;
+            }
+
+            // Discussion 본문에서 체크된 TODO 찾기
+            const lines = discussion.body.split('\n');
+            const checkedTodos = [];
+            
+            for (const line of lines) {
+              // 체크된 TODO 찾기: - [x] 텍스트
+              const checkedMatch = line.match(/^(\s*)- \[x\] (.+)/);
+              if (checkedMatch) {
+                const todoText = checkedMatch[2].trim();
+                if (todoText) {
+                  checkedTodos.push(todoText);
+                }
+              }
+            }
+
+            console.log(`체크된 TODO 개수: ${checkedTodos.length}`);
+            
+            // 각 체크된 TODO에 대해 해당하는 이슈 찾기 및 닫기
+            for (const todoText of checkedTodos) {
+              try {
+                // 이슈 검색 (제목이 TODO 텍스트와 일치하는 것)
+                const issues = await github.rest.search.issuesAndPullRequests({
+                  q: `repo:${context.repo.owner}/${context.repo.repo} is:issue is:open "${todoText}"`
+                });
+
+                if (issues.data.items.length > 0) {
+                  // 현재 Discussion과 연결된 이슈 찾기
+                  let targetIssue = null;
+                  
+                  for (const issue of issues.data.items) {
+                    // 고유 TODO_ID로 정확한 매칭
+                    const todoId = `<!-- TODO_ID: ${discussion.id}_${todoText.replace(/[^a-zA-Z0-9]/g, '_')} -->`;
+                    if (issue.body && issue.body.includes(todoId)) {
+                      targetIssue = issue;
+                      break;
+                    }
+                  }
+                  
+                  // Discussion 링크가 있는 이슈가 없으면 첫 번째 이슈 선택
+                  if (!targetIssue) {
+                    targetIssue = issues.data.items[0];
+                    console.log(`TODO_ID가 일치하는 이슈가 없어서 첫 번째 이슈를 선택합니다: #${targetIssue.number}`);
+                  }
+                  
+                  // 이미 닫힌 이슈는 건너뛰기
+                  if (targetIssue.state === 'closed') {
+                    console.log(`이슈 #${targetIssue.number}는 이미 닫혀있습니다.`);
+                    continue;
+                  }
+
+                  console.log(`이슈 #${targetIssue.number} 닫는 중: ${todoText}`);
+                  
+                  // 이슈 닫기
+                  await github.rest.issues.update({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: targetIssue.number,
+                    state: 'closed',
+                    state_reason: 'completed'
+                  });
+
+                  console.log(`이슈 #${targetIssue.number} 닫기 완료`);
+                } else {
+                  console.log(`TODO "${todoText}"에 해당하는 열린 이슈를 찾을 수 없습니다.`);
+                }
+              } catch (error) {
+                console.error(`TODO "${todoText}" 처리 중 오류:`, error);
+              }
+            }
