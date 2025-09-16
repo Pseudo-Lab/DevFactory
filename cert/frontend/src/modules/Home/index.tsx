@@ -21,6 +21,7 @@ import { Search as SearchIcon } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import successImg from "../../assets/success.png";
 import failImg from "../../assets/fail.png";
+import { API_BASE_URL } from "./config";
 
 type IssuePayload = {
   applicant_name: string;
@@ -49,7 +50,7 @@ type StudyMeta = {
 };
 
 async function fetchStudyMeta(): Promise<StudyMeta> {
-  const res = await fetch("http://localhost:8000/certs/all-projects");
+  const res = await fetch(`${API_BASE_URL}/certs/all-projects`);
   if (!res.ok) throw new Error("Failed to load meta");
 
   const data = (await res.json()) as ApiStudy[];
@@ -77,7 +78,7 @@ async function fetchStudyMeta(): Promise<StudyMeta> {
 }
 
 async function issueCertificate(payload: IssuePayload): Promise<IssueResponse> {
-  const res = await fetch("http://localhost:8000/certs/create", {
+  const res = await fetch(`${API_BASE_URL}/certs/create`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -386,8 +387,6 @@ const ExportCertificateForm = () => {
       const codes = perTagResults.map(r => r.code);
       let overall: number;
 
-      console.log('codes', codes);
-  
       if (codes.every(c => c === 200)) {
         overall = 200;
       } else if (codes.some(c => c === 500)) {
