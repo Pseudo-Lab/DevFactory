@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Container, Grid, Typography, Link } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { colors } from '../../styles/theme';
 
 const Footer: React.FC = () => {
