@@ -4,15 +4,24 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        VITE_API_BASE_URL: ${FRONTEND_EXTERNAL_API_URL:-https://backend:8000}
     ports:
-      - "8080:80"  # 내부 80포트를 8080으로 매핑
+      - "${FRONTEND_PORT}:80"
     restart: always
 
-  webhook:
+  backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
-    container_name: webhook
     ports:
-      - "8800:8000"
+      - "${BACKEND_PORT}:8000"
+    environment:
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - NOTION_API_KEY=${NOTION_API_KEY}
+      - NOTION_CERT_DB_ID=${NOTION_CERT_DB_ID}
+      - NOTION_PROJ_DB_ID=${NOTION_PROJ_DB_ID}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
     restart: always
