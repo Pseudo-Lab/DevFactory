@@ -57,7 +57,7 @@ class CertificateService:
                 raise Exception("수료증 신청 기록 생성 실패")
             
             request_id = certificate_request.get("id")
-            print(f"수료증 신청 기록 생성 완료: {request_id}")
+            # print(f"수료증 신청 기록 생성 완료: {request_id}")
             
             # 사용자 참여 이력 확인
             participation_info = await notion_client.verify_user_participation(
