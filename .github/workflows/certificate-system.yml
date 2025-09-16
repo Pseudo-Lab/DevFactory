@@ -8,6 +8,10 @@ on:
 jobs:
   deploy:
     runs-on: oracle
+    defaults:
+      run:
+        working-directory: ./cert
+
     steps:
       - uses: actions/checkout@v4
 
