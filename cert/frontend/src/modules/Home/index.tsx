@@ -15,7 +15,6 @@ import {
   DialogContent,
   LinearProgress,
   Autocomplete,
-  InputLabel
 } from '@mui/material';
 import { ButtonProps } from "@mui/material/Button";
 import { Search as SearchIcon } from '@mui/icons-material';
@@ -23,52 +22,78 @@ import { styled } from '@mui/material/styles';
 import successImg from "../../assets/success.png";
 import failImg from "../../assets/fail.png";
 
-
-type StudyMeta = {
-  periods: string[]; 
-  studiesByPeriod?: Record<string, string[]>;
-  studies?: string[];
-};
-
 type IssuePayload = {
-  name: string;
-  email: string;
-  period: string;
-  studies: string[];
+  applicant_name: string;
+  recipient_email: string;
+  season: string;
+  course_name: string;
 };
 
 type IssueResponse = {
   returnCode: number; // 200, 404, 500 등
 };
 
-async function fetchStudyMeta(): Promise<StudyMeta> {
-  // const res = await fetch('/api/studies/meta');
-  // if (!res.ok) throw new Error('Failed to load meta');
-  // return (await res.json()) as StudyMeta;
+type ApiStudy = {
+  id: string;
+  name: string;
+  season: number;
+  description: string;
+  created_at: string;
+  updated_at: string;
+};
 
-  await new Promise(r => setTimeout(r, 300));
+type StudyMeta = {
+  periods: string[];
+  studiesByPeriod: Record<string, string[]>;
+  studies: string[];
+};
+
+async function fetchStudyMeta(): Promise<StudyMeta> {
+  const res = await fetch("http://localhost:8000/certs/all-projects");
+  if (!res.ok) throw new Error("Failed to load meta");
+
+  const data = (await res.json()) as ApiStudy[];
+
+  // season(=period) 기준으로 그룹핑
+  const studiesByPeriod: Record<string, string[]> = {};
+  const studies: string[] = [];
+
+  for (const item of data) {
+    const period = String(item.season);
+    if (!studiesByPeriod[period]) {
+      studiesByPeriod[period] = [];
+    }
+    studiesByPeriod[period].push(item.name);
+    studies.push(item.name);
+  }
+
+  const periods = Object.keys(studiesByPeriod).sort();
+
   return {
-    periods: ["10", "11"],
-    studiesByPeriod: {
-      "10": ["DevFactory", "JobPT", "3D Vision"],
-      "11": ["AI Research Club", "Test Study"]
-    },
-    studies: ["DevFactory", "JobPT", "AI Research Club", "3D Vision", "Test Study"]
+    periods,
+    studiesByPeriod,
+    studies,
   };
 }
 
-  async function issueCertificate(payload: IssuePayload): Promise<IssueResponse> {
-    const body = JSON.stringify(payload);
-    console.log('body', body);
-  // const res = await fetch('/api/certificates/issue', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(payload),
-  // });
-  // if (!res.ok) throw new Error('Issue API failed');
-  // return (await res.json()) as IssueResponse;
-  await new Promise(r => setTimeout(r, 500));
-  return { returnCode: 200 };
+async function issueCertificate(payload: IssuePayload): Promise<IssueResponse> {
+  const res = await fetch("http://localhost:8000/certs/create", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  let json: any = {};
+  try {
+    json = await res.json();
+  } catch {
+    json = {};
+  }
+
+  return {
+    ...json,
+    returnCode: res.status, // HTTP 상태 코드 그대로 사용
+  };
 }
 
 const SuccessIcon: React.FC = () => {
@@ -259,8 +284,6 @@ const ExportCertificateForm = () => {
 
   const [returnCode, setReturnCode] = useState<number | null>(null);
 
-  const [testReturnCode, setTestReturnCode] = useState<number>(200);
-
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -323,7 +346,7 @@ const ExportCertificateForm = () => {
     setIsComplete(false);
     setReturnCode(null);
     setProgress(0);
-
+  
     // 가짜 진행바
     const interval = setInterval(() => {
       setProgress(prev => {
@@ -331,26 +354,54 @@ const ExportCertificateForm = () => {
           clearInterval(interval);
           return 100;
         }
-        return prev + 10;
+        return prev + 1;
       });
-    }, 150);
-
+    }, 200); // 0.2초마다 1% → 총 20초
+  
     try {
-      // 실제 API 호출 (응답 returnCode는 무시하고, UI에서 선택한 testReturnCode를 반영)
-      await issueCertificate({
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        period: formData.period,
-        studies: tags,
+      // 각 태그별 호출을 allSettled로 수행하여 부분 실패도 수집
+      const settled = await Promise.allSettled(
+        tags.map(tag =>
+          issueCertificate({
+            applicant_name: formData.name.trim(),
+            recipient_email: formData.email.trim(),
+            season: formData.period,     // 기존 로직 유지
+            course_name: tag,            // 각 스터디별 호출
+          })
+        )
+      );
+  
+      // 태그별 코드 수집
+      const perTagResults = settled.map((r, idx) => {
+        if (r.status === "fulfilled") {
+          return { tag: tags[idx], code: r.value.returnCode };
+        } else {
+          return { tag: tags[idx], code: 500 }; // 네트워크 오류 같은 경우
+        }
       });
+  
+      // 모두 200이면 200
+      // 500이 하나라도 있으면 500 ("명단에 없음" 시나리오)
+      // 그 외 300(일반 실패)
+      const codes = perTagResults.map(r => r.code);
+      let overall: number;
 
-      // 테스트용 returnCode 적용
-      // 200: 성공, 300: 일반 실패, 나머지(예: 302): “명단에 없음” 시나리오
-      setReturnCode(testReturnCode);
+      console.log('codes', codes);
+  
+      if (codes.every(c => c === 200)) {
+        overall = 200;
+      } else if (codes.some(c => c === 500)) {
+        overall = 500;
+      } else {
+        overall = 300;
+      }
+  
+      setReturnCode(overall);
     } catch (e) {
-      // 호출 자체 실패 시 일반 실패로 처리
-      setReturnCode(300);
+      // 예외적으로 여기까지 떨어지면 일반 실패
+      setReturnCode(500);
     } finally {
+      clearInterval(interval);     // 안전하게 인터벌 정리
       setIsLoading(false);
       setIsComplete(true);
     }
@@ -499,22 +550,6 @@ const ExportCertificateForm = () => {
                 />
               </FieldRow>
 
-              <FieldRow label="테스트 코드">
-                <StyledFormControl fullWidth size="medium">
-                  <InputLabel id="returncode-label">returnCode (테스트)</InputLabel>
-                  <Select
-                    labelId="returncode-label"
-                    value={String(testReturnCode)}
-                    label="returnCode (테스트)"
-                    onChange={(e) => setTestReturnCode(Number(e.target.value))}
-                  >
-                    <MenuItem value="200">200 (성공)</MenuItem>
-                    <MenuItem value="404">404 (명단 없음)</MenuItem>
-                    <MenuItem value="500">500 (실패)</MenuItem>
-                  </Select>
-                </StyledFormControl>
-              </FieldRow>
-
               {/* Buttons */}
               <Box sx={{ display: 'flex', gap: 3, mt: 2 }}>
                 <StyledButton
@@ -611,7 +646,7 @@ const ExportCertificateForm = () => {
               </Box>
             )}
 
-            {!isLoading && returnCode === 500 && (
+            {!isLoading && returnCode === 300 && (
               /* 일반 실패 */
               <Box>
                 <FailIcon />
@@ -631,7 +666,7 @@ const ExportCertificateForm = () => {
               </Box>
             )}
 
-            {!isLoading && returnCode === 404 && (
+            {!isLoading && returnCode === 500 && (
               /* 명단 없음 */
               <Box>
                 <FailIcon />
