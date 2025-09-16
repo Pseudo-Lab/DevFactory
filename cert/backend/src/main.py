@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+import os
 
 from .routers import certificate
 
@@ -18,9 +19,10 @@ app = FastAPI(
 )
 
 # CORS 미들웨어 설정
+origins = os.getenv("CORS_ORIGINS", "").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 개발 환경용, 프로덕션에서는 특정 도메인만 허용
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

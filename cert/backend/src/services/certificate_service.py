@@ -135,4 +135,3 @@ class CertificateService:
                     "message": f"{str(e)}"
                 }
             )
-
