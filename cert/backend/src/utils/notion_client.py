@@ -75,7 +75,7 @@ class NotionClient:
                 async with session.post(url, headers=self.headers, json=payload) as response:
                     if response.status == 200:
                         data = await response.json()
-                        print("data: ", data)
+                        # print("data: ", data)
                         if data["results"]:
                             if len(data["results"]) > 1:
                                 print(f"다 수{(len(data['results']))}의 결과가 검색되었습니다.")
@@ -87,6 +87,7 @@ class NotionClient:
                             runners = properties.get("러너", {}).get("multi_select", [])
                             completers = properties.get("수료자", {}).get("rich_text", [])
                             dropouts = properties.get("이탈자", {}).get("multi_select", [])
+                            project_code = properties.get("코드", {}).get("rich_text", [])[0].get("plain_text", "")
                             
                             builder_names = [b.get("name", "") for b in builders]
                             runner_names = [r.get("name", "") for r in runners]
@@ -121,14 +122,14 @@ class NotionClient:
                                 "project_data": project,
                                 "user_role": user_role,
                                 "period": period,
+                                "project_code": project_code,
                             }
                         else:
                             # 프로젝트가 검색되지 않은 경우 (Edge case)
                             print(f"프로젝트 검색 결과 없음: {user_name}, {season}기, {course_name}")
                             raise Exception("해당 프로젝트가 검색되지 않습니다. \nDevFactory로 연락부탁드립니다.")
         except Exception as e:
-            print(f"사용자 참여 이력 확인 중 오류: {e}")
-            return {"found": False, "user_role": None, "project_data": None, "period": None}
+            raise e
     
     async def create_certificate_request(
         self,   
