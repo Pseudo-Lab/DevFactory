@@ -18,7 +18,7 @@ URL : https://cert.pseudolab-devfactory/certs/create
 | applicant_name          | String  | 신청자 이름           |  O  |
 | recipient_email         | String  | 수료자 이메일          |  O  |
 | course_name     | String  | 과정명        |  O  |
-| cohort        | Int  | 활동기수(예: `10`) |  O  |
+| season        | Int  | 활동기수(예: `10`) |  O  |
 
 
 ### Response
@@ -54,7 +54,7 @@ URL : https://cert.pseudolab-devfactory/certs/create
 {
   "name": "홍길동",
   "email": "gildong@example.com",
-  "cohort": "10",
+  "season": "10",
   "course_name": "MLOps Bootcamp"
 }
 
