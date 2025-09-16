@@ -66,22 +66,8 @@ class CertificateService:
                 season=certificate_data["season"]
             )
             
-            # 프로젝트가 검색되지 않은 경우 처리 (*Edge case*)
-            if not participation_info["found"]:
-                await notion_client.update_certificate_status(
-                    page_id=request_id,
-                    status=CertificateStatus.NOT_ELIGIBLE
-                )
-                raise HTTPException(
-                    status_code=404,
-                    detail={
-                        "status": ResponseStatus.FAIL,
-                        "error_code": ErrorCodes.NO_CERTIFICATE_HISTORY,
-                        "message": f"해당 기수({certificate_data['season']}기)의 [{certificate_data['course_name']}] 프로젝트를 찾을 수 없습니다."
-                    }
-                )
             # TODO: 임시 값, 추후 수정 필요
-            certificate_number = f"CERT-{datetime.now().strftime('%Y%m')}-{str(uuid.uuid4())[:8].upper()}"
+            certificate_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{str(uuid.uuid4())[:2].upper()}"
 
             # PDF 수료증 생성
             pdf_generator = PDFGenerator()
@@ -149,3 +135,4 @@ class CertificateService:
                     "message": f"{str(e)}"
                 }
             )
+
