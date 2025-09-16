@@ -34,6 +34,6 @@ PseudoLab {course_name} {season} 수료를 축하드립니다! 🎉
 앞으로도 많은 관심과 참여 부탁드립니다! 🚀
 
 감사합니다.
-PseudoLab(DevFactory) 팀
+PseudoLab 팀
         """
         return body
