@@ -4,6 +4,15 @@ FROM python:3.11-slim-buster
 # Set the working directory in the container
 WORKDIR /app
 
+# Install tzdata and set timezone to Asia/Seoul
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends tzdata && \
+    ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    echo "Asia/Seoul" > /etc/timezone && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ENV TZ=Asia/Seoul
+
 # Copy the dependency files
 COPY requirements.txt .
 COPY uv.lock .
