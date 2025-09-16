@@ -1,0 +1,70 @@
+name: Deploy (self-hosted)
+
+on:
+  push:
+    branches: ['**']
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: oracle
+    steps:
+      - uses: actions/checkout@v4
+
+      # === main 배포 ===
+      - name: Build & up (main)
+        if: github.ref == 'refs/heads/main'
+        env:
+          # --- Frontend build arg / 공용 ENV ---
+          FRONTEND_EXTERNAL_API_URL: ${{ vars.FRONTEND_EXTERNAL_API_URL }}
+          FRONTEND_PORT: ${{ vars.FRONTEND_PORT }}
+          BACKEND_PORT: ${{ vars.BACKEND_PORT }}
+
+          # --- Backend runtime ENV (공용) ---
+          CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
+          SMTP_HOST: ${{ vars.SMTP_HOST }}
+          SMTP_PORT: ${{ vars.SMTP_PORT }}
+          SMTP_USERNAME: ${{ vars.SMTP_USERNAME }}
+
+          # --- Notion / Secrets (공용) ---
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_CERT_DB_ID: ${{ secrets.NOTION_CERT_DB_ID }}
+          NOTION_PROJ_DB_ID: ${{ secrets.NOTION_PROJ_DB_ID }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+
+          ENV_MODE: production
+        run: |
+          echo "ENV_MODE=$ENV_MODE"
+          docker compose config -q
+          docker compose down --remove-orphans
+          docker compose up -d --build --remove-orphans
+          docker image prune -f
+
+      # === 비-main (테스트 배포) ===
+      - name: Build & up (non-main)
+        if: github.ref != 'refs/heads/main'
+        env:
+          # --- Frontend build arg / 공용 ENV ---
+          FRONTEND_EXTERNAL_API_URL: ${{ vars.FRONTEND_EXTERNAL_API_URL }}
+          FRONTEND_PORT: ${{ vars.FRONTEND_PORT }}
+          BACKEND_PORT: ${{ vars.BACKEND_PORT }}
+
+          # --- Backend runtime ENV (공용 + 테스트 전용) ---
+          CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
+          SMTP_HOST: ${{ vars.SMTP_HOST }}
+          SMTP_PORT: ${{ vars.SMTP_PORT }}
+          SMTP_USERNAME: ${{ vars.TEST_SMTP_USERNAME }}
+
+          # --- Notion / Secrets (테스트 전용) ---
+          NOTION_API_KEY: ${{ secrets.TEST_NOTION_API_KEY }}
+          NOTION_CERT_DB_ID: ${{ secrets.TEST_NOTION_CERT_DB_ID }}
+          NOTION_PROJ_DB_ID: ${{ secrets.TEST_NOTION_PROJ_DB_ID }}
+          SMTP_PASSWORD: ${{ secrets.TEST_SMTP_PASSWORD }}
+
+          ENV_MODE: test
+        run: |
+          echo "ENV_MODE=$ENV_MODE"
+          docker compose config -q
+          docker compose down --remove-orphans
+          docker compose up -d --build --remove-orphans
+          docker image prune -f
