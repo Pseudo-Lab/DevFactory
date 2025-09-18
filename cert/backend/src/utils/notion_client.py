@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 import aiohttp
 from typing import Optional, Dict, Any, List
@@ -448,6 +448,110 @@ class NotionClient:
             print(f"기수별 프로젝트 조회 중 오류: {e}")
             return None
                         
+    async def check_existing_certificate(
+        self,
+        applicant_name: str,
+        course_name: str,
+        season: int,
+        recipient_email: str = None
+    ) -> Optional[Dict[str, Any]]:
+        """기존 수료증 확인 (재발급용) - 이름, 코스명, 기수로 검색 (이메일 무관)"""
+        try:
+            async with aiohttp.ClientSession() as session:
+                url = f"{self.base_url}/databases/{self.databases['certificate_requests']}/query"
+                
+                # 필터 조건 구성 (이름, 코스명, 기수로만 검색 - 이메일은 무관)
+                filters = [
+                    {
+                        "property": "Name",
+                        "title": {
+                            "equals": applicant_name
+                        }
+                    },
+                    {
+                        "property": "Course Name",
+                        "rich_text": {
+                            "equals": course_name
+                        }
+                    },
+                    {
+                        "property": "Season",
+                        "select": {
+                            "equals": f"{season}기"
+                        }
+                    }
+                ]
+                
+                payload = {
+                    "filter": {
+                        "and": filters
+                    }
+                }
+                
+                async with session.post(url, headers=self.headers, json=payload) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        if data["results"]:
+                            # 가장 최근 수료증 반환 (첫 번째 결과)
+                            existing_cert = data["results"][0]
+                            properties = existing_cert.get("properties", {})
+                            
+                            # 기존 수료증 정보 추출
+                            certificate_number = ""
+                            if "Certificate Number" in properties:
+                                cert_num_prop = properties["Certificate Number"].get("rich_text", [])
+                                if cert_num_prop:
+                                    certificate_number = cert_num_prop[0].get("plain_text", "")
+                            
+                            role = ""
+                            if "Role" in properties:
+                                role_prop = properties["Role"].get("select", {})
+                                if role_prop:
+                                    role = role_prop.get("name", "")
+                            
+                            status = ""
+                            if "Certificate Status" in properties:
+                                status_prop = properties["Certificate Status"].get("status", {})
+                                if status_prop:
+                                    status = status_prop.get("name", "")
+                            
+                            # 이메일 정보 추출
+                            existing_email = ""
+                            if "Recipient Email" in properties:
+                                email_prop = properties["Recipient Email"].get("email", "")
+                                if email_prop:
+                                    existing_email = email_prop
+                            
+                            print("🔍 기존 수료증 발견 (이름, 코스, 기수 일치):")
+                            print(f"   - 이름: {applicant_name}")
+                            print(f"   - 코스: {course_name}")
+                            print(f"   - 기수: {season}기")
+                            print(f"   - 수료증 번호: '{certificate_number}'")
+                            print(f"   - 역할: '{role}'")
+                            print(f"   - 상태: '{status}'")
+                            
+                            return {
+                                "found": True,
+                                "page_id": existing_cert.get("id"),
+                                "certificate_number": certificate_number,
+                                "role": role,
+                                "status": status,
+                                "issue_date": properties.get("Issue Date", {}).get("date", {}).get("start", ""),
+                                "existing_email": existing_email,
+                                "existing_data": existing_cert
+                            }
+                        else:
+                            print(f"🔍 기존 수료증 없음: {applicant_name}, {course_name}, {season}기")
+                            return {"found": False}
+                    else:
+                        error_text = await response.text()
+                        print(f"기존 수료증 확인 오류: {response.status} - {error_text}")
+                        return None
+                        
+        except Exception as e:
+            print(f"기존 수료증 확인 중 오류: {e}")
+            return None
+
     async def get_database_structure(self, database_type: str = "project_history") -> Optional[Dict[str, Any]]:
         """데이터베이스 구조 조회 (디버깅용)"""
         try:
