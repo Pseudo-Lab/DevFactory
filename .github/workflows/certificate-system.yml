@@ -50,6 +50,8 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
         run: |
           set -euxo pipefail
+          : "${FRONTEND_PORT:?FRONTEND_PORT is empty}"
+          : "${BACKEND_PORT:?BACKEND_PORT is empty}"
           echo "ENV_MODE=$ENV_MODE"
           docker compose -p cert-main config -q
           docker compose -p cert-main down --remove-orphans
@@ -78,6 +80,8 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.DEV_SMTP_PASSWORD }}
         run: |
           set -euxo pipefail
+          : "${FRONTEND_PORT:?FRONTEND_PORT is empty}"
+          : "${BACKEND_PORT:?BACKEND_PORT is empty}"
           echo "ENV_MODE=$ENV_MODE"
           docker compose -p cert-dev config -q
           docker compose -p cert-dev down --remove-orphans
