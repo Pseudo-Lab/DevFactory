@@ -2,8 +2,17 @@ name: Deploy (self-hosted)
 
 on:
   push:
-    branches: ['**']
+    branches: 
+      - 'main'
+      - 'deploy/cert-develop'
+    paths:
+      - 'cert/**'
   workflow_dispatch:
+
+# 같은 브랜치 동시 실행 시 이전 잡 취소(경쟁 배포 방지)
+concurrency:
+  group: cert-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -11,6 +20,10 @@ jobs:
     defaults:
       run:
         working-directory: ./cert
+    env:
+      # 공용(운영/개발 공통) - 중복 제거
+      SMTP_HOST: ${{ vars.SMTP_HOST }}
+      SMTP_PORT: ${{ vars.SMTP_PORT }}
 
     steps:
       - uses: actions/checkout@v4
@@ -19,56 +32,54 @@ jobs:
       - name: Build & up (main)
         if: github.ref == 'refs/heads/main'
         env:
-          # --- Frontend build arg / 공용 ENV ---
+          ENV_MODE: production
+          
+          # --- Frontend build arg / 운영 ---
           FRONTEND_EXTERNAL_API_URL: ${{ vars.FRONTEND_EXTERNAL_API_URL }}
           FRONTEND_PORT: ${{ vars.FRONTEND_PORT }}
           BACKEND_PORT: ${{ vars.BACKEND_PORT }}
 
-          # --- Backend runtime ENV (공용) ---
+          # --- Backend runtime / 운영 ---
           CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
-          SMTP_HOST: ${{ vars.SMTP_HOST }}
-          SMTP_PORT: ${{ vars.SMTP_PORT }}
           SMTP_USERNAME: ${{ vars.SMTP_USERNAME }}
 
-          # --- Notion / Secrets (공용) ---
+          # --- Notion, Secrets / 운영 ---
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           NOTION_CERT_DB_ID: ${{ secrets.NOTION_CERT_DB_ID }}
           NOTION_PROJ_DB_ID: ${{ secrets.NOTION_PROJ_DB_ID }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-
-          ENV_MODE: production
         run: |
+          set -euxo pipefail
           echo "ENV_MODE=$ENV_MODE"
-          docker compose config -q
-          docker compose down --remove-orphans
-          docker compose up -d --build --remove-orphans
-          docker image prune -f
+          docker compose -p cert-main config -q
+          docker compose -p cert-main down --remove-orphans
+          docker compose -p cert-main up -d --build --remove-orphans
+          docker image prune -f --filter "label=org.pseudolab.project=cert"
 
-      # === 비-main (테스트 배포) ===
-      - name: Build & up (non-main)
-        if: github.ref != 'refs/heads/main'
+      # === 개발 배포 (deploy/cert-develop) ===
+      - name: Build & up (develop)
+        if: github.ref == 'refs/heads/deploy/cert-develop'
         env:
-          # --- Frontend build arg / 공용 ENV ---
-          FRONTEND_EXTERNAL_API_URL: ${{ vars.FRONTEND_EXTERNAL_API_URL }}
-          FRONTEND_PORT: ${{ vars.FRONTEND_PORT }}
-          BACKEND_PORT: ${{ vars.BACKEND_PORT }}
+          ENV_MODE: development
 
-          # --- Backend runtime ENV (공용 + 테스트 전용) ---
-          CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
-          SMTP_HOST: ${{ vars.SMTP_HOST }}
-          SMTP_PORT: ${{ vars.SMTP_PORT }}
-          SMTP_USERNAME: ${{ vars.TEST_SMTP_USERNAME }}
+          # --- Frontend build arg / 개발 ---
+          FRONTEND_EXTERNAL_API_URL: ${{ vars.DEV_FRONTEND_EXTERNAL_API_URL }}
+          FRONTEND_PORT: ${{ vars.DEV_FRONTEND_PORT }}
+          BACKEND_PORT: ${{ vars.DEV_BACKEND_PORT }}
 
-          # --- Notion / Secrets (테스트 전용) ---
-          NOTION_API_KEY: ${{ secrets.TEST_NOTION_API_KEY }}
-          NOTION_CERT_DB_ID: ${{ secrets.TEST_NOTION_CERT_DB_ID }}
-          NOTION_PROJ_DB_ID: ${{ secrets.TEST_NOTION_PROJ_DB_ID }}
-          SMTP_PASSWORD: ${{ secrets.TEST_SMTP_PASSWORD }}
+          # --- Backend runtime / 개발 ---
+          CORS_ORIGINS: ${{ vars.DEV_CORS_ORIGINS }}
+          SMTP_USERNAME: ${{ vars.DEV_SMTP_USERNAME }}
 
-          ENV_MODE: test
+          # --- Notion, Secrets / 개발 ---
+          NOTION_API_KEY: ${{ secrets.DEV_NOTION_API_KEY }}
+          NOTION_CERT_DB_ID: ${{ secrets.DEV_NOTION_CERT_DB_ID }}
+          NOTION_PROJ_DB_ID: ${{ secrets.DEV_NOTION_PROJ_DB_ID }}
+          SMTP_PASSWORD: ${{ secrets.DEV_SMTP_PASSWORD }}
         run: |
+          set -euxo pipefail
           echo "ENV_MODE=$ENV_MODE"
-          docker compose config -q
-          docker compose down --remove-orphans
-          docker compose up -d --build --remove-orphans
-          docker image prune -f
+          docker compose -p cert-dev config -q
+          docker compose -p cert-dev down --remove-orphans
+          docker compose -p cert-dev up -d --build --remove-orphans
+          docker image prune -f --filter "label=org.pseudolab.project=cert"
