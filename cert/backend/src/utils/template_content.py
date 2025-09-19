@@ -23,7 +23,7 @@ class TemplateContent:
         body = f"""
 안녕하세요, {recipient_name}님!
 
-PseudoLab {course_name} {season} 수료를 축하드립니다! 🎉
+PseudoLab {course_name} {season}기 수료를 축하드립니다! 🎉
 
 📋 활동 정보:
 • 스터디명: {course_name}
@@ -34,6 +34,6 @@ PseudoLab {course_name} {season} 수료를 축하드립니다! 🎉
 앞으로도 많은 관심과 참여 부탁드립니다! 🚀
 
 감사합니다.
-PseudoLab 팀
+PseudoLab 드림
         """
         return body
