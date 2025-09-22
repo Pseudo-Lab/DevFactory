@@ -68,7 +68,10 @@ async function fetchStudyMeta(): Promise<StudyMeta> {
     studies.push(item.name);
   }
 
-  const periods = Object.keys(studiesByPeriod).sort();
+  const periods = Object.keys(studiesByPeriod)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map(String);
 
   return {
     periods,
