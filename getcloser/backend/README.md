@@ -6,8 +6,13 @@
 3. API 서버 접속:
 `http://localhost:8000/docs`
 
+4. 초기 구조:
+- FastAPI 기반 REST API 서버
+- PostgreSQL 연결 및 ORM 지원
+- `/test/ping_db` 엔드포인트를 통한 DB 연결 상태 확인
 
-### 코드 구조
+
+### 폴더 구조
 ```
 .
 ├── docker-compose.yaml
