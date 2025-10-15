@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, APIRouter
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
-from ..database import get_db
+from core.database import get_db
 
 test_router = APIRouter(prefix="/test", tags=["test"])
 

@@ -19,8 +19,8 @@ services:
       - "${BACKEND_PORT}:8000"
     environment:
       DATABASE_URL: postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
-      SECRET_KEY: ${SECRET_KEY:-change-me-in-prod}
-      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      # SECRET_KEY: ${SECRET_KEY:-change-me-in-prod}
+      # ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
     depends_on:
       db:
         condition: service_healthy
