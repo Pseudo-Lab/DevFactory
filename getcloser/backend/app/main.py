@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 
-from .database import engine, Base
-from .routers import test_db
+from core.database import engine, Base
+from routers import test_db
 
 
 # .env 파일 로드
