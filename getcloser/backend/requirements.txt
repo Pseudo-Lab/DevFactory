@@ -3,4 +3,5 @@ uvicorn[standard]
 SQLAlchemy
 pydantic
 pydantic_settings
+pydantic[email]
 psycopg2-binary
