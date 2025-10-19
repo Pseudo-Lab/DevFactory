@@ -72,6 +72,7 @@ export default function Page2() {
         {[...Array(5)].map((_, index) => (
           <div key={index}>
             <Label htmlFor={`team-email-${index}`}>팀원 {index + 1}</Label>
+            {index === 0 && <Label> (나)</Label>}
             <Input
               id={`team-email-${index}`}
               type="email"
