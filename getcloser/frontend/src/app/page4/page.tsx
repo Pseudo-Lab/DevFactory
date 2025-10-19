@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import React, { useEffect, useState } from 'react';
@@ -8,6 +7,8 @@ import Image from 'next/image';
 
 export default function Page4() {
   const [result, setResult] = useState<string>('');
+  const [clickCount, setClickCount] = useState<number>(0);
+  const [lastClickTime, setLastClickTime] = useState<number>(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -17,6 +18,22 @@ export default function Page4() {
 
   const handleTryAgain = () => {
     router.push('/page2');
+  };
+
+  const handleSuccessClick = () => {
+    const currentTime = new Date().getTime();
+    if (currentTime - lastClickTime < 2000) { // 2 seconds window
+      setClickCount(prevCount => prevCount + 1);
+    } else {
+      setClickCount(1);
+    }
+    setLastClickTime(currentTime);
+
+    if (clickCount + 1 >= 5) { // Check if this click makes it 5
+      alert("수령 완료!");
+      setClickCount(0); // Reset after alert
+      setLastClickTime(0); // Reset time as well
+    }
   };
 
   return (
@@ -31,6 +48,7 @@ export default function Page4() {
               width={100}
               height={100}
               className="mx-auto block"
+              onClick={handleSuccessClick}
             />
             <p>DevFactory 부스에 방문하여 해당 화면을 보여주세요.<br />부스 방문 시 선물 드립니다!</p>
           </>
