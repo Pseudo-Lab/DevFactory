@@ -1,12 +1,14 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useFormStore } from '../../store/formStore';
-import React, { useState } from 'react';
+import Modal from '@/components/Modal';
+import Cookies from 'js-cookie';
 
 export default function Page2() {
   const { email } = useFormStore();
@@ -18,6 +20,23 @@ export default function Page2() {
     }
     return initialInputs;
   });
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const hasSeenModal = Cookies.get('doNotShowModalPage2');
+    if (!hasSeenModal) {
+      setShowModal(true);
+    }
+  }, []);
+
+  const handleConfirm = () => {
+    setShowModal(false);
+  };
+
+  const handleDoNotShowAgain = () => {
+    Cookies.set('doNotShowModalPage2', 'true', { expires: 365 }); // Cookie expires in 365 days
+    setShowModal(false);
+  };
 
   const handleInputChange = (index: number, value: string) => {
     const newInputs = [...inputs];
@@ -33,8 +52,20 @@ export default function Page2() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Page 2</h1>
-      <p>This is the second page.</p>
+      <Modal
+        title="미션 소개"
+        content={(
+          `1. 참가자들의 코드를 모으세요!<br />` +
+          `   코드는 위에 개인별 다른 코드가 있습니다.<br />` +
+          `2. 5명이 함께 문제 풀기에 도전하세요!<br />` +
+          `   (팁! 문제는 팀원들과 관련된 문제가 나옵니다.)<br />` +
+          `3. 성공 시 부스 방문해주세요.<br />` +
+          `   성공 선물을 드립니다.`
+        )}
+        onConfirm={handleConfirm}
+        onDoNotShowAgain={handleDoNotShowAgain}
+        isOpen={showModal}
+      />
       {email && <p className="mt-4">이메일: <strong>{email}</strong></p>}
 
       <div className="mt-8 space-y-4">
@@ -55,10 +86,9 @@ export default function Page2() {
       </div>
 
       <nav className="flex justify-between mt-8">
-        <Button asChild>
-          <Link href="/page1">이전 페이지 (Page 1)</Link>
+        <Button asChild className="rounded-full" variant={ 'outline' }>
+          <Link href="/page1">&lt;</Link>
         </Button>
-        {/* Removed '다음 페이지 (Page 3)' button */}
       </nav>
     </div>
   );
