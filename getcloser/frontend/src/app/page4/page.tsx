@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 export default function Page4() {
   const [result, setResult] = useState<string>('');
@@ -20,15 +21,23 @@ export default function Page4() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Page 4</h1>
-      <p>This is the fourth page.</p>
-
       <div className="mt-8 text-center">
         {result === '성공' ? (
-          <p className="text-green-600 text-3xl font-bold">결과: 성공!</p>
+          <>
+            <p className="text-3xl font-bold">성공!</p>
+            <Image
+              src="/free-icon-success.png"
+              alt="Success"
+              width={100}
+              height={100}
+              className="mx-auto block"
+            />
+            <p>DevFactory 부스에 방문하여 해당 화면을 보여주세요.<br />부스 방문 시 선물 드립니다!</p>
+          </>
         ) : (
           <>
-            <p className="text-red-600 text-3xl font-bold">결과: 실패!</p>
+            <p className="text-red-600 text-3xl font-bold">실패!</p>
+            <Image src="/free-icon-failure.png" alt="Fail" width={100} height={100} className="mx-auto block" />
             <Button onClick={handleTryAgain} className="mt-4">다시 도전하기</Button>
           </>
         )}
