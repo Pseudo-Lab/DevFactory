@@ -5,6 +5,7 @@ import os
 
 from core.database import engine, Base
 from routers import test_db
+from api.v1 import api_router
 
 
 # .env 파일 로드
@@ -32,6 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(api_router, prefix="/api/v1")
 app.include_router(test_db.test_router)
 
 
