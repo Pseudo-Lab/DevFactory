@@ -1,28 +1,35 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { useFormStore } from '../../store/formStore';
+import { Rows } from 'lucide-react';
 
 export default function Page1() {
-  const { email, question, answer, setEmail, setQuestion, setAnswer } = useFormStore();
+  const { email, setEmail } = useFormStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form Submitted:', { email, question, answer });
+    console.log('Form Submitted:', { email });
     // Here you would typically send this data to an API
     alert('정보가 제출되었습니다! 콘솔을 확인해주세요.');
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 min-h-screen flex items-center justify-center">
       <main className="max-w-md mx-auto bg-card text-card-foreground p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">참가 정보 입력</h2>
+        <h1 className="text-5xl font-bold">친해지길바라</h1>
+        <Image src="/logo.png" alt="Fail" width={52} height={58} style={{marginTop: 36, marginBottom: 36}} className="mx-auto block" />
+        <div className="items-center text-center" style={{marginBottom: 36}}>
+          <p className="text-md mt-1">Pseudo Lab</p>
+          <p className="text-md">2nd Grand Gathering</p>
+          <p className="text-md">2025. 11. 15</p>
+        </div>
         <form className="space-y-4" onSubmit={handleSubmit}>
-          <div>
+          <div className='items-center text-center'>
             <Label htmlFor="email">이메일 주소</Label>
             <Input
               id="email"
@@ -31,26 +38,6 @@ export default function Page1() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label htmlFor="question">나만의 질문</Label>
-            <Textarea
-              id="question"
-              placeholder="행사 미션에서 사용 할 나만의 질문을 입력해주세요."
-              required
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label htmlFor="answer">답변</Label>
-            <Textarea
-              id="answer"
-              placeholder="질문에 대한 답변을 입력해주세요."
-              required
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
             />
           </div>
           <Link href="/page2"><Button type="submit" className="w-full">정보 제출</Button></Link>
