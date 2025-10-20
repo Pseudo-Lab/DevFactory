@@ -8,6 +8,5 @@ class UserResponse(BaseModel):
   email: str
   name: str
   
-  
-  class Config:
-    orm_mode = True
+class Config:
+  orm_mode = True
