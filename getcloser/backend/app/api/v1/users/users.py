@@ -15,4 +15,4 @@ def auth(user_auth: UserAuth, db: Session = Depends(get_db)):
 @router.get("/{id}")
 def get_user_name(id: int, db: Session = Depends(get_db)):
   user = get_user(db, id)
-  return {"data": f"{user.name}#{user.id}"}
+  return {"data": f"{user.name}#{str(user.id).zfill(4)}"}
