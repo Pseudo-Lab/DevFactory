@@ -8,3 +8,10 @@ def auth_user(db: Session, email: str):
   if not user:
     raise UserNotFoundException(email)
   return user
+
+
+def get_user(db: Session, id: int):
+  user = db.query(User).filter(User.id == id).first()
+  if not user:
+    raise UserNotFoundException(id)
+  return user
