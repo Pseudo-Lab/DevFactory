@@ -16,3 +16,22 @@ def redeem_goods(db: Session, user_id: int):
 
     db.commit()
     return {"message": "굿즈 수령 완료", "redeemed_at": now}
+
+def retry_challenge(db: Session, user_id: int):
+  user_status = db.query(UserChallengeStatus).filter(UserChallengeStatus.user_id == user_id).first()
+  
+  if not user_status:
+    raise HTTPException(status=404, detail="User not found")
+  if user_status.is_correct:
+    raise HTTPException(status_code=400, detail="Already solved correctly")
+  if user_status.retry_count >= 1:
+    raise HTTPException(status_code=400, detail="Retry limit reached")
+  
+  user_status.retry_count += 1
+  db.commit()
+  db.refresh(user_status)
+  
+  return {
+    "message": "Retry granted",
+    "retry_count": user_status.retry_count
+  }

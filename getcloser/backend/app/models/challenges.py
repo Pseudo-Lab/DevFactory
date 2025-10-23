@@ -10,4 +10,5 @@ class UserChallengeStatus(Base):
     submitted_at = Column(DateTime(timezone=True))
     is_redeemed = Column(Boolean, default=False)
     redeemed_at = Column(DateTime(timezone=True))
+    retry_count = Column(Integer, default=0)
     
