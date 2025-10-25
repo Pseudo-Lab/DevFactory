@@ -12,7 +12,7 @@ def seed_users_from_csv(file_path: str):
             reader = csv.DictReader(csvfile)
             for row in reader:
                 user = User(
-                    id=int(row["id"]),
+                    id=int(row["user_id"]),
                     email=row["email"],
                     name=row["name"]
                 )
@@ -26,5 +26,5 @@ def seed_users_from_csv(file_path: str):
     finally:
         db.close()
 
-if __name__ == "__main__":
-    seed_users_from_csv("user_dummy_data.csv")
+# if __name__ == "__main__":
+#     seed_users_from_csv("user_data.csv")
