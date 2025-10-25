@@ -8,7 +8,7 @@ from routers import test_db
 from api.v1 import api_router
 
 from scripts.users import seed_users_from_csv
-from getcloser.backend.app.scripts.challenge_question import seed_challenge_questions_from_csv
+from scripts.challenge_question import seed_challenge_questions_from_csv
 
 
 # .env 파일 로드

@@ -1,5 +1,5 @@
 from api.v1.users import users
-from getcloser.backend.app.api.v1.challenge import assign_challenge
+from api.v1.challenge import assign_challenge
 from fastapi import APIRouter
 
 api_router = APIRouter()

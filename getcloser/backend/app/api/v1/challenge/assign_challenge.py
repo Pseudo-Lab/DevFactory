@@ -6,7 +6,7 @@ from core.database import get_db
 
 router = APIRouter()
 
-@router.post("/assign-challenges/", response_model=ChallengeResponse)
+@router.post("/assign-challenges", response_model=ChallengeResponse)
 def assign_challenges(request: ChallengeRequest, db: Session = Depends(get_db)):
     try:
         assigned = assign_challenges_logic(request.members_id, db)
