@@ -7,6 +7,9 @@ from core.database import engine, Base
 from routers import test_db
 from api.v1 import api_router
 
+from scripts.users import seed_users_from_csv
+from getcloser.backend.app.scripts.challenge_question import seed_challenge_questions_from_csv
+
 
 # .env 파일 로드
 load_dotenv()
@@ -50,3 +53,10 @@ async def read_root():
 async def health_check():
     """헬스 체크 엔드포인트"""
     return {"status": "healthy"}
+
+# 서버 시작 시 실행
+@app.on_event("startup")
+def on_startup():
+    print("🚀 Server starting, seeding challenge questions...")
+    seed_users_from_csv("./scripts/user_data.csv")
+    seed_challenge_questions_from_csv("./scripts/challenge_question.csv")
