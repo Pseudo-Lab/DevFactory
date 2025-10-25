@@ -8,14 +8,37 @@ import { Label } from '@/components/ui/label';
 import { useFormStore } from '../../store/formStore';
 import { Rows } from 'lucide-react';
 
+import { useRouter } from 'next/navigation';
+
 export default function Page1() {
   const { email, setEmail } = useFormStore();
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Form Submitted:', { email });
-    // Here you would typically send this data to an API
-    alert('정보가 제출되었습니다! 콘솔을 확인해주세요.');
+
+    try {
+      const response = await fetch(`${process.env.APP_HOST}/api/v1/users/auth`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Auth API Response:', result);
+      alert('정보가 제출되었습니다!');
+      router.push('/page2'); // Navigate to page2 after successful submission
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('정보 제출에 실패했습니다.');
+    }
   };
 
   return (
@@ -40,7 +63,7 @@ export default function Page1() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <Link href="/page2"><Button type="submit" className="w-full">정보 제출</Button></Link>
+          <Button type="submit" className="w-full">정보 제출</Button>
           
         </form>
       </main>
