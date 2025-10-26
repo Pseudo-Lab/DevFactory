@@ -54,7 +54,7 @@ services:
       - traefik.docker.network=traefik
 
       # --- Traefik Router (backend) ---
-      - traefik.http.routers.getcloser-api.rule=Host(`${APP_HOST}`) && PathPrefix(`/api`)
+      - traefik.http.routers.getcloser-api.rule=Host(`${APP_HOST}`) && PathPrefix(`/api`) || Host(`${APP_HOST}`) && PathPrefix(`/docs`) || Host(`${APP_HOST}`) && PathPrefix(`/redoc`) || Host(`${APP_HOST}`) && PathPrefix(`/health`) || Host(`${APP_HOST}`) && Path(`/openapi.json`)
       - traefik.http.routers.getcloser-api.entrypoints=websecure
       - traefik.http.routers.getcloser-api.tls=true
       - traefik.http.routers.getcloser-api.tls.certresolver=le
