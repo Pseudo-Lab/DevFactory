@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from models.challenge_question import ChallengeQuestion
 from schemas.challenge_schema import AssignedChallenge
 
-def assign_challenges_logic(members: list, db: Session) -> list:
+
+def assign_challenges_logic(my_id: str, members: list, db: Session) -> list:
     team_questions = db.query(ChallengeQuestion).filter(ChallengeQuestion.user_id.in_(members)).all()
     if len(team_questions) < 2:
         raise ValueError("팀원 문제가 충분하지 않습니다.")
@@ -30,4 +31,4 @@ def assign_challenges_logic(members: list, db: Session) -> list:
             answer=assigned_question.answer
         ))
 
-    return assigned_list
+    return assigned_list[0]

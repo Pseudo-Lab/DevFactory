@@ -3,7 +3,8 @@ from typing import List
 
 class ChallengeRequest(BaseModel):
     team_id: int
-    members_id: List[int]
+    my_id: str
+    members_ids: List[str]
 
 class AssignedChallenge(BaseModel):
     user_id: int
@@ -14,4 +15,4 @@ class AssignedChallenge(BaseModel):
 
 class ChallengeResponse(BaseModel):
     team_id: int
-    assigned: List[AssignedChallenge]
+    my_assigned: AssignedChallenge
