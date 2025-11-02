@@ -1,4 +1,4 @@
-challenge_id,user_id,category,answer
+id,user_id,category,answer
 1,1,1,LLM
 2,1,2,등산
 3,1,3,INFP
