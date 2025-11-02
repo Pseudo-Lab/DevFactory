@@ -1,0 +1,38 @@
+name: Deploy GetCloser
+
+on:
+  push:
+    branches:
+      - main
+      - deploy/getcloser-test
+  workflow_dispatch:
+
+jobs:
+  # ========================================
+  # 🚀 Deploy GetCloser Service
+  # ========================================
+  deploy-prod:
+    if: github.ref_name == 'main' || github.ref_name == 'deploy/getcloser-test'
+    name: 🚀 Deploy GetCloser
+    runs-on: oracle
+    environment: getcloser
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Create .env file for PROD
+        run: |
+          set -e
+          echo "DB_USER=${{ secrets.DB_USER }}" > .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_DATABASE=${{ vars.DB_DATABASE }}" >> .env
+          echo "APP_HOST=${{ vars.APP_HOST }}" >> .env
+
+      - name: 🚀 Deploy to PROD
+        run: |
+          docker compose -f docker-compose.yaml -p getcloser-${{ github.ref_name }} down --remove-orphans || true
+          docker compose -f docker-compose.yaml -p getcloser-${{ github.ref_name }} up -d --build
