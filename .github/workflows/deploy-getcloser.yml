@@ -7,6 +7,11 @@ on:
       - deploy-getcloser
   workflow_dispatch:
 
+# 같은 브랜치 동시 실행 시 이전 잡 취소(경쟁 배포 방지)
+concurrency:
+  group: cert-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # ========================================
   # 🚀 Deploy GetCloser Service
@@ -16,6 +21,9 @@ jobs:
     name: 🚀 Deploy GetCloser
     runs-on: oracle
     environment: getcloser
+    defaults:
+      run:
+        working-directory: ./getcloser
 
     steps:
       - name: Checkout branch
