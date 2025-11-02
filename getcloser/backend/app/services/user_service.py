@@ -15,3 +15,12 @@ def get_user(db: Session, id: int):
   if not user:
     raise UserNotFoundException(id)
   return user
+
+
+def parse_user_id(tag: str):
+  try:
+    name, id_str = tag.split("#")
+    user_id = int(id_str)
+    return {"id": user_id}
+  except ValueError:
+    return {"error": "올바른 형식의 유저 태그가 아닙니다. 예: 김민준#0001"}
