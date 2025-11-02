@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - deploy/getcloser-test
+      - deploy-getcloser
   workflow_dispatch:
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
   # 🚀 Deploy GetCloser Service
   # ========================================
   deploy-prod:
-    if: github.ref_name == 'main' || github.ref_name == 'deploy/getcloser-test'
+    if: github.ref_name == 'main' || github.ref_name == 'deploy-getcloser'
     name: 🚀 Deploy GetCloser
     runs-on: oracle
     environment: getcloser
