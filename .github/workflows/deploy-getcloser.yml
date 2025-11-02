@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - deploy-getcloser
   workflow_dispatch:
 
 # 같은 브랜치 동시 실행 시 이전 잡 취소(경쟁 배포 방지)
@@ -17,7 +16,7 @@ jobs:
   # 🚀 Deploy GetCloser Service
   # ========================================
   deploy-prod:
-    if: github.ref_name == 'main' || github.ref_name == 'deploy-getcloser'
+    if: github.ref_name == 'main'
     name: 🚀 Deploy GetCloser
     runs-on: oracle
     environment: getcloser
