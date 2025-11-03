@@ -9,7 +9,7 @@ from models.challenges import UserChallengeStatus
 
 def assign_challenges_logic(my_id: str, members: list, db: Session) -> list:
     team_questions = db.query(ChallengeQuestion).filter(ChallengeQuestion.user_id.in_(members)).all()
-    if len(team_questions) < 2:
+    if len(team_questions) < len(members):
         raise ValueError("팀원 문제가 충분하지 않습니다.")
 
     assigned_list = []
