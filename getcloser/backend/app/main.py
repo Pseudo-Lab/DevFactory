@@ -1,11 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
 from dotenv import load_dotenv
 import os
 
 from core.database import engine, Base
 from routers import test_db
 from api.v1 import api_router
+
+from scripts.users import seed_users_from_csv
+from scripts.challenge_question import seed_challenge_questions_from_csv
 
 
 # .env 파일 로드
@@ -22,6 +26,22 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
 )
+
+# Swagger 기본 경로를 /api 로 지정
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(   
+        title=app.title,
+        version=app.version,
+        description=app.description,
+        routes=app.routes,
+    )
+    openapi_schema["servers"] = [{"url": "/api"}]
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
 
 # CORS 미들웨어 설정
 origins = os.getenv("CORS_ORIGINS", "").split(",")
@@ -50,3 +70,10 @@ async def read_root():
 async def health_check():
     """헬스 체크 엔드포인트"""
     return {"status": "healthy"}
+
+# 서버 시작 시 실행
+@app.on_event("startup")
+def on_startup():
+    print("🚀 Server starting, seeding challenge questions...")
+    seed_users_from_csv("./scripts/user_data.csv")
+    seed_challenge_questions_from_csv("./scripts/challenge_question.csv")
