@@ -42,8 +42,12 @@ export default function Page2() {
       const newInputs = [...inputs];
       newInputs[index] = { id: userId, displayName: userData.data || userId }; // Store both id and display name
       setInputs(newInputs);
-    } catch (error) {
-      console.error(`Error fetching user ${userId}:`, error);
+    } catch (error: unknown) {
+      let errorMessage = '알 수 없는 오류가 발생했습니다.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error(`Error fetching user ${userId}:`, errorMessage);
       const newInputs = [...inputs];
       newInputs[index] = { id: userId, displayName: userId }; // Fallback to just ID if fetch fails
       setInputs(newInputs);
@@ -90,10 +94,51 @@ export default function Page2() {
     }, 3000);
   };
 
-  const handleSolveProblem = () => {
-    console.log('Inputs:', inputs.map(input => input.id));
-    // You can add logic here to process the inputs before navigating
-    router.push('/page3');
+  const handleSolveProblem = async () => {
+    // Step 1: Check if all inputs are filled
+    const allInputsFilled = inputs.every(input => input.id !== '');
+    if (!allInputsFilled) {
+      alert('모든 팀원 ID를 채워주세요.');
+      return;
+    }
+
+    // Step 2: Construct the JSON body
+    const myId = id; // id from useFormStore()
+    const memberIds = inputs.slice(1).map(input => input.id); // Exclude the first input (my_id)
+
+    const requestBody = {
+      my_id: myId,
+      member_ids: memberIds,
+    };
+
+    console.log('Request Body:', requestBody);
+
+    // Step 3: Make the POST request
+    try {
+      const response = await fetch('/api/v1/teams/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.detail || response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      console.log('Team creation successful:', responseData);
+      router.push('/page3'); // Navigate to page3 on success
+    } catch (error: unknown) {
+      console.error('Error creating team:', error);
+      let errorMessage = '알 수 없는 오류가 발생했습니다.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      alert(`팀 생성에 실패했습니다: ${errorMessage}`);
+    }
   };
 
   return (
