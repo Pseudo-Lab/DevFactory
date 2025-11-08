@@ -11,7 +11,7 @@ import Modal from '@/components/Modal';
 import Cookies from 'js-cookie';
 
 export default function Page2() {
-  const { id } = useFormStore();
+  const { id, setTeamId, setMemberIds } = useFormStore();
   const router = useRouter();
   const [inputs, setInputs] = useState<Array<{ id: string; displayName: string }>>(() => {
     const initialInputs = Array(5).fill({ id: '', displayName: '' });
@@ -130,6 +130,8 @@ export default function Page2() {
 
       const responseData = await response.json();
       console.log('Team creation successful:', responseData);
+      setTeamId(responseData.team_id); // Save team_id to store
+      setMemberIds(responseData.members_ids); // Save members_ids to store
       router.push('/page3'); // Navigate to page3 on success
     } catch (error: unknown) {
       console.error('Error creating team:', error);

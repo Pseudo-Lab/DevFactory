@@ -6,11 +6,57 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useFormStore } from '../../store/formStore';
-import React from 'react';
+import React, { useEffect } from 'react'; // Import useEffect
 
 export default function Page3() {
-  const { question, answer, setAnswer } = useFormStore();
+  const { question, answer, setAnswer, id, teamId, memberIds } = useFormStore(); // Destructure new state
   const router = useRouter();
+
+  useEffect(() => {
+    const assignChallenges = async () => {
+      if (!teamId || !id || memberIds.length === 0) {
+        console.warn('Missing teamId, my_id, or memberIds for challenge assignment.');
+        return;
+      }
+
+      const requestBody = {
+        team_id: teamId,
+        my_id: id,
+        members_ids: memberIds,
+      };
+
+      console.log('Assign Challenges Request Body:', requestBody);
+
+      try {
+        const response = await fetch('/api/v1/challenge/assign-challenges', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.detail || response.statusText}`);
+        }
+
+        const responseData = await response.json();
+        console.log('Challenge assignment successful:', responseData);
+        // Here you might want to update the question in the store based on responseData
+        // setQuestion(responseData.challenge_question);
+      } catch (error: unknown) {
+        console.error('Error assigning challenges:', error);
+        let errorMessage = '알 수 없는 오류가 발생했습니다.';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        alert(`챌린지 할당에 실패했습니다: ${errorMessage}`);
+      }
+    };
+
+    assignChallenges();
+  }, [id, teamId, memberIds]); // Dependencies for useEffect
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
