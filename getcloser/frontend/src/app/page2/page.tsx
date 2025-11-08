@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -11,17 +11,45 @@ import Modal from '@/components/Modal';
 import Cookies from 'js-cookie';
 
 export default function Page2() {
-  const { email } = useFormStore();
+  const { id } = useFormStore();
   const router = useRouter();
-  const [inputs, setInputs] = useState<string[]>(() => {
-    const initialInputs = Array(5).fill('');
-    if (email) {
-      initialInputs[0] = email;
-    }
+  const [inputs, setInputs] = useState<Array<{ id: string; displayName: string }>>(() => {
+    const initialInputs = Array(5).fill({ id: '', displayName: '' });
     return initialInputs;
   });
   const [showModal, setShowModal] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null); // Add timeoutRef
+
+  const fetchUserById = useCallback(async (index: number, userId: string) => {
+    if (!userId) return; // Don't fetch if ID is empty
+
+    // Prevent adding self as a team member
+    if (index !== 0 && id && Number(userId) === Number(id)) { // Check only for other team members, not self
+      alert(`자기 자신(${userId})을 팀원으로 추가할 수 없습니다.`);
+      const newInputs = [...inputs];
+      newInputs[index] = { id: '', displayName: '' }; // Clear the input field
+      setInputs(newInputs);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/v1/users/${userId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const userData = await response.json();
+      // Assuming the API returns an object with a 'data' field which is the display name
+      const newInputs = [...inputs];
+      newInputs[index] = { id: userId, displayName: userData.data || userId }; // Store both id and display name
+      setInputs(newInputs);
+    } catch (error) {
+      console.error(`Error fetching user ${userId}:`, error);
+      const newInputs = [...inputs];
+      newInputs[index] = { id: userId, displayName: userId }; // Fallback to just ID if fetch fails
+      setInputs(newInputs);
+      // Optionally, display an error message to the user
+    }
+  }, [id, inputs]);
 
   useEffect(() => {
     const hasSeenModal = Cookies.get('doNotShowModalPage2');
@@ -29,6 +57,13 @@ export default function Page2() {
       setShowModal(true);
     }
   }, []);
+
+  // Effect to pre-fill the first input if ID is available
+  useEffect(() => {
+    if (id && inputs[0].id === '') { // Only fetch if ID exists and input is empty
+      fetchUserById(0, id);
+    }
+  }, [id, fetchUserById, inputs]); // Rerun when id changes
 
   const handleConfirm = () => {
     setShowModal(false);
@@ -41,7 +76,7 @@ export default function Page2() {
 
   const handleInputChange = (index: number, value: string) => {
     const newInputs = [...inputs];
-    newInputs[index] = value;
+    newInputs[index] = { id: value, displayName: value }; // Temporarily set display name to ID
     setInputs(newInputs);
 
     // Clear any existing timeout
@@ -55,26 +90,8 @@ export default function Page2() {
     }, 3000);
   };
 
-  const fetchUserById = async (index: number, id: string) => {
-    if (!id) return; // Don't fetch if ID is empty
-    try {
-      const response = await fetch(`${process.env.APP_HOST}/v1/users/${id}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const userData = await response.json();
-      // Assuming the API returns an object with a 'detail' field as per user's confirmation
-      const newInputs = [...inputs];
-      newInputs[index] = userData.detail || id; // Use fetched detail, or original ID if not found
-      setInputs(newInputs);
-    } catch (error) {
-      console.error(`Error fetching user ${id}:`, error);
-      // Optionally, display an error message to the user
-    }
-  };
-
   const handleSolveProblem = () => {
-    console.log('Inputs:', inputs);
+    console.log('Inputs:', inputs.map(input => input.id));
     // You can add logic here to process the inputs before navigating
     router.push('/page3');
   };
@@ -95,7 +112,6 @@ export default function Page2() {
         onDoNotShowAgain={handleDoNotShowAgain}
         isOpen={showModal}
       />
-      {email && <p className="mt-4">이메일: <strong>{email}</strong></p>}
 
       <div className="mt-8 space-y-4">
         {[...Array(5)].map((_, index) => (
@@ -106,13 +122,13 @@ export default function Page2() {
               id={`team-id-${index}`}
               type="id"
               placeholder={`팀원 ${index + 1}의 번호`}
-              value={inputs[index]}
+              value={inputs[index].displayName}
               onChange={(e) => handleInputChange(index, e.target.value)}
-              onBlur={(e) => {
+              onBlur={() => {
                 if (timeoutRef.current) {
                   clearTimeout(timeoutRef.current); // Clear any pending debounce
                 }
-                fetchUserById(index, e.target.value); // Fetch immediately on blur
+                fetchUserById(index, inputs[index].id); // Fetch immediately on blur using the stored ID
               }}
               disabled={index === 0}
             />
