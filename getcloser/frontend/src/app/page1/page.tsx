@@ -17,7 +17,7 @@ export default function Page1() {
     console.log('Form Submitted:', { email });
 
     try {
-      const response = await fetch(`${process.env.APP_HOST}/api/v1/users/auth`, {
+      const response = await fetch('/api/v1/users/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
