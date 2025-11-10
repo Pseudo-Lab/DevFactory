@@ -8,7 +8,7 @@ from schemas.user_schema import UserAuth, UserResponse
 
 router = APIRouter()
 
-@router.post('/auth', response_model=UserResponse)
+@router.post('/', response_model=UserResponse)
 def auth(user_auth: UserAuth, db: Session = Depends(get_db)):
   token = auth_user(db, user_auth.email)
   return token
