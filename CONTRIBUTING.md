@@ -1,65 +1,173 @@
-
 # 🛠️ DevFactory Contributing Guide
 
-## 1. 브랜치 전략
-- 기본 브랜치: `main`, `dev`
-- 작업 브랜치: `feat/`, `fix/`, `docs/` 등 prefix 사용
-  - 예시: `feat/login`, `fix/navbar-crash`
-- 머지는 `PR(Pull Request)`를 통해 진행
+> Last updated: 2025-11-05
+> 
+> 
+> Maintainer: **DevFactory Team**
+> 
 
-## 2. 커밋 메시지 규칙
-- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) 형식 사용
-   ```
-   <type> <short summary>
-   │           │
-   │           └─⫸ Summary in present tense. Not capitalized. No period at the end.
-   │
-   └─⫸ Commit Type: build|ci|docs|feat|fix|perf|refactor|test
-   ```
-- Commit type (ex: feat: commit message)
-   ```
-   build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
-   ci: Changes to our CI configuration files and scripts (examples: CircleCi, SauceLabs)
-   docs: Documentation only changes
-   feat: A new feature
-   fix: A bug fix
-   perf: A code change that improves performance
-   refactor: A code change that neither fixes a bug nor adds a feature
-   test: Adding missing tests or correcting existing tests
-   ```
+---
 
-## 3. PR(Pull Request) 규칙
-- PR 제목은 작업 목적이 드러나도록 작성
-- PR 설명에 **작업 내용**, **관련 이슈**, **스크린샷** 등 포함
-- 최소 1명 이상의 리뷰어 승인 후 머지
-   - 상황에 따라 유동적으로 적용
-- 리뷰 후 **본인이 머지 진행**
+## 🧭 Branch Strategy
 
-## 4. 코드 품질
-- Lint, Test는 PR 전에 반드시 통과
-- CI 자동 검사(GitHub Actions 등) 적용
+DevFactory는 **모노레포(Monorepo)** 구조를 사용합니다.
 
-## 5. Issue 관리(선택)
-- 작업 시작 전 관련 이슈 생성 또는 연결
-- 라벨(label) 지정: `bug`, `feature`, `question`, `urgent` 등
-- 완료된 이슈는 PR과 함께 자동 닫힘 (`Fixes #이슈번호`)
+여러 서비스(`getcloser`, `cert-system`)를 하나의 리포지토리에서 관리하며,
 
-## 6. 보안 및 환경 변수
-- `.env` 파일 또는 민감한 정보는 Git에 커밋 금지
-- `gitignore`에 포함된 파일 목록 확인 필수
-- 필요시 `.env.example` 제공
+일부 프로젝트(`JobPT`, `event-bingo`)는 **별도 리포지토리**로 운영합니다.
 
+| 브랜치 | 역할 | 비고 |
+| --- | --- | --- |
+| `main` | 프로덕션 통합 | 전체 서비스의 통합 및 배포용 브랜치 |
+| `feat/*` | 기능 개발 | 서비스별 기능 단위 개발 브랜치 |
+| `fix/*` | 버그 수정 | 서비스별 버그 수정 브랜치 |
+| `docs/*` | 문서 수정 | README, CONTRIBUTING 등 문서 전용 브랜치 |
 
+> 브랜치명 예시
+> 
+> - `feat/getcloser/auto-deploy`
+> - `fix/getcloser/auth-refresh`
+> - `docs/getcloser/update-deploy-guide`
+> - `chore/devfactory/github-actions-update`
 
-## EX) 예시 워크플로우
-1. `dev` 브랜치 최신 상태로부터 작업 브랜치 생성  
-   `git checkout -b feat/search dev`
+---
 
-2. 기능 개발 및 커밋  
-   `git commit -m "feat: 검색 기능 구현"`
+## ⚙️ Workflow
 
-3. 원격 푸시 및 PR 생성  
-   `git push origin feat/search`
+1. **기능 개발 브랜치 생성**
+    
+    ```bash
+    git checkout main
+    git checkout -b feat/<feature-name>
+    # 예시
+    git checkout -b feat/auto-deploy
+    ```
+    
+2. **기능 구현 및 커밋**
+    
+    ```bash
+    git commit -m "feat(getcloser): add CI/CD auto deploy pipeline"
+    ```
+    
+3. **PR 생성**
+    
+    ```bash
+    git push origin feat/auto-deploy
+    ```
+    
+    - `feat/*` → `main`으로 PR 생성
+    - PR 제목은 작업 목적을 명확히 작성
+    예: `fix(getcloser): resolve API timeout issue`
+4. **리뷰 및 병합**
+    - 코드 리뷰 및 승인 후 병합
+    - 이후 브랜치는 **삭제 권장** (`Delete branch after merge`)
+    - 자세한 내용은 병합 및 리뷰 규칙 참고
 
-4. `feat/search` -> `dev` PR 생성 → 리뷰어 지정 → 리뷰 후 머지  
-   `main` 브랜치는 배포용으로만 사용
+---
+
+## 🪶 Commit Convention
+
+모든 커밋은 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) 규칙을 따릅니다.
+
+```bash
+<type>(<scope>): <short summary>
+```
+
+| Type | 설명 |
+| --- | --- |
+| `feat` | 새로운 기능 추가 |
+| `fix` | 버그 수정 |
+| `docs` | 문서 변경 (README, CONTRIBUTING 등) |
+| `chore` | 빌드, 의존성, 설정 등 변경 (비즈니스 로직 영향 없음) |
+| `refactor` | 코드 리팩토링 |
+| `test` | 테스트 코드 추가 또는 수정 |
+| `perf` | 성능 개선 |
+
+> 커밋 예시
+> 
+> - `feat(getcloser): add automatic deploy pipeline`
+> - `fix(getcloser): handle login token issue`
+> - `docs(devfactory): update contributing guide`
+
+---
+
+## 🔀 Merge & Review Rules
+
+- **직접 push 금지** (`main` 브랜치 포함)
+- 모든 변경은 **Pull Request(PR)**를 통해 진행
+- **서비스 구분 라벨(`친해지길바라`, `수료증`, `devfactory`, `Bingo`) 수동 추가 필수**
+- **리뷰어 1인 이상 승인 필수**
+- **PR 작성자가 직접 병합 (rebase merge 권장)**
+- **병합 후 브랜치 삭제 권장**
+
+💡 **PR 상태는 라벨을 통해 관리됩니다.**
+
+| 라벨 | 설명 | 부여 방식 |
+| --- | --- | --- |
+| 🟨 `needs-review` | 새 PR 생성 시 자동 부여 (리뷰 대기 상태) | 자동 |
+| 🟧 `changes-requested` | 리뷰어가 코드 수정 요청을 남긴 상태 | 리뷰어가 수동 변경 |
+| 🟩 `approved` | 리뷰어 승인 완료, 병합 가능한 상태 | 리뷰어가 수동 변경 |
+| 🟪 `merged` | PR 병합 완료 시 자동 부여 | 자동 |
+
+🔖 **리뷰어 가이드**
+- 코드 수정이 필요할 경우 → `changes-requested`
+- 수정 확인 후 승인 시 → `approved`
+
+🔧 **PR 작성자 가이드**
+- PR이 **`approved` 상태**가 되면 **rebase merge** 방식으로 직접 병합합니다.
+- 병합이 완료되면 `merged` 라벨이 자동으로 추가됩니다.
+
+---
+
+## ✅ Pull Request Guide
+
+1. **PR 제목 규칙**
+    
+    ```
+    feat(getcloser): add deploy pipeline
+    fix(getcloser): resolve API error
+    docs(devfactory): update contributing guide
+    
+    ```
+    
+2. **PR 본문 템플릿**
+    - **요약:** 변경 내용을 간략히 설명
+    - **관련 이슈:** `Closes #123`
+    - **테스트 결과:** 검증 방법 명시
+    - **스크린샷 (선택):** UI 변경 시 첨부
+
+---
+
+## 🔒 Security & Environment Files
+
+- `.env`, API 키, 비밀번호 등 **민감한 정보 커밋 금지**
+- `.env.example`만 Git에 포함
+- 실제 환경 변수는 GitHub **Secrets / Variables**에서 관리
+
+---
+
+## 💡 Workflow Example
+
+```bash
+# 1. 기능 브랜치 생성
+git checkout main
+git checkout -b feat/auto-deploy
+
+# 2. 작업 및 커밋
+git commit -m "feat(getcloser): add CI/CD pipeline"
+
+# 3. 원격 푸시 & PR 생성
+git push origin feat/auto-deploy
+
+# 4. PR 생성 → 'needs-review' 자동 부여
+# 5. 리뷰 승인 → rebase merge → 'merged' 자동 부여
+# 6. 브랜치 삭제
+
+```
+
+---
+
+## 📘 Notes
+
+- 주요 서비스: `getcloser`, `cert-system`
+- 별도 리포지토리: `JobPT`, `event-bingo`
