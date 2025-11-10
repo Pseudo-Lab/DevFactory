@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useFormStore } from '../../store/formStore';
+import { authenticatedFetch } from '../../lib/api';
 import React, { useEffect } from 'react'; // Import useEffect
 
 export default function Page3() {
@@ -28,7 +29,7 @@ export default function Page3() {
       console.log('Assign Challenges Request Body:', requestBody);
 
       try {
-        const response = await fetch('/api/v1/challenge/assign-challenges', {
+        const response = await authenticatedFetch('/api/v1/challenge/assign-challenges', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

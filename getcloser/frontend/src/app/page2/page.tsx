@@ -1,5 +1,6 @@
 'use client';
 
+import { authenticatedFetch } from '../../lib/api';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -33,7 +34,7 @@ export default function Page2() {
     }
 
     try {
-      const response = await fetch(`/api/v1/users/${userId}`);
+      const response = await authenticatedFetch(`/api/v1/users/${userId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -115,7 +116,7 @@ export default function Page2() {
 
     // Step 3: Make the POST request
     try {
-      const response = await fetch('/api/v1/teams/create', {
+      const response = await authenticatedFetch('/api/v1/teams/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
