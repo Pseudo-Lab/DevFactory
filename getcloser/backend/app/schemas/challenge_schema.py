@@ -1,5 +1,6 @@
+from datetime import datetime
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 class ChallengeRequest(BaseModel):
     team_id: int
@@ -13,11 +14,17 @@ class AssignedChallenge(BaseModel):
     category: str
     answer: str
 
+class AnswerSubmitRequest(BaseModel):
+    user_id: int
+    challenge_id: int
+    submitted_answer: str
+
+class AnswerSubmitResponse(BaseModel):
+    is_correct: bool
+
 class ChallengeResponse(BaseModel):
     team_id: int
     my_assigned: AssignedChallenge
-from datetime import datetime
-from typing import Optional
 
 class GoodsRedeemRequest(BaseModel):
   user_id: int
