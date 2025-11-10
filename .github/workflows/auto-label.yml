@@ -1,0 +1,46 @@
+name: Auto Label PR
+
+on:
+  pull_request:
+    types: [opened, closed]
+
+jobs:
+  # PR 생성 시 → needs-review
+  add_label_on_open:
+    if: github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove old status labels (safety)
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: |
+            changes-requested
+            approved
+            merged
+
+      - name: Add 'needs-review' label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: needs-review
+
+  # PR 병합 시 → merged
+  label_on_merge:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove previous labels
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: |
+            needs-review
+            changes-requested
+            approved
+
+      - name: Add 'merged' label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: merged

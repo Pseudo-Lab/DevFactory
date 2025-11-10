@@ -1,17 +1,15 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useFormStore } from '../../store/formStore';
-import { Rows } from 'lucide-react';
 
 import { useRouter } from 'next/navigation';
 
 export default function Page1() {
-  const { email, setEmail } = useFormStore();
+  const { email, setEmail, setId } = useFormStore();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,6 +31,9 @@ export default function Page1() {
 
       const result = await response.json();
       console.log('Auth API Response:', result);
+      if (result.id) {
+        setId(result.id); // Store the ID in the form store
+      }
       alert('정보가 제출되었습니다!');
       router.push('/page2'); // Navigate to page2 after successful submission
     } catch (error) {
@@ -49,7 +50,7 @@ export default function Page1() {
         <div className="items-center text-center" style={{marginBottom: 36}}>
           <p className="text-md mt-1">Pseudo Lab</p>
           <p className="text-md">2nd Grand Gathering</p>
-          <p className="text-md">2025. 11. 15</p>
+          <p className="text-md">2025. 12. 20</p>
         </div>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className='items-center text-center'>

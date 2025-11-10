@@ -1,3 +1,4 @@
+from core.security import create_access_token
 from exceptions.user_exceptions import UserNotFoundException
 from models.users import User
 from sqlalchemy.orm import Session
@@ -7,7 +8,13 @@ def auth_user(db: Session, email: str):
   user = db.query(User).filter(User.email == email).first()
   if not user:
     raise UserNotFoundException(email)
-  return user
+  
+  token = create_access_token({
+    "sub": str(user.id),
+    "email": user.email,
+    "name": user.name
+    })
+  return {"accessToken": token}
 
 
 def get_user(db: Session, id: int):
