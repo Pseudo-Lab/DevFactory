@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from core.config import settings
 from models.users import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/users/auth")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth")
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
@@ -24,8 +24,8 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     except JWTError:
         raise credentials_exception
 
-    user = db.query(User).filter(User.id == user_id).first()
-    if user is None:
-        raise credentials_exception
+    # user = db.query(User).filter(User.id == user_id).first()
+    # if user is None:
+    #     raise credentials_exception
 
-    return user
+    return payload
