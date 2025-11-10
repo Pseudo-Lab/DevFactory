@@ -4,9 +4,7 @@ class UserAuth(BaseModel):
   email: EmailStr
 
 class UserResponse(BaseModel):
-  id: int
-  email: str
-  name: str
+  accessToken: str
   
 class Config:
   orm_mode = True
