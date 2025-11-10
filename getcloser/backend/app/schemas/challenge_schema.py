@@ -19,6 +19,15 @@ class AnswerSubmitRequest(BaseModel):
     challenge_id: int
     submitted_answer: str
 
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "user_id": 1,
+                "challenge_id": 1,
+                "submitted_answer": "LLM"
+            }
+        }
+
 class AnswerSubmitResponse(BaseModel):
     is_correct: bool
 

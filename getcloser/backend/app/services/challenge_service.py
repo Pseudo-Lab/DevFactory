@@ -60,9 +60,9 @@ def submit_challenges_logic(user_id: str, challenge_id: int, submitted_answer: s
     is_correct = (submitted_answer.strip().lower() == question.answer.strip().lower())
 
     # 4. 결과 저장
-    challenge.is_correct = is_correct
-    challenge.submitted_answer = submitted_answer
-    db.commit()
+    # challenge.is_correct = is_correct
+    # challenge.submitted_answer = submitted_answer
+    # db.commit()
 
     # 5. 결과 반환
     return is_correct
