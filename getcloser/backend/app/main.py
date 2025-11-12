@@ -37,7 +37,7 @@ def custom_openapi():
         description=app.description,
         routes=app.routes,
     )
-    openapi_schema["servers"] = [{"url": "/"}]
+    openapi_schema["servers"] = [{"url": "/api"}]
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
