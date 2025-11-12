@@ -13,7 +13,7 @@ def seed_challenge_questions_from_csv(file_path: str):
             reader = csv.DictReader(csvfile)
             for row in reader:
                 challenge = ChallengeQuestion(
-                    id=int(row["challenge_id"]),
+                    id=int(row["id"]),
                     user_id=int(row["user_id"]),
                     category=row["category"],
                     answer=row["answer"]
