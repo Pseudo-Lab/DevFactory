@@ -38,6 +38,36 @@ def assign_challenges_logic(my_id: str, members: list, db: Session) -> list:
     return assigned_list[0]
 
 
+def submit_challenges_logic(user_id: str, challenge_id: int, submitted_answer: str, db: Session) -> bool:
+    # 1. 사용자가 푼 문제 찾기
+    challenge = db.query(ChallengeQuestion).filter(
+        ChallengeQuestion.user_id == user_id,
+        ChallengeQuestion.id == challenge_id
+    ).first()
+
+    if not challenge:
+        raise ValueError("해당 사용자의 할당된 문제가 없습니다.")
+
+    # 2. 원본 문제에서 정답 확인
+    question = db.query(ChallengeQuestion).filter(
+        ChallengeQuestion.id == challenge.id
+    ).first()
+
+    if not question:
+        raise ValueError("문제 정보를 찾을 수 없습니다.")
+
+    # 3. 정답 판별
+    is_correct = (submitted_answer.strip().lower() == question.answer.strip().lower())
+
+    # 4. 결과 저장
+    challenge.is_correct = is_correct
+    challenge.submitted_answer = submitted_answer
+    db.commit()
+
+    # 5. 결과 반환
+    return is_correct
+
+   
 def redeem_goods(db: Session, user_id: int):
     user = db.query(UserChallengeStatus).filter(UserChallengeStatus.user_id == user_id).first()
     if not user or not user.is_correct:
