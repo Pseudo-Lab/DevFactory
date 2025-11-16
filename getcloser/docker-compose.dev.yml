@@ -1,14 +1,22 @@
 version: '3.8'
 
 services:
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     labels:
-  #       - "org.pseudolab.project=getcloser"
-  #   ports:
-  #     - "${FRONTEND_PORT}:80"
-  #   restart: always
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+      labels:
+        - "org.pseudolab.project=getcloser"
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_BACKEND_URL: http://backend:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    restart: always
 
   backend:
     build:
@@ -17,10 +25,11 @@ services:
       labels:
         - "org.pseudolab.project=getcloser"
     ports:
-      - "${BACKEND_PORT}:8000"
+      - "8000:8000"
     environment:
       ENV: development
       DATABASE_URL: postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
       SECRET_KEY: ${SECRET_KEY:-change-me-in-prod}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
     volumes:

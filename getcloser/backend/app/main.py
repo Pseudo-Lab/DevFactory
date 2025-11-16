@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.openapi.utils import get_openapi
 from dotenv import load_dotenv
 import os
 
@@ -27,21 +26,6 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# Swagger 기본 경로를 /api 로 지정
-def custom_openapi():
-    if app.openapi_schema:
-        return app.openapi_schema
-    openapi_schema = get_openapi(   
-        title=app.title,
-        version=app.version,
-        description=app.description,
-        routes=app.routes,
-    )
-    openapi_schema["servers"] = [{"url": "/api"}]
-    app.openapi_schema = openapi_schema
-    return app.openapi_schema
-
-app.openapi = custom_openapi
 
 # CORS 미들웨어 설정
 origins = os.getenv("CORS_ORIGINS", "").split(",")
@@ -53,7 +37,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(api_router, prefix="/v1")
+# 모든 환경에서 /api 프리픽스 사용 (개발/프로덕션 통일)
+app.include_router(api_router, prefix="/api/v1")
 app.include_router(test_db.test_router)
 
 
