@@ -1,5 +1,6 @@
 'use client';
 
+import { authenticatedFetch } from '../lib/api';
 import React, { useState, useEffect } from 'react';
 import { useFormStore } from '../store/formStore';
 
@@ -11,7 +12,7 @@ export default function Header() {
     if (id) {
       const fetchUserName = async () => {
         try {
-          const response = await fetch(`/api/v1/users/${id}`);
+          const response = await authenticatedFetch(`/api/v1/users/${id}`);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }

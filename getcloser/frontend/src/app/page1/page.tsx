@@ -9,7 +9,7 @@ import { useFormStore } from '../../store/formStore';
 import { useRouter } from 'next/navigation';
 
 export default function Page1() {
-  const { email, setEmail, setId } = useFormStore();
+  const { email, setEmail, setId, setAccessToken } = useFormStore();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -17,7 +17,7 @@ export default function Page1() {
     console.log('Form Submitted:', { email });
 
     try {
-      const response = await fetch('/api/v1/users/auth', {
+      const authResponse = await fetch('/api/v1/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,17 +25,38 @@ export default function Page1() {
         body: JSON.stringify({ email }),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!authResponse.ok) {
+        throw new Error(`HTTP error! status: ${authResponse.status}`);
       }
 
-      const result = await response.json();
-      console.log('Auth API Response:', result);
-      if (result.id) {
-        setId(result.id); // Store the ID in the form store
+      const authResult = await authResponse.json();
+      const newAccessToken = authResult.accessToken;
+
+      if (!newAccessToken) {
+        throw new Error('Access token not received from auth API.');
+      }
+      setAccessToken(newAccessToken); // Store the new access token
+
+      const userMeResponse = await fetch('/api/v1/users/me', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${newAccessToken}`, // Use the new access token
+        },
+      });
+
+      if (!userMeResponse.ok) {
+        throw new Error(`HTTP error! status: ${userMeResponse.status}`);
+      }
+
+      const userMeResult = await userMeResponse.json();
+      console.log('User Me API Response:', userMeResult);
+
+      if (userMeResult.sub) {
+        setId(userMeResult.sub);
       }
       alert('정보가 제출되었습니다!');
-      router.push('/page2'); // Navigate to page2 after successful submission
+      router.push('/page2');
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('정보 제출에 실패했습니다.');
