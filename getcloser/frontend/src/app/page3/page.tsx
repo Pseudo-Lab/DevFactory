@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import React, { useEffect } from 'react';
 import { useFormStore } from '../../store/formStore';
 import { authenticatedFetch } from '../../lib/api';
-import React, { useEffect } from 'react'; // Import useEffect
 
 export default function Page3() {
   const { question, answer, setAnswer, id, teamId, memberIds } = useFormStore(); // Destructure new state

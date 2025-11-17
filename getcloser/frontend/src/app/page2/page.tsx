@@ -1,15 +1,15 @@
 'use client';
 
-import { authenticatedFetch } from '../../lib/api';
+import Cookies from 'js-cookie';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useFormStore } from '../../store/formStore';
 import Modal from '@/components/Modal';
-import Cookies from 'js-cookie';
+import { authenticatedFetch } from '../../lib/api';
+import { useFormStore } from '../../store/formStore';
 
 export default function Page2() {
   const { id, setTeamId, setMemberIds } = useFormStore();
