@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.openapi.utils import get_openapi
 from dotenv import load_dotenv
 import os
@@ -25,6 +26,7 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    root_path="/api",
 )
 
 # Swagger 기본 경로를 /api 로 지정
@@ -52,6 +54,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add TrustedHostMiddleware to handle X-Forwarded-Proto headers
+
+# Add TrustedHostMiddleware to handle X-Forwarded-Proto headers
+trusted_hosts = os.getenv("TRUSTED_HOSTS", "*").split(",")
+if "*" not in trusted_hosts: # If "*" is present, it means all hosts are allowed, so no need to add "localhost"
+    trusted_hosts.append("localhost") # Always allow localhost for development
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=trusted_hosts)
+
 
 app.include_router(api_router, prefix="/v1")
 app.include_router(test_db.test_router)
