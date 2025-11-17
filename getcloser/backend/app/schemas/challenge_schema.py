@@ -7,13 +7,6 @@ class ChallengeRequest(BaseModel):
   my_id: int
   members_ids: List[int]
 
-class AssignedChallenge(BaseModel):
-  user_id: int
-  assigned_challenge_id: int
-  from_user_id: int
-  category: str
-  answer: str
-
   class Config:
     json_schema_extra = {
       "example": {
@@ -24,6 +17,13 @@ class AssignedChallenge(BaseModel):
         ]
       }
     }
+
+class AssignedChallenge(BaseModel):
+  user_id: int
+  assigned_challenge_id: int
+  from_user_id: int
+  category: str
+  answer: str
 
 class AnswerSubmitRequest(BaseModel):
   user_id: int
@@ -49,12 +49,26 @@ class ChallengeResponse(BaseModel):
 class GoodsRedeemRequest(BaseModel):
   user_id: int
 
+  class Config:
+    json_schema_extra = {
+      "example": {
+        "user_id": 1
+      }
+    }
+
 class GoodsRedeemResponse(BaseModel):
   message: str
   redeemed_at: Optional[datetime] = None
 
 class ChallengeRetryRequest(BaseModel):
   user_id: int
+
+  class Config:
+    json_schema_extra = {
+      "example": {
+        "user_id": 1
+      }
+    }
 
 class ChallengeRetryResponse(BaseModel):
   message: str
