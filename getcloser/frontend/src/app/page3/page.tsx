@@ -29,7 +29,7 @@ export default function Page3() {
       console.log('Assign Challenges Request Body:', requestBody);
 
       try {
-        const response = await authenticatedFetch('/api/v1/challenge/assign-challenges', {
+        const response = await authenticatedFetch('/api/v1/challenges/assign', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
