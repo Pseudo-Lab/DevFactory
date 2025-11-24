@@ -1,0 +1,19 @@
+FROM node:24-alpine
+
+WORKDIR /app
+
+# 시스템 의존성 설치
+RUN apk add --no-cache libc6-compat
+
+# package.json과 lock 파일 복사
+COPY package*.json ./
+
+# 의존성 설치
+RUN npm ci
+
+# 소스 코드 복사
+COPY . .
+
+# 개발 모드로 실행
+CMD ["npm", "run", "dev"]
+

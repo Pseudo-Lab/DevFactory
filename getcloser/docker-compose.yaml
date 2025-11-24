@@ -54,15 +54,17 @@ services:
       - traefik.docker.network=traefik
 
       # --- Traefik Router (backend) ---
-      - traefik.http.routers.getcloser-api.rule=Host(`${APP_HOST}`) && PathPrefix(`/api`) || Host(`${APP_HOST}`) && PathPrefix(`/docs`) || Host(`${APP_HOST}`) && PathPrefix(`/redoc`) || Host(`${APP_HOST}`) && PathPrefix(`/health`) || Host(`${APP_HOST}`) && Path(`/openapi.json`)
+      # 백엔드로 라우팅되는 경로:
+      # - /api/* : API 엔드포인트 (백엔드에서 /api/v1/* 로 라우팅)
+      # - /docs, /redoc : Swagger UI 문서 (백엔드에서 /docs, /redoc로 라우팅)
+      # - /health : 헬스체크 (백엔드에서 /health로 라우팅)
+      # - /openapi.json : OpenAPI 스키마 (백엔드에서 /openapi.json로 라우팅)
+      # 백엔드에 /api 프리픽스가 포함되어 있으므로 stripPrefix 미들웨어 없이 그대로 전달
+      - traefik.http.routers.getcloser-api.rule=Host(`${APP_HOST}`) && (PathPrefix(`/api`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/health`) || Path(`/openapi.json`))
       - traefik.http.routers.getcloser-api.entrypoints=websecure
       - traefik.http.routers.getcloser-api.tls=true
       - traefik.http.routers.getcloser-api.tls.certresolver=le
       - traefik.http.services.getcloser-api.loadbalancer.server.port=8000
-
-      # /api 프리픽스 제거 (백엔드 내부는 / 기준으로 동작)
-      - traefik.http.middlewares.getcloser-stripapi.stripPrefix.prefixes=/api
-      - traefik.http.routers.getcloser-api.middlewares=getcloser-stripapi
 
       # HTTP → HTTPS 리다이렉트 (backend)
       - traefik.http.routers.getcloser-api-http.rule=Host(`${APP_HOST}`) && PathPrefix(`/api`)
