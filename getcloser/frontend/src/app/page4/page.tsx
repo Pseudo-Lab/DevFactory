@@ -4,8 +4,12 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { authenticatedFetch } from '../../lib/api';
+import { useFormStore } from '../../store/formStore';
 
 export default function Page4() {
+  const { id } = useFormStore();
+
   const [result, setResult] = useState<string>('');
   const [clickCount, setClickCount] = useState<number>(0);
   const [lastClickTime, setLastClickTime] = useState<number>(0);
@@ -20,7 +24,7 @@ export default function Page4() {
     router.push('/page2');
   };
 
-  const handleSuccessClick = () => {
+  const handleSuccessClick = async () => {
     const currentTime = new Date().getTime();
     if (currentTime - lastClickTime < 2000) { // 2 seconds window
       setClickCount(prevCount => prevCount + 1);
@@ -30,9 +34,23 @@ export default function Page4() {
     setLastClickTime(currentTime);
 
     if (clickCount + 1 >= 5) { // Check if this click makes it 5
-      alert("수령 완료!");
       setClickCount(0); // Reset after alert
       setLastClickTime(0); // Reset time as well
+
+      const response = await authenticatedFetch('/api/v1/challenges/redeem', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user_id: id }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      alert("수령 완료!");
+
     }
   };
 
