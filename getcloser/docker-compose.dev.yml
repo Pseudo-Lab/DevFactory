@@ -32,6 +32,8 @@ services:
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
       SECRET_KEY: ${SECRET_KEY:-change-me-in-prod}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      TEAM_SIZE: ${TEAM_SIZE}
+      PENDING_TIMEOUT_MINUTES: ${PENDING_TIMEOUT_MINUTES}
     volumes:
       - ./backend/app:/app
     depends_on:
