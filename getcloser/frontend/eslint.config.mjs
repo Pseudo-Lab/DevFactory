@@ -12,6 +12,14 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
+    rules: {
+      indent: ["error", 2, { SwitchCase: 1 }], // Enforce 2-space indentation
+      "linebreak-style": ["error", "unix"],
+      quotes: ["error", "single"],
+      semi: ["error", "always"],
+      "object-curly-spacing": ["error", "always"],
+      "key-spacing": ["error", { beforeColon: false, afterColon: true }],
+    },
     ignores: [
       "node_modules/**",
       ".next/**",
