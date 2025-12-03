@@ -101,22 +101,44 @@ def create_team(db: Session, my_id: int, member_ids: List[int]):
     return {"status": "PENDING", "team_id": team.id, "message": "New team request created"}
 
 def cancel_team(db: Session, team_id: int, user_id: int):
-  team_entry = (
+  team = (
         db.query(Team)
-        .join(TeamMember)
         .filter(
-            TeamMember.user_id == user_id, 
+            Team.id == team_id, 
             Team.status == TeamStatus.PENDING
         ).first()
     )
     
-  if team_entry:
-      team_entry.status = TeamStatus.CANCELLED
-      db.commit()
-      return {"message": "Team request cancelled"}
+  if not team:
+      raise HTTPException(status_code=400, detail="No pending team found")
+    
+  member = db.query(TeamMember).filter(
+    TeamMember.team_id == team_id,
+    TeamMember.user_id == user_id
+  ).first()
   
-  raise HTTPException(status_code=400, detail="No pending team found")
-
+  if not member:
+    raise HTTPException(status_code=403, detail="You are not a member of this team")
+  
+  if member.confirmed is False:
+    return {"message": "Already cancelled"}
+  
+  member.confirmed = False
+  db.commit()
+  db.refresh(team)
+  
+  remaining_confirmed = db.query(TeamMember).filter(
+    TeamMember.team_id == team_id,
+    TeamMember.confirmed == True
+  ).count()
+  
+  if remaining_confirmed == 0:
+    team.status = TeamStatus.CANCELLED
+    db.commit()
+    return {"message": "Team cancelled (last member left)"}
+  
+  return {"message": "You left the team"}
+  
 def get_team_status(db: Session, team_id: int, user_id: int):
     last_member_entry = (
         db.query(TeamMember)
