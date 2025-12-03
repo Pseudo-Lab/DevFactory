@@ -1,19 +1,17 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
+from datetime import datetime
 
 
 class TeamCreateRequest(BaseModel):
-    my_id: int
-    member_ids: List[int] = Field(..., min_items=4, max_items=4, description="팀원 4명의 ID")
+    member_ids: List[int] = Field(..., min_items=1, max_items=4, description="팀원 4명의 ID")
 
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "my_id": 1,
-                "member_ids": [2, 3, 4, 5]
-            }
-    }
-
-class TeamResponse(BaseModel):
+class TeamCreateResponse(BaseModel):
     team_id: int
-    members_ids: List[int]
+    status: str
+    message: str
+
+class TeamStatusResponse(BaseModel):
+    team_id: int
+    status: str
+    members_ready: List[int]
