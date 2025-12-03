@@ -60,13 +60,13 @@ def create_team(db: Session, my_id: int, member_ids: List[int]):
             team.status = TeamStatus.CANCELLED
             db.commit()
         else:
-            my_member = (
+            me = (
                 db.query(TeamMember)
                 .filter(TeamMember.team_id == team.id, TeamMember.user_id == my_id)
                 .first()
             )
-            if my_member:
-                my_member.confirmed = True
+            if me:
+                me.confirmed = True
             
             db.flush()
 
@@ -133,7 +133,7 @@ def get_team_status(db: Session, team_id: int, user_id: int):
 
     if team.status == TeamStatus.PENDING:
         time_diff = datetime.now() - team.created_at
-        if time_diff > timedelta(minutes=5):
+        if time_diff > timedelta(minutes=PENDING_TIMEOUT_MINUTES):
              team.status = TeamStatus.CANCELLED
              db.commit()
              return {"status": "EXPIRED"}

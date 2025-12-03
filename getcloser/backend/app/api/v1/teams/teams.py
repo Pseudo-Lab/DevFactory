@@ -13,10 +13,6 @@ async def create_team_route(req: TeamCreateRequest, db: Session = Depends(get_db
     res = create_team(db, int(current_user["sub"]), req.member_ids)
     return TeamCreateResponse(**res)
 
-# @router.post("/{team_id}/confirm")
-# def confirm_route(team_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-#     return confirm_membership(db, team_id, current_user["sub"])
-
 @router.post("/{team_id}/cancel")
 def cancel_route(team_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     return cancel_team(db, team_id, current_user["sub"])
