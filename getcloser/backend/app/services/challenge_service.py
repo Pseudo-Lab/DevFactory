@@ -9,6 +9,16 @@ from models.challenges import UserChallengeStatus
 
 
 def assign_challenges_logic(my_id: str, members: list, db: Session) -> list:
+    # 현재 사용자 retry_count 조회
+    status = db.query(UserChallengeStatus).filter(UserChallengeStatus.user_id == my_id).first()
+
+    if not status:
+        raise HTTPException(status_code=404, detail="User status not found.")
+
+    # retry_count 검사
+    if status.retry_count >= 2:
+        return {"message": "retry_count가 2 이상입니다. 팀을 다시 구성해주세요."}
+    
     team_questions = db.query(ChallengeQuestion).filter(ChallengeQuestion.user_id.in_(members)).all()
     if len(team_questions) < len(members):
         raise ValueError("팀원 문제가 충분하지 않습니다.")
