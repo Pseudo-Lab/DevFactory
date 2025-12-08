@@ -15,3 +15,22 @@ class TeamStatusResponse(BaseModel):
     team_id: int
     status: str
     members_ready: List[int]
+    members_ids: List[int]
+
+class TeamMemberInfo(BaseModel):
+    user_id: int
+    name: str
+    github: Optional[str] = None
+    linkedin: Optional[str] = None
+    
+class TeamInfoResponse(BaseModel):
+    team_id: int
+    status: str
+    members: List[TeamMemberInfo]
+    
+class MemberChallengeResponse(BaseModel):
+    user_id: int
+    question: str
+    user_answer: str
+    correct_answer: str
+    is_correct: bool
