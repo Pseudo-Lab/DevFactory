@@ -6,7 +6,7 @@ from schemas.team_schema import TeamCreateRequest
 from fastapi import HTTPException
 from typing import List
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 TEAM_SIZE = int(os.getenv("TEAM_SIZE", "0"))
 PENDING_TIMEOUT_MINUTES = int(os.getenv("PENDING_TIMEOUT_MINUTES", "0"))
@@ -154,7 +154,7 @@ def get_team_status(db: Session, team_id: int, user_id: int):
     team = last_member_entry.team
 
     if team.status == TeamStatus.PENDING:
-        time_diff = datetime.now() - team.created_at
+        time_diff = datetime.now(timezone.utc) - team.created_at
         if time_diff > timedelta(minutes=PENDING_TIMEOUT_MINUTES):
              team.status = TeamStatus.CANCELLED
              db.commit()
