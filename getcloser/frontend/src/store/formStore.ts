@@ -2,28 +2,28 @@ import { create } from 'zustand';
 
 interface FormState {
   email: string;
-  id: string;
+  id: number;
   accessToken: string;
   question: string;
   answer: string;
-  teamId: string;
-  memberIds: string[];
+  teamId: number;
+  memberIds: number[];
   setEmail: (email: string) => void;
-  setId: (id: string) => void;
+  setId: (id: number) => void;
   setAccessToken: (accessToken: string) => void;
   setQuestion: (question: string) => void;
   setAnswer: (answer: string) => void;
-  setTeamId: (teamId: string) => void;
-  setMemberIds: (memberIds: string[]) => void;
+  setTeamId: (teamId: number) => void;
+  setMemberIds: (memberIds: number[]) => void;
 }
 
 export const useFormStore = create<FormState>((set) => ({
   email: '',
-  id: '',
+  id: 0,
   accessToken: '',
   question: '',
   answer: '',
-  teamId: '',
+  teamId: 0,
   memberIds: [],
   setEmail: (email) => set({ email }),
   setId: (id) => set({ id }),
