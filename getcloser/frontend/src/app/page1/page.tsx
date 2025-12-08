@@ -67,8 +67,8 @@ export default function Page1() {
     <div className="container mx-auto p-4 min-h-screen flex items-center justify-center">
       <main className="max-w-md mx-auto bg-card text-card-foreground p-6 rounded-lg shadow-md">
         <h1 className="text-5xl font-bold">친해지길바라</h1>
-        <Image src="/logo.png" alt="Fail" width={52} height={58} style={{marginTop: 36, marginBottom: 36}} className="mx-auto block" />
-        <div className="items-center text-center" style={{marginBottom: 36}}>
+        <Image src="/logo.png" alt="Fail" width={52} height={58} style={{ marginTop: 36, marginBottom: 36 }} className="mx-auto block" />
+        <div className="items-center text-center" style={{ marginBottom: 36 }}>
           <p className="text-md mt-1">Pseudo Lab</p>
           <p className="text-md">2nd Grand Gathering</p>
           <p className="text-md">2025. 12. 20</p>

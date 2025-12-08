@@ -49,7 +49,7 @@ export default function Page4() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      alert("수령 완료!");
+      alert('수령 완료!');
 
     }
   };
