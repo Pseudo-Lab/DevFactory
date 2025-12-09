@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from core.database import get_db
-from schemas.team_schema import TeamCreateRequest, TeamCreateResponse, TeamStatusResponse
+from schemas.team_schema import TeamCreateRequest, TeamCreateResponse, TeamStatusResponse, MemberChallengeResponse
 from services.team_service import create_team
 from core.dependencies import get_current_user
-from core.websocket import notify_invitation
-
 
 router = APIRouter()
 
@@ -31,7 +29,7 @@ def get_my_team_info(
   return get_team_info(db, current_user["sub"])
 
 @router.get("/{team_id}/members/{user_id}/challenge",
-            response_model=MemberChallengeResponse | dict)
+            response_model=MemberChallengeResponse)
 def get_member_challenge(
     team_id: int,
     user_id: int,
