@@ -25,7 +25,7 @@ const WaitingView = ({ teamMembers, myId, teamId }: { teamMembers: TeamMember[],
 
   const handleLeaveTeam = async () => {
     try {
-      await authenticatedFetch(`/api/v1/teams/${teamId}/cancel`, {
+      await authenticatedFetch(`/api/v1/teams/${String(teamId)}/cancel`, {
         method: 'POST',
       });
     } catch (error) {
@@ -34,8 +34,6 @@ const WaitingView = ({ teamMembers, myId, teamId }: { teamMembers: TeamMember[],
     }
     router.back();
   };
-
-  const me = teamMembers.find(m => m.user_id === myId);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-background-light dark:bg-background-dark p-4">
@@ -215,7 +213,7 @@ export default function Page2() {
 
     const interval = setInterval(async () => {
       try {
-        const response = await authenticatedFetch(`/api/v1/teams/${teamId}/status`);
+        const response = await authenticatedFetch(`/api/v1/teams/${String(teamId)}/status`);
         if (!response.ok) throw new Error('Failed to fetch team status');
         const memberStatuses: { user_id: number, is_ready: boolean }[] = await response.json();
         const membersWithNames = await Promise.all(memberStatuses.map(async (member) => {
