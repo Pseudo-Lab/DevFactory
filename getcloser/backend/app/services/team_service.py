@@ -143,7 +143,10 @@ def get_team_status(db: Session, team_id: int, user_id: int):
     last_member_entry = (
         db.query(TeamMember)
         .join(Team)
-        .filter(TeamMember.user_id == user_id)
+        .filter(
+            Team.id == team_id,
+            TeamMember.user_id == user_id
+        )
         .order_by(Team.created_at.desc())
         .first()
     )
@@ -154,11 +157,16 @@ def get_team_status(db: Session, team_id: int, user_id: int):
     team = last_member_entry.team
 
     if team.status == TeamStatus.PENDING:
-        time_diff = datetime.now() - team.created_at
+        time_diff = datetime.now() - team.created_at.replace(tzinfo=None)
         if time_diff > timedelta(minutes=PENDING_TIMEOUT_MINUTES):
              team.status = TeamStatus.CANCELLED
              db.commit()
-             return {"status": "EXPIRED"}
+             return {
+                "team_id": team.id,
+                "status": TeamStatus.CANCELLED.value,
+                "members_ready": [m.user_id for m in team.members if m.confirmed]
+            }
+
 
     return {
         "team_id": team.id,
