@@ -12,6 +12,7 @@ services:
     environment:
       NODE_ENV: development
       NEXT_PUBLIC_API_BASE: http://backend:8000/api
+      TEAM_SIZE: ${TEAM_SIZE}
     volumes:
       - ./frontend:/app
       - /app/node_modules
