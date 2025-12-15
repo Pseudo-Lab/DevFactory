@@ -15,7 +15,6 @@ class TeamStatusResponse(BaseModel):
     team_id: int
     status: str
     members_ready: List[int]
-    members_ids: List[int]
 
 class TeamMemberInfo(BaseModel):
     user_id: int
