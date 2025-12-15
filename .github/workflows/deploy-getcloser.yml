@@ -38,6 +38,8 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "DB_DATABASE=${{ vars.DB_DATABASE }}" >> .env
           echo "APP_HOST=${{ vars.APP_HOST }}" >> .env
+          echo "TEAM_SIZE=${{ vars.TEAM_SIZE}}" >> .env
+          echo "PENDING_TIMEOUT_MINUTES=${{ vars.PENDING_TIMEOUT_MINUTES}}" >> .env
 
       - name: 🚀 Deploy to PROD
         run: |

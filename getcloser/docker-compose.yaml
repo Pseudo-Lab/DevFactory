@@ -12,6 +12,7 @@ services:
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_API_BASE: "https://${APP_HOST}/api"
+      TEAM_SIZE: ${TEAM_SIZE}
     networks:
       - traefik
       - internal
@@ -43,6 +44,8 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
       CORS_ORIGINS: "https://${APP_HOST}"
+      TEAM_SIZE: ${TEAM_SIZE}
+      PENDING_TIMEOUT_MINUTES: ${PENDING_TIMEOUT_MINUTES}
     depends_on:
       db:
         condition: service_healthy
