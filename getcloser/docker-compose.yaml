@@ -43,6 +43,8 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
       CORS_ORIGINS: "https://${APP_HOST}"
+      TEAM_SIZE: ${TEAM_SIZE}
+      PENDING_TIMEOUT_MINUTES: ${PENDING_TIMEOUT_MINUTES}
     depends_on:
       db:
         condition: service_healthy
