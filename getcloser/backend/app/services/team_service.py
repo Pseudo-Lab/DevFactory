@@ -2,7 +2,7 @@ from models.challenges import UserChallengeStatus
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from models.teams import Team, TeamMember, TeamStatus
-from schemas.team_schema import TeamCreateRequest
+from schemas.team_schema import TeamCreateRequest, TeamInfoResponse, MemberChallengeResponse, TeamMemberInfo
 from fastapi import HTTPException
 from typing import List
 import os
@@ -184,3 +184,89 @@ def dissolve_team_by_user(db: Session, user_id: int):
   db.commit()
   
   return {"message": f"Team {team_entry.id} dissolved due to quiz failure.", "team_id": team_entry.id}
+
+def get_team_info(db: Session, user_id: int):
+  team_member = (
+    db.query(TeamMembers)
+    .join(Team)
+    .filter(
+      TeamMember.user_id == user_id,
+      Team.status.in_([TeamStatus.ACTIVE])
+    )
+    .order_by(Team.created_at.desc())
+    .first()
+  )
+    
+  if not team_member:
+    return {"message": "NOT ACTIVE TEAM"}
+      
+  team = team_member.team
+  
+  members = (
+    db.query(User)
+    .join(TeamMember, Team.user_id == User.id)
+    .filter(TeamMember.team_id == team.id)
+    .all()
+  )
+  
+  member_info = [
+    TeamMemberInfo(
+      user_id=member.id,
+      name=member.name,
+      github=member.github,
+      linkedin=member.linkedin
+    )
+    for member in members
+  ]
+  
+  return TeamInfoResponse(
+    team_id=team.id,
+    status=team.status.value,
+    members=member_info
+  )
+
+def get_team_member_challenge(
+    db: Session, requester_id: int, team_id: int, user_id: int
+) -> MemberChallengeResponse | dict:
+    
+  is_member = (
+      db.query(TeamMember)
+      .filter(
+          TeamMember.team_id == team_id,
+          TeamMember.user_id == requester_id
+      )
+      .first()
+  )
+  if not is_member:
+      raise HTTPException(status_code=403, detail="You are not in this team")
+
+  target = (
+      db.query(TeamMember)
+      .filter(
+          TeamMember.team_id == team_id,
+          TeamMember.user_id == user_id
+      )
+      .first()
+  )
+  
+  if not target:
+      raise HTTPException(status_code=404, detail="User not in this team")
+
+  record = (
+      db.query(UserChallengeStatus)
+      .join(Challenge, Challenge.id == UserChallengeStatus.challenge_id)
+      .filter(UserChallengeStatus.user_id == user_id)
+      .order_by(UserChallengeStatus.created_at.desc())
+      .first()
+  )
+
+  if not record:
+      return {"status": "NO_CHALLENGE"}
+
+  return MemberChallengeResponse(
+      user_id=user_id,
+      question=record.challenge.question,
+      user_answer=record.answer,
+      correct_answer=record.challenge.answer,
+      is_correct=record.is_correct
+  )
