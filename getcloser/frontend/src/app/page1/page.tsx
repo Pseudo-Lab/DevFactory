@@ -71,7 +71,7 @@ export default function Page1() {
         <div className="items-center text-center" style={{ marginBottom: 36 }}>
           <p className="text-md mt-1">Pseudo Lab</p>
           <p className="text-md">2nd Grand Gathering</p>
-          <p className="text-md">2025. 12. 20</p>
+          <p className="text-md">2026. 1. 10</p>
         </div>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className='items-center text-center'>
