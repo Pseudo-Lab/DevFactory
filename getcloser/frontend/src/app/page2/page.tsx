@@ -19,10 +19,11 @@ type TeamMember = {
   displayName: string;
 };
 type InputState = { id: string; displayName: string };
+const TEAM_SIZE = process.env.NEXT_PUBLIC_TEAM_SIZE
+  ? parseInt(process.env.NEXT_PUBLIC_TEAM_SIZE, 10)
+  : 5;
 
-const WaitingView = ({ teamMembers, myId, teamId }: { teamMembers: TeamMember[], myId: number, teamId: number }) => {
-  const router = useRouter();
-
+const WaitingView = ({ teamMembers, myId, teamId, setView }: { teamMembers: TeamMember[], myId: number, teamId: number, setView: (view: View) => void }) => {
   const handleLeaveTeam = async () => {
     try {
       await authenticatedFetch(`/api/v1/teams/${String(teamId)}/cancel`, {
@@ -32,7 +33,7 @@ const WaitingView = ({ teamMembers, myId, teamId }: { teamMembers: TeamMember[],
       console.error('Error canceling team:', error);
       alert('팀을 나가는데 실패했습니다.');
     }
-    router.back();
+    setView('create');
   };
 
   return (
@@ -112,7 +113,7 @@ const CreateTeamView = ({
         isOpen={showModal}
       />
       <div className="mt-8 space-y-4">
-        {[...Array(5)].map((_, index) => (
+        {[...Array(TEAM_SIZE)].map((_, index) => (
           <div key={index}>
             <Label htmlFor={`team-id-${index}`}>팀원 {index + 1} {index === 0 && '(나)'}</Label>
             <Input
@@ -146,7 +147,7 @@ export default function Page2() {
 
   const [view, setView] = useState<View>('loading');
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [inputs, setInputs] = useState<InputState[]>(() => Array(5).fill({ id: '', displayName: '' }));
+  const [inputs, setInputs] = useState<InputState[]>(() => Array(TEAM_SIZE).fill({ id: '', displayName: '' }));
 
   const hasCheckedTeamStatus = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -190,7 +191,7 @@ export default function Page2() {
     const checkUserTeam = async () => {
       hasCheckedTeamStatus.current = true;
       try {
-        const response = await authenticatedFetch('/api/v1/teams/create');
+        const response = await authenticatedFetch('/api/v1/users/me');
         if (response.ok) {
           const teamData = await response.json();
           if (teamData && teamData.status === 'PENDING') {
@@ -215,20 +216,22 @@ export default function Page2() {
       try {
         const response = await authenticatedFetch(`/api/v1/teams/${String(teamId)}/status`);
         if (!response.ok) throw new Error('Failed to fetch team status');
-        const memberStatuses: { user_id: number, is_ready: boolean }[] = await response.json();
-        const membersWithNames = await Promise.all(memberStatuses.map(async (member) => {
-          const existingMember = teamMembers.find(m => m.user_id === member.user_id);
-          const displayName = existingMember?.displayName ?? await fetchUserDisplayName(member.user_id);
-          return { ...member, displayName };
-        }));
-        setTeamMembers(membersWithNames);
+        const memberStatuses: { team_id: number, status: string, members_ready: number[] } = await response.json();
+        const readyMemberIds = new Set(memberStatuses.members_ready);
+
+        setTeamMembers(prevTeamMembers =>
+          prevTeamMembers.map(member => ({
+            ...member,
+            is_ready: readyMemberIds.has(member.user_id),
+          }))
+        );
       } catch (error) {
         console.error('Error polling team status:', error);
       }
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [view, teamId, fetchUserDisplayName, teamMembers]);
+  }, [view, teamId]);
 
   useEffect(() => {
     if (view === 'waiting' && teamMembers.length > 0 && teamMembers.every(m => m.is_ready)) {
@@ -268,6 +271,14 @@ export default function Page2() {
       }
       const responseData = await response.json();
       setTeamId(responseData.team_id);
+
+      const initialTeamMembers = inputs.map(input => ({
+        user_id: Number(input.id),
+        displayName: input.displayName,
+        is_ready: false,
+      }));
+      setTeamMembers(initialTeamMembers);
+
       setView('waiting');
     } catch (error) {
       console.error('Error creating team:', error);
@@ -284,7 +295,7 @@ export default function Page2() {
   }
 
   if (view === 'waiting') {
-    return <WaitingView teamMembers={teamMembers} myId={myId as number} teamId={teamId as number} />;
+    return <WaitingView teamMembers={teamMembers} myId={myId as number} teamId={teamId as number} setView={setView} />;
   }
 
   return (
