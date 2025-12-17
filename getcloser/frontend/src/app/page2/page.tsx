@@ -145,6 +145,12 @@ export default function Page2() {
   const { id: myId, teamId, setTeamId, setMemberIds } = useFormStore();
   const router = useRouter();
 
+  useEffect(() => {
+    if (!myId) {
+      router.push('/page1');
+    }
+  }, [myId, router]);
+
   const [view, setView] = useState<View>('loading');
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [inputs, setInputs] = useState<InputState[]>(() => Array(TEAM_SIZE).fill({ id: '', displayName: '' }));
@@ -155,12 +161,16 @@ export default function Page2() {
   const fetchUserDisplayName = useCallback(async (userId: number | string): Promise<string> => {
     try {
       const response = await authenticatedFetch(`/api/v1/users/${userId}`);
-      if (!response.ok) return `User ${userId}`;
-      const data = await response.json();
-      return data.data || `User ${userId}`;
+      if (response.status === 404) {
+        alert(`존재하지 않는 ID. ${userId}`);
+        return '';
+      }
+      if (!response.ok) return '';
+      const json = await response.json();
+      return json.data || '';
     } catch (error) {
       console.error(error);
-      return `User ${userId}`;
+      return '';
     }
   }, []);
 
@@ -247,7 +257,7 @@ export default function Page2() {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       fetchUserById(index, value);
-    }, 1500);
+    }, 10000);
   };
 
   const handleCreateTeam = async () => {
