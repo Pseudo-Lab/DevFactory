@@ -19,8 +19,8 @@ class TeamStatusResponse(BaseModel):
 class TeamMemberInfo(BaseModel):
     user_id: int
     name: str
-    github: Optional[str] = None
-    linkedin: Optional[str] = None
+    github_url: Optional[str] = None
+    linkedin_url: Optional[str] = None
     
 class TeamInfoResponse(BaseModel):
     team_id: int
