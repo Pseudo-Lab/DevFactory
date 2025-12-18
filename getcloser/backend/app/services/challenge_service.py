@@ -36,6 +36,7 @@ def assign_challenges_logic(my_id: str, members: list, db: Session) -> list:
     available_ids = members.copy()
     random.shuffle(available_ids)
 
+    members = list(set(members))
     for user_id in members:
         possible_ids = [uid for uid in available_ids if uid != user_id]
         if not possible_ids:
@@ -43,9 +44,26 @@ def assign_challenges_logic(my_id: str, members: list, db: Session) -> list:
 
         assigned_user_id = random.choice(possible_ids)
         assigned_question = random.choice([q for q in team_questions if q.user_id == assigned_user_id])
-
+        
         available_ids.remove(assigned_user_id)
 
+        # ✅ UserChallengeStatus 업데이트
+        user_status = (
+            db.query(UserChallengeStatus)
+            .filter(UserChallengeStatus.user_id == user_id)
+            .first()
+        )
+
+        if not user_status:
+            raise HTTPException(status_code=404, detail="UserChallengeStatus 없음")
+
+        user_status.challenge_id = assigned_question.id
+        user_status.submitted_at = None
+        user_status.is_correct = False
+        user_status.is_redeemed = False
+
+        db.add(user_status)
+        
         assigned_list.append(AssignedChallenge(
             user_id=user_id,
             assigned_challenge_id=assigned_question.id,
@@ -53,6 +71,8 @@ def assign_challenges_logic(my_id: str, members: list, db: Session) -> list:
             category=assigned_question.category,
             answer=assigned_question.answer
         ))
+
+        db.commit()
 
     return assigned_list[0]
 
