@@ -14,7 +14,9 @@ def seed_users_from_csv(file_path: str):
                 user = User(
                     id=int(row["user_id"]),
                     email=row["email"],
-                    name=row["name"]
+                    name=row["name"],
+                    linkedin_url=row["linkedin_url"],
+                    github_url=row["github_url"],
                 )
                 existing = db.query(User).filter_by(email=user.email).first()
                 if not existing:

@@ -2,6 +2,7 @@ from models.challenges import UserChallengeStatus
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from models.teams import Team, TeamMember, TeamStatus
+from models.users import User
 from schemas.team_schema import TeamCreateRequest, TeamInfoResponse, MemberChallengeResponse, TeamMemberInfo
 from fastapi import HTTPException
 from typing import List
@@ -195,7 +196,7 @@ def dissolve_team_by_user(db: Session, user_id: int):
 
 def get_team_info(db: Session, user_id: int):
   team_member = (
-    db.query(TeamMembers)
+    db.query(TeamMember)
     .join(Team)
     .filter(
       TeamMember.user_id == user_id,
@@ -212,7 +213,7 @@ def get_team_info(db: Session, user_id: int):
   
   members = (
     db.query(User)
-    .join(TeamMember, Team.user_id == User.id)
+    .join(TeamMember, TeamMember.user_id == User.id)
     .filter(TeamMember.team_id == team.id)
     .all()
   )
@@ -221,8 +222,9 @@ def get_team_info(db: Session, user_id: int):
     TeamMemberInfo(
       user_id=member.id,
       name=member.name,
-      github=member.github,
-      linkedin=member.linkedin
+      email=member.email,
+      github_url=member.github_url,
+      linkedin_url=member.linkedin_url
     )
     for member in members
   ]
