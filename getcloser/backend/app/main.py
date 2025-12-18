@@ -4,11 +4,10 @@ from dotenv import load_dotenv
 import os
 
 from core.database import engine, Base
-from routers import test_db
+from routers import test_db, admin
 from api.v1 import api_router
 
-from scripts.users import seed_users_from_csv
-from scripts.challenge_question import seed_challenge_questions_from_csv
+from scripts.seed import seed_initial_data
 
 
 # .env 파일 로드
@@ -40,6 +39,7 @@ app.add_middleware(
 # 모든 환경에서 /api 프리픽스 사용 (개발/프로덕션 통일)
 app.include_router(api_router, prefix="/api/v1")
 app.include_router(test_db.test_router)
+app.include_router(admin.admin_router)
 
 
 @app.get("/")
@@ -59,6 +59,5 @@ async def health_check():
 # 서버 시작 시 실행
 @app.on_event("startup")
 def on_startup():
-    print("🚀 Server starting, seeding challenge questions...")
-    seed_users_from_csv("./scripts/user_data.csv")
-    seed_challenge_questions_from_csv("./scripts/challenge_question.csv")
+    print("🚀 Server starting, seeding initial data...")
+    seed_initial_data()
