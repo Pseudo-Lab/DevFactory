@@ -9,7 +9,7 @@ RUN apk add --no-cache libc6-compat
 COPY package*.json ./
 
 # 의존성 설치
-RUN npm ci
+RUN npm i
 
 # 소스 코드 복사
 COPY . .
