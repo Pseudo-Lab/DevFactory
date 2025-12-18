@@ -5,10 +5,15 @@ from core.database import Base
 
 class UserChallengeStatus(Base):
     __tablename__ = "user_challenge_status"
+
+    id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, primary_key=True, index=True)
+    challenge_id = Column(Integer, ForeignKey("challenge_questions.id"), index=True)
+
     is_correct = Column(Boolean, default=False)
     submitted_at = Column(DateTime(timezone=True))
     is_redeemed = Column(Boolean, default=False)
     redeemed_at = Column(DateTime(timezone=True))
     retry_count = Column(Integer, default=0)
     
+    challenge = relationship("ChallengeQuestion")
