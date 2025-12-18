@@ -17,7 +17,7 @@ RUN apk add --no-cache libc6-compat
 COPY package*.json ./
 
 # 개발 의존성(devDependencies) 포함 설치
-RUN npm ci --include=dev
+RUN npm i --include=dev
 
 # 소스 코드 복사
 COPY . .
@@ -45,7 +45,7 @@ RUN apk add --no-cache libc6-compat
 COPY package*.json ./
 
 # 프로덕션 의존성만 설치 + 캐시 정리
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm i --omit=dev && npm cache clean --force
 
 # 빌드 스테이지에서 생성된 산출물만 복사
 COPY --from=builder /app/.next ./.next
