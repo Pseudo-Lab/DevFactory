@@ -8,6 +8,7 @@ interface FormState {
   answer: string;
   teamId: number;
   memberIds: number[];
+  isCorrect: boolean | null;
   setEmail: (email: string) => void;
   setId: (id: number) => void;
   setAccessToken: (accessToken: string) => void;
@@ -15,6 +16,7 @@ interface FormState {
   setAnswer: (answer: string) => void;
   setTeamId: (teamId: number) => void;
   setMemberIds: (memberIds: number[]) => void;
+  setIsCorrect: (isCorrect: boolean) => void;
 }
 
 export const useFormStore = create<FormState>((set) => ({
@@ -25,6 +27,7 @@ export const useFormStore = create<FormState>((set) => ({
   answer: '',
   teamId: 0,
   memberIds: [],
+  isCorrect: null,
   setEmail: (email) => set({ email }),
   setId: (id) => set({ id }),
   setAccessToken: (accessToken) => set({ accessToken }),
@@ -32,4 +35,5 @@ export const useFormStore = create<FormState>((set) => ({
   setAnswer: (answer) => set({ answer }),
   setTeamId: (teamId) => set({ teamId }),
   setMemberIds: (memberIds) => set({ memberIds }),
+  setIsCorrect: (isCorrect) => set({ isCorrect }),
 }));
