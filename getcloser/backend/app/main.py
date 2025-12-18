@@ -38,8 +38,8 @@ app.add_middleware(
 
 # 모든 환경에서 /api 프리픽스 사용 (개발/프로덕션 통일)
 app.include_router(api_router, prefix="/api/v1")
-app.include_router(test_db.test_router)
-app.include_router(admin.admin_router)
+app.include_router(test_db.test_router, prefix="/api/v1")
+app.include_router(admin.admin_router, prefix="/api/v1")
 
 
 @app.get("/")
