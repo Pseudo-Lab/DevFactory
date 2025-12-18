@@ -12,8 +12,17 @@ def assign_challenges_logic(my_id: str, members: list, db: Session) -> list:
     # 현재 사용자 retry_count 조회
     status = db.query(UserChallengeStatus).filter(UserChallengeStatus.user_id == my_id).first()
 
+    # ✅ 없으면 생성
     if not status:
-        raise HTTPException(status_code=404, detail="User status not found.")
+        status = UserChallengeStatus(
+            user_id=my_id,
+            retry_count=0,
+            is_correct=False,
+            is_redeemed=False
+        )
+        db.add(status)
+        db.commit()
+        db.refresh(status)
 
     # retry_count 검사
     if status.retry_count >= 2:
@@ -69,12 +78,30 @@ def submit_challenges_logic(user_id: str, challenge_id: int, submitted_answer: s
     # 3. 정답 판별
     is_correct = (submitted_answer.strip().lower() == question.answer.strip().lower())
 
-    # 4. 결과 저장
-    challenge.is_correct = is_correct
-    challenge.submitted_answer = submitted_answer
+    # 4. UserChallengeStatus 조회 또는 생성
+    status = db.query(UserChallengeStatus).filter(
+        UserChallengeStatus.user_id == user_id,
+        UserChallengeStatus.challenge_id == challenge_id
+    ).first()
+
+    if not status:
+        status = UserChallengeStatus(
+            user_id=user_id,
+            challenge_id=challenge_id,
+            retry_count=0
+        )
+        db.add(status)
+
+    # 5. 결과 저장
+    status.is_correct = is_correct
+    status.submitted_at = datetime.utcnow()
+
+    if not is_correct:
+        status.retry_count += 1
+
     db.commit()
 
-    # 5. 결과 반환
+    # 6. 결과 반환
     return is_correct
 
    
