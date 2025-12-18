@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, APIRouter
+from fastapi import Depends, APIRouter
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
 from core.database import get_db
@@ -13,3 +13,4 @@ def ping_db(db=Depends(get_db)):
         return {"status": "ok", "message": "PostgreSQL 연결 성공"}
     except SQLAlchemyError as e:
         return {"status": "error", "message": str(e)}
+
