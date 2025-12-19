@@ -8,7 +8,7 @@ import { authenticatedFetch } from '../../lib/api';
 import { useFormStore } from '../../store/formStore';
 
 export default function Page4() {
-  const { id } = useFormStore();
+  const { id, isCorrect } = useFormStore();
 
   const [result, setResult] = useState<string>('');
   const [clickCount, setClickCount] = useState<number>(0);
@@ -16,9 +16,13 @@ export default function Page4() {
   const router = useRouter();
 
   useEffect(() => {
-    const isSuccess = Math.random() > 0.5; // 50% chance of success
-    setResult(isSuccess ? '성공' : '실패');
-  }, []);
+    if (isCorrect === null) {
+      console.warn('isCorrect is not set, defaulting to 실패');
+      setResult('실패');
+    } else {
+      setResult(isCorrect ? '성공' : '실패');
+    }
+  }, [isCorrect]);
 
   const handleTryAgain = () => {
     router.push('/page2');

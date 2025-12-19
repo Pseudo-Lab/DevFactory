@@ -16,7 +16,7 @@ const questions = [
 ];
 
 export default function Page3() {
-  const { question, answer, setAnswer, id, teamId, memberIds, setQuestion } = useFormStore(); // Destructure new state
+  const { question, answer, setAnswer, id, teamId, memberIds, setQuestion, setIsCorrect } = useFormStore(); // Destructure new state
   const router = useRouter();
 
   useEffect(() => {
@@ -75,11 +75,42 @@ export default function Page3() {
     assignChallenges();
   }, [id, teamId, memberIds, setQuestion]); // Dependencies for useEffect
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Question:', question, 'Answer:', answer);
-    // Here you would typically send this data to an API
-    router.push('/page4');
+
+    const requestBody = {
+      user_id: id,
+      question: question,
+      answer: answer,
+    };
+
+    try {
+      const response = await authenticatedFetch('/api/v1/challenges/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.detail || response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      console.log('Challenge submission successful:', responseData);
+      setIsCorrect(responseData.is_correct);
+      router.push('/page4');
+    } catch (error: unknown) {
+      console.error('Error submitting challenge:', error);
+      let errorMessage = '알 수 없는 오류가 발생했습니다.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      alert(`챌린지 제출에 실패했습니다: ${errorMessage}`);
+    }
   };
 
   return (
