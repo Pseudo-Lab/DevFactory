@@ -9,8 +9,14 @@ import React, { useEffect } from 'react';
 import { useFormStore } from '../../store/formStore';
 import { authenticatedFetch } from '../../lib/api';
 
+const questions = [
+  { category: '1', keyword: '관심사', problem: '사용자의 관심사를 맞춰주세요. 예: 기술, 예술, 환경 등' },
+  { category: '2', keyword: '취미', problem: '사용자의 취미를 맞춰주세요. 예: 등산, 독서, 요리 등' },
+  { category: '3', keyword: 'MBTI', problem: '사용자의 MBTI 유형을 맞춰주세요. 예: INFP, ESTJ 등' },
+];
+
 export default function Page3() {
-  const { question, answer, setAnswer, id, teamId, memberIds, setIsCorrect } = useFormStore(); // Destructure new state
+  const { question, answer, setAnswer, id, teamId, memberIds, setQuestion, setIsCorrect } = useFormStore(); // Destructure new state
   const router = useRouter();
 
   useEffect(() => {
@@ -45,7 +51,17 @@ export default function Page3() {
         const responseData = await response.json();
         console.log('Challenge assignment successful:', responseData);
         // Here you might want to update the question in the store based on responseData
-        // setQuestion(responseData.challenge_question);
+        if (responseData.my_assigned && responseData.my_assigned.category) {
+          const category = String(responseData.my_assigned.category);
+          const questionData = questions.find((q) => q.category === category);
+          if (questionData) {
+            setQuestion(questionData.problem);
+          } else {
+            console.warn(`No question found for category: ${category}`);
+          }
+        } else {
+          console.warn('Category not found in challenge assignment response.');
+        }
       } catch (error: unknown) {
         console.error('Error assigning challenges:', error);
         let errorMessage = '알 수 없는 오류가 발생했습니다.';
@@ -57,7 +73,7 @@ export default function Page3() {
     };
 
     assignChallenges();
-  }, [id, teamId, memberIds]); // Dependencies for useEffect
+  }, [id, teamId, memberIds, setQuestion]); // Dependencies for useEffect
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
