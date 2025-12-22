@@ -5,6 +5,7 @@ interface FormState {
   id: number;
   accessToken: string;
   question: string;
+  challengeId: number;
   answer: string;
   teamId: number;
   memberIds: number[];
@@ -13,6 +14,7 @@ interface FormState {
   setId: (id: number) => void;
   setAccessToken: (accessToken: string) => void;
   setQuestion: (question: string) => void;
+  setChallengeId: (challengeId: number) => void;
   setAnswer: (answer: string) => void;
   setTeamId: (teamId: number) => void;
   setMemberIds: (memberIds: number[]) => void;
@@ -24,6 +26,7 @@ export const useFormStore = create<FormState>((set) => ({
   id: 0,
   accessToken: '',
   question: '',
+  challengeId: 0,
   answer: '',
   teamId: 0,
   memberIds: [],
@@ -32,6 +35,7 @@ export const useFormStore = create<FormState>((set) => ({
   setId: (id) => set({ id }),
   setAccessToken: (accessToken) => set({ accessToken }),
   setQuestion: (question) => set({ question }),
+  setChallengeId: (challengeId) => set({ challengeId }),
   setAnswer: (answer) => set({ answer }),
   setTeamId: (teamId) => set({ teamId }),
   setMemberIds: (memberIds) => set({ memberIds }),
