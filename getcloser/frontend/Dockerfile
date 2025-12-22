@@ -3,6 +3,9 @@
 # -------------------------------
 FROM node:24-alpine AS builder
 
+ARG NEXT_PUBLIC_TEAM_SIZE
+ENV NEXT_PUBLIC_TEAM_SIZE=$NEXT_PUBLIC_TEAM_SIZE
+
 # 프로덕션 모드 설정 및 Next.js 텔레메트리(익명 통계) 비활성화
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1

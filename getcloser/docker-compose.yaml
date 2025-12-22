@@ -4,6 +4,8 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        NEXT_PUBLIC_TEAM_SIZE: ${TEAM_SIZE}
       labels:
         - "org.pseudolab.project=getcloser"
     restart: unless-stopped
