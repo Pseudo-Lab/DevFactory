@@ -16,7 +16,7 @@ const questions = [
 ];
 
 export default function Page3() {
-  const { question, answer, setAnswer, id, teamId, memberIds, setQuestion, setIsCorrect } = useFormStore(); // Destructure new state
+  const { question, answer, challengeId, setAnswer, id, teamId, memberIds, setQuestion, setChallengeId, setIsCorrect } = useFormStore(); // Destructure new state
   const router = useRouter();
 
   useEffect(() => {
@@ -56,6 +56,7 @@ export default function Page3() {
           const questionData = questions.find((q) => q.category === category);
           if (questionData) {
             setQuestion(questionData.problem);
+            setChallengeId(responseData.my_assigned.assigned_challenge_id);
           } else {
             console.warn(`No question found for category: ${category}`);
           }
@@ -73,17 +74,18 @@ export default function Page3() {
     };
 
     assignChallenges();
-  }, [id, teamId, memberIds, setQuestion]); // Dependencies for useEffect
+  }, [id, teamId, memberIds, setQuestion, setChallengeId]); // Dependencies for useEffect
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Question:', question, 'Answer:', answer);
 
     const requestBody = {
       user_id: id,
-      question: question,
-      answer: answer,
+      challenge_id: challengeId,
+      submitted_answer: answer,
     };
+
+    console.log(JSON.stringify(requestBody));
 
     try {
       const response = await authenticatedFetch('/api/v1/challenges/submit', {
