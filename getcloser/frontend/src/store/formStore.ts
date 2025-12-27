@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface FormState {
   email: string;
@@ -19,9 +20,10 @@ interface FormState {
   setTeamId: (teamId: number) => void;
   setMemberIds: (memberIds: number[]) => void;
   setIsCorrect: (isCorrect: boolean) => void;
+  reset: () => void;
 }
 
-export const useFormStore = create<FormState>((set) => ({
+const initialState = {
   email: '',
   id: 0,
   accessToken: '',
@@ -31,13 +33,27 @@ export const useFormStore = create<FormState>((set) => ({
   teamId: 0,
   memberIds: [],
   isCorrect: null,
-  setEmail: (email) => set({ email }),
-  setId: (id) => set({ id }),
-  setAccessToken: (accessToken) => set({ accessToken }),
-  setQuestion: (question) => set({ question }),
-  setChallengeId: (challengeId) => set({ challengeId }),
-  setAnswer: (answer) => set({ answer }),
-  setTeamId: (teamId) => set({ teamId }),
-  setMemberIds: (memberIds) => set({ memberIds }),
-  setIsCorrect: (isCorrect) => set({ isCorrect }),
-}));
+};
+
+export const useFormStore = create<FormState>()(
+  persist(
+    (set) => ({
+      ...initialState,
+      setEmail: (email) => set({ email }),
+      setId: (id) => set({ id }),
+      setAccessToken: (accessToken) => set({ accessToken }),
+      setQuestion: (question) => set({ question }),
+      setChallengeId: (challengeId) => set({ challengeId }),
+      setAnswer: (answer) => set({ answer }),
+      setTeamId: (teamId) => set({ teamId }),
+      setMemberIds: (memberIds) => set({ memberIds }),
+      setIsCorrect: (isCorrect) => set({ isCorrect }),
+      reset: () => set(initialState),
+    }),
+    {
+      name: 'form-storage', // name of the item in the storage (must be unique)
+      storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+      partialize: (state) => ({ email: state.email, id: state.id, accessToken: state.accessToken, teamId: state.teamId, memberIds: state.memberIds }),
+    },
+  ),
+);
