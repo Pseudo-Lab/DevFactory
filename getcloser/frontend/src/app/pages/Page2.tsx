@@ -23,7 +23,6 @@ const TEAM_SIZE = process.env.NEXT_PUBLIC_TEAM_SIZE
   : 5;
 
 const WaitingView = ({ teamMembers, myId, teamId, setView }: { teamMembers: TeamMember[], myId: number, teamId: number, setView: (view: View) => void }) => {
-  const { setCurrentPage } = useNavigationStore();
   const handleLeaveTeam = async () => {
     try {
       await authenticatedFetch(`/api/v1/teams/${String(teamId)}/cancel`, {
@@ -150,7 +149,6 @@ export default function Page2() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [inputs, setInputs] = useState<InputState[]>(() => Array(TEAM_SIZE).fill({ id: '', displayName: '' }));
 
-  const hasCheckedTeamStatus = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchUserDisplayName = useCallback(async (userId: number | string): Promise<string> => {
@@ -185,98 +183,90 @@ export default function Page2() {
   }, [myId, inputs, fetchUserDisplayName]);
 
   useEffect(() => {
-    const hydrateTeam = async () => {
-      if (myId && teamId && view === 'loading') {
-        console.log('Hydrating team members from persisted teamId...');
-        try {
-          const response = await authenticatedFetch('/api/v1/teams/me');
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.detail || response.statusText}`);
-          }
-          const teamData = await response.json();
-          if (teamData && teamData.members && teamData.members.length > 0) {
-            const newInputs: InputState[] = Array(TEAM_SIZE).fill(null).map((_, index) => {
-              if (index === 0) {
-                // My ID should be the first input
-                const me = teamData.members.find((member: { id: number; }) => Number(member.id) === Number(myId));
-                return me ? { id: String(me.id), displayName: me.name } : { id: String(myId), displayName: '' };
-              } else {
-                // Other members
-                const member = teamData.members[index];
-                return member ? { id: String(member.id), displayName: member.name } : { id: '', displayName: '' };
-              }
-            });
+    const initialize = async () => {
+      if (!myId) {
+        setCurrentPage('page1');
+        return;
+      }
+      if (view !== 'loading') return;
 
-            const initialTeamMembers: TeamMember[] = teamData.members.map((member: { id: number; name: string; }) => ({
-              user_id: Number(member.id),
-              displayName: member.name,
-              is_ready: false, // will be updated by polling later
-            }));
+      try {
+        const response = await authenticatedFetch('/api/v1/teams/me');
 
-            setInputs(newInputs);
-            setTeamMembers(initialTeamMembers);
-            setView('waiting');
-          } else {
-            console.warn('No team members found in /teams/me response, falling back to create view.');
-            setView('create');
-          }
-        } catch (error) {
-          console.error('Error hydrating team data:', error);
-          if (teamId && teamId > 0) {
-            try {
-              console.log(`Attempting to leave team ${teamId} due to hydration error...`);
-              await authenticatedFetch(`/api/v1/teams/${teamId}/cancel`, {
-                method: 'POST',
-              });
-              console.log(`Successfully left team ${teamId}.`);
-            } catch (cancelError) {
-              console.error(`Failed to leave team ${teamId} after hydration error:`, cancelError);
-            }
-          }
-          reset();
-          localStorage.removeItem('lastPage');
-          setCurrentPage('page1');
+        if (response.status === 404) {
+          setView('create');
+          return;
         }
-      } else if (!myId) {
-        setCurrentPage('page1'); // Redirect to page1 if myId is missing
-      } else if (view === 'loading') {
-        setView('create'); // Fallback if no teamId but not redirected
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}, message: ${(await response.json()).detail || response.statusText}`);
+        }
+
+        const teamData = await response.json();
+
+        if (teamData && teamData.team_id) {
+          if (teamData.status === 'ACTIVE') {
+            setCurrentPage('page3');
+            return;
+          }
+
+          if (teamData.status === 'PENDING') {
+            setTeamId(teamData.team_id);
+            if (teamData.members && teamData.members.length > 0) {
+              const me = teamData.members.find((m: {id: number}) => Number(m.id) === Number(myId));
+              const others = teamData.members.filter((m: {id: number}) => Number(m.id) !== Number(myId));
+              const newInputs: InputState[] = Array(TEAM_SIZE).fill({ id: '', displayName: '' });
+
+              if (me) {
+                newInputs[0] = { id: String(me.id), displayName: me.name };
+              } else {
+                newInputs[0] = { id: String(myId), displayName: '' }; // Fallback
+              }
+
+              others.forEach((member: { id: number; name: string }, i: number) => {
+                if (i + 1 < TEAM_SIZE) {
+                  newInputs[i + 1] = { id: String(member.id), displayName: member.name };
+                }
+              });
+
+              const initialTeamMembers: TeamMember[] = teamData.members.map((member: { id: number; name: string; }) => ({
+                user_id: Number(member.id),
+                displayName: member.name,
+                is_ready: false,
+              }));
+              
+              setInputs(newInputs);
+              setTeamMembers(initialTeamMembers);
+              setView('waiting');
+            } else {
+              setView('create');
+            }
+            return;
+          }
+        }
+        setView('create');
+      } catch (error) {
+        console.error('Error during page initialization:', error);
+        if (teamId && teamId > 0) {
+          try {
+            await authenticatedFetch(`/api/v1/teams/${teamId}/cancel`, { method: 'POST' });
+          } catch (cancelError) {
+            console.error(`Failed to leave team ${teamId} after init error:`, cancelError);
+          }
+        }
+        reset();
+        setView('create');
       }
     };
 
-    hydrateTeam();
-  }, [myId, teamId, view, setCurrentPage, reset]);
+    initialize();
+  }, [myId, view, setCurrentPage, setTeamId, setInputs, setTeamMembers, reset]);
 
   useEffect(() => {
     if (myId && inputs[0].id === '') {
       fetchUserById(0, String(myId));
     }
   }, [myId, fetchUserById, inputs]);
-
-  useEffect(() => {
-    if (!myId || hasCheckedTeamStatus.current) return;
-
-    const checkUserTeam = async () => {
-      hasCheckedTeamStatus.current = true;
-      try {
-        const response = await authenticatedFetch('/api/v1/users/me');
-        if (response.ok) {
-          const teamData = await response.json();
-          if (teamData && teamData.status === 'PENDING') {
-            setTeamId(teamData.team_id);
-            setView('waiting');
-            return;
-          }
-        }
-        setView('create');
-      } catch (error) {
-        console.error('Error checking user\'s team status:', error);
-        setView('create');
-      }
-    };
-    checkUserTeam();
-  }, [myId, setTeamId]);
 
   useEffect(() => {
     if (view !== 'waiting' || !teamId) return;
