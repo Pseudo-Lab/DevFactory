@@ -1,11 +1,11 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { authenticatedFetch } from '../../lib/api';
 import { useFormStore } from '../../store/formStore';
+import { useNavigationStore } from '../../store/navigationStore';
 
 // Assuming a TeamMember interface for better typing
 interface TeamMember {
@@ -24,12 +24,12 @@ interface TeamData {
 
 export default function Page4() {
   const { id, isCorrect } = useFormStore(); // Added isCorrect
+  const { setCurrentPage } = useNavigationStore();
 
   const [result, setResult] = useState<string>('');
   const [teamData, setTeamData] = useState<TeamData | null>(null); // State to store team data
   const [clickCount, setClickCount] = useState<number>(0);
   const [lastClickTime, setLastClickTime] = useState<number>(0);
-  const router = useRouter();
 
   // This useEffect will set the initial success/failure based on isCorrect from the store
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function Page4() {
   }, [result]); // Depend on result
 
   const handleTryAgain = () => {
-    router.push('/page2');
+    setCurrentPage('page2');
   };
 
   const handleSuccessClick = async () => {

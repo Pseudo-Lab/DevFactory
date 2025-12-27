@@ -3,14 +3,13 @@
 import Avatar from 'boring-avatars';
 import Cookies from 'js-cookie';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Modal from '@/components/Modal';
 import { authenticatedFetch } from '../../lib/api';
 import { useFormStore } from '../../store/formStore';
+import { useNavigationStore } from '../../store/navigationStore';
 
 type View = 'loading' | 'create' | 'waiting';
 type TeamMember = {
@@ -24,6 +23,7 @@ const TEAM_SIZE = process.env.NEXT_PUBLIC_TEAM_SIZE
   : 5;
 
 const WaitingView = ({ teamMembers, myId, teamId, setView }: { teamMembers: TeamMember[], myId: number, teamId: number, setView: (view: View) => void }) => {
+  const { setCurrentPage } = useNavigationStore();
   const handleLeaveTeam = async () => {
     try {
       await authenticatedFetch(`/api/v1/teams/${String(teamId)}/cancel`, {
@@ -89,6 +89,7 @@ const CreateTeamView = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { setCurrentPage } = useNavigationStore();
 
   useEffect(() => {
     const hasSeenModal = Cookies.get('doNotShowModalPage2');
@@ -107,7 +108,7 @@ const CreateTeamView = ({
     <div className="container mx-auto p-4">
       <Modal
         title="미션 소개"
-        content={('1. 참가자들의 코드를 모으세요!<br />   코드는 위에 개인별 다른 코드가 있습니다.<br />2. 5명이 함께 문제 풀기에 도전하세요!<br />   (팁! 문제는 팀원들과 관련된 문제가 나옵니다.)<br />3. 성공 시 부스 방문해주세요.<br />   성공 선물을 드립니다.')}
+        content={('1. 참가자들의 코드를 모으세요!\n   코드는 위에 개인별 다른 코드가 있습니다.\n2. 5명이 함께 문제 풀기에 도전하세요!\n   (팁! 문제는 팀원들과 관련된 문제가 나옵니다.)\n3. 성공 시 부스 방문해주세요.\n   성공 선물을 드립니다.')}
         onConfirm={handleConfirm}
         onDoNotShowAgain={handleDoNotShowAgain}
         isOpen={showModal}
@@ -133,8 +134,8 @@ const CreateTeamView = ({
         <Button onClick={handleCreateTeam} className="w-full">문제 풀기</Button>
       </div>
       <nav className="flex justify-between mt-8">
-        <Button asChild className="rounded-full" variant={'outline'}>
-          <Link href="/page1">&lt;</Link>
+        <Button onClick={() => setCurrentPage('page1')} className="rounded-full" variant={'outline'}>
+          &lt;
         </Button>
       </nav>
     </div>
@@ -142,14 +143,8 @@ const CreateTeamView = ({
 };
 
 export default function Page2() {
-  const { id: myId, teamId, setTeamId, setMemberIds } = useFormStore();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!myId) {
-      router.push('/page1');
-    }
-  }, [myId, router]);
+  const { id: myId, teamId, setTeamId, setMemberIds, reset } = useFormStore();
+  const { setCurrentPage } = useNavigationStore();
 
   const [view, setView] = useState<View>('loading');
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -188,6 +183,70 @@ export default function Page2() {
     newInputs[index] = { id: userId, displayName: displayName };
     setInputs(newInputs);
   }, [myId, inputs, fetchUserDisplayName]);
+
+  useEffect(() => {
+    const hydrateTeam = async () => {
+      if (myId && teamId && view === 'loading') {
+        console.log('Hydrating team members from persisted teamId...');
+        try {
+          const response = await authenticatedFetch('/api/v1/teams/me');
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.detail || response.statusText}`);
+          }
+          const teamData = await response.json();
+          if (teamData && teamData.members && teamData.members.length > 0) {
+            const newInputs: InputState[] = Array(TEAM_SIZE).fill(null).map((_, index) => {
+              if (index === 0) {
+                // My ID should be the first input
+                const me = teamData.members.find((member: { id: number; }) => Number(member.id) === Number(myId));
+                return me ? { id: String(me.id), displayName: me.name } : { id: String(myId), displayName: '' };
+              } else {
+                // Other members
+                const member = teamData.members[index];
+                return member ? { id: String(member.id), displayName: member.name } : { id: '', displayName: '' };
+              }
+            });
+
+            const initialTeamMembers: TeamMember[] = teamData.members.map((member: { id: number; name: string; }) => ({
+              user_id: Number(member.id),
+              displayName: member.name,
+              is_ready: false, // will be updated by polling later
+            }));
+
+            setInputs(newInputs);
+            setTeamMembers(initialTeamMembers);
+            setView('waiting');
+          } else {
+            console.warn('No team members found in /teams/me response, falling back to create view.');
+            setView('create');
+          }
+        } catch (error) {
+          console.error('Error hydrating team data:', error);
+          if (teamId && teamId > 0) {
+            try {
+              console.log(`Attempting to leave team ${teamId} due to hydration error...`);
+              await authenticatedFetch(`/api/v1/teams/${teamId}/cancel`, {
+                method: 'POST',
+              });
+              console.log(`Successfully left team ${teamId}.`);
+            } catch (cancelError) {
+              console.error(`Failed to leave team ${teamId} after hydration error:`, cancelError);
+            }
+          }
+          reset();
+          localStorage.removeItem('lastPage');
+          setCurrentPage('page1');
+        }
+      } else if (!myId) {
+        setCurrentPage('page1'); // Redirect to page1 if myId is missing
+      } else if (view === 'loading') {
+        setView('create'); // Fallback if no teamId but not redirected
+      }
+    };
+
+    hydrateTeam();
+  }, [myId, teamId, view, setCurrentPage, reset]);
 
   useEffect(() => {
     if (myId && inputs[0].id === '') {
@@ -246,9 +305,9 @@ export default function Page2() {
   useEffect(() => {
     if (view === 'waiting' && teamMembers.length > 0 && teamMembers.every(m => m.is_ready)) {
       setMemberIds(teamMembers.map(m => m.user_id));
-      router.push('/page3');
+      setCurrentPage('page3');
     }
-  }, [view, teamMembers, router, setMemberIds]);
+  }, [view, teamMembers, setCurrentPage, setMemberIds]);
 
   const handleInputChange = (index: number, value: string) => {
     const newInputs = [...inputs];
