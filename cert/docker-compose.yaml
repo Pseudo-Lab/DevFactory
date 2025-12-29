@@ -6,26 +6,71 @@ services:
       context: ./frontend
       labels:
         - "org.pseudolab.project=cert"
-      args:
-        VITE_API_BASE_URL: ${FRONTEND_EXTERNAL_API_URL:-https://backend:8000}
-    ports:
-      - "${FRONTEND_PORT}:80"
-    restart: always
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+    networks:
+      - traefik
+      - internal
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+
+      # --- Traefik Router (frontend) ---
+      - traefik.http.routers.cert-web.rule=Host(`${APP_HOST}`)
+      - traefik.http.routers.cert-web.entrypoints=websecure
+      - traefik.http.routers.cert-web.tls=true
+      - traefik.http.routers.cert-web.tls.certresolver=le
+      - traefik.http.services.cert-web.loadbalancer.server.port=80
+
+      # HTTP → HTTPS 리다이렉트 (frontend)
+      - traefik.http.routers.cert-web-http.rule=Host(`${APP_HOST}`)
+      - traefik.http.routers.cert-web-http.entrypoints=web
+      - traefik.http.routers.cert-web-http.middlewares=redirect-to-https@file
+      - traefik.http.routers.cert-web-http.service=cert-web
 
   backend:
     build:
       context: ./backend
       labels:
         - "org.pseudolab.project=cert"
-    ports:
-      - "${BACKEND_PORT}:8000"
+        - "org.pseudolab.env=${ENVIRONMENT:-dev}"
+    restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      - CORS_ORIGINS=${CORS_ORIGINS}
-      - NOTION_API_KEY=${NOTION_API_KEY}
-      - NOTION_CERT_DB_ID=${NOTION_CERT_DB_ID}
-      - NOTION_PROJ_DB_ID=${NOTION_PROJ_DB_ID}
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-      - SMTP_USERNAME=${SMTP_USERNAME}
-      - SMTP_PASSWORD=${SMTP_PASSWORD}
-    restart: always
+      CORS_ORIGINS: "https://${APP_HOST}"
+      NOTION_API_KEY: ${NOTION_API_KEY}
+      NOTION_CERT_DB_ID: ${NOTION_CERT_DB_ID}
+      NOTION_PROJ_DB_ID: ${NOTION_PROJ_DB_ID}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+    networks:
+      - traefik
+      - internal
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+
+      # --- Traefik Router (backend) ---
+      - traefik.http.routers.cert-api.rule=Host(`${APP_HOST}`) && (PathPrefix(`/api`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/health`) || Path(`/openapi.json`))
+      - traefik.http.routers.cert-api.entrypoints=websecure
+      - traefik.http.routers.cert-api.tls=true
+      - traefik.http.routers.cert-api.tls.certresolver=le
+      - traefik.http.services.cert-api.loadbalancer.server.port=8000
+
+      # HTTP → HTTPS 리다이렉트 (backend)
+      - traefik.http.routers.cert-api-http.rule=Host(`${APP_HOST}`) && PathPrefix(`/api`)
+      - traefik.http.routers.cert-api-http.entrypoints=web
+      - traefik.http.routers.cert-api-http.middlewares=redirect-to-https@file
+      - traefik.http.routers.cert-api-http.service=cert-api
+
+networks:
+  traefik:
+    external: true   # Traefik과 공유
+  internal:
+    driver: bridge
