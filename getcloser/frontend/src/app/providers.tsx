@@ -12,32 +12,17 @@ function StoreInitializer() {
     // Function to run on initial load
     const initialize = () => {
       if (typeof window !== 'undefined') {
-        const savedPage = localStorage.getItem('lastPage');
-        if (savedPage) {
-          useNavigationStore.getState().setCurrentPage(savedPage);
-        }
-
         const accessToken = useFormStore.getState().accessToken;
         const currentPage = useNavigationStore.getState().currentPage;
 
         // If no accessToken and not already on 'page1', redirect to 'page1'
         if (!accessToken && currentPage !== 'page1') {
           useNavigationStore.getState().setCurrentPage('page1');
-          localStorage.removeItem('lastPage'); // Clear lastPage on auth redirect
         }
       }
     };
 
     initialize();
-
-    // Subscribe to store changes and save to localStorage
-    const unsubscribe = useNavigationStore.subscribe(
-      (state) => {
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('lastPage', state.currentPage);
-        }
-      }
-    );
 
     // Also subscribe to formStore for accessToken changes
     const unsubscribeFormStore = useFormStore.subscribe(
@@ -48,14 +33,12 @@ function StoreInitializer() {
           // If the access token is cleared and we are not on page1, navigate to page1
           if (!accessToken && prevState.accessToken && currentPage !== 'page1') {
             useNavigationStore.getState().setCurrentPage('page1');
-            localStorage.removeItem('lastPage'); // Clear lastPage on auth redirect
           }
         }
       }
     );
 
     return () => {
-      unsubscribe();
       unsubscribeFormStore();
     };
   }, []);

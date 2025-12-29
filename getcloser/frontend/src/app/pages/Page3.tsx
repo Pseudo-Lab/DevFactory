@@ -141,7 +141,7 @@ export default function Page3() {
           }
           localStorage.removeItem(CHALLENGE_DATA_KEY);
           reset();
-          localStorage.removeItem('lastPage');
+
           setCurrentPage('page1');
         }
       } else if (question) {
@@ -150,14 +150,13 @@ export default function Page3() {
         console.log('Missing id or teamId, cannot initialize challenge. Resetting.');
         localStorage.removeItem(CHALLENGE_DATA_KEY);
         reset();
-        localStorage.removeItem('lastPage');
+
         setCurrentPage('page1');
       }
     };
 
     initializeChallenge();
   }, [id, teamId, question, memberIds, setQuestion, setChallengeId, reset, setCurrentPage]);
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,8 +166,6 @@ export default function Page3() {
       challenge_id: challengeId,
       submitted_answer: answer,
     };
-
-    console.log(JSON.stringify(requestBody));
 
     try {
       const response = await authenticatedFetch('/api/v1/challenges/submit', {
