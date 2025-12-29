@@ -8,7 +8,7 @@ import { useFormStore } from '../../store/formStore';
 import { useNavigationStore } from '../../store/navigationStore';
 
 export default function Page1() {
-  const { email, setEmail, setId, setAccessToken } = useFormStore();
+  const { email, setEmail, setId, setAccessToken, setTeamId, setChallengeId, setProgressStatus } = useFormStore();
   const { setCurrentPage } = useNavigationStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,6 +53,15 @@ export default function Page1() {
 
       if (userMeResult.sub) {
         setId(userMeResult.sub);
+      }
+      if (userMeResult.team_id) {
+        setTeamId(userMeResult.team_id);
+      }
+      if (userMeResult.challenge_id) {
+        setChallengeId(userMeResult.challenge_id);
+      }
+      if (userMeResult.progress_status) {
+        setProgressStatus(userMeResult.progress_status);
       }
       alert('정보가 제출되었습니다!');
       setCurrentPage('page2');

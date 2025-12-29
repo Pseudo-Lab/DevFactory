@@ -11,6 +11,7 @@ interface FormState {
   teamId: number;
   memberIds: number[];
   isCorrect: boolean | null;
+  progressStatus: string;
   setEmail: (email: string) => void;
   setId: (id: number) => void;
   setAccessToken: (accessToken: string) => void;
@@ -20,6 +21,7 @@ interface FormState {
   setTeamId: (teamId: number) => void;
   setMemberIds: (memberIds: number[]) => void;
   setIsCorrect: (isCorrect: boolean) => void;
+  setProgressStatus: (progressStatus: string) => void;
   reset: () => void;
 }
 
@@ -33,6 +35,7 @@ const initialState = {
   teamId: 0,
   memberIds: [],
   isCorrect: null,
+  progressStatus: '',
 };
 
 export const useFormStore = create<FormState>()(
@@ -48,6 +51,7 @@ export const useFormStore = create<FormState>()(
       setTeamId: (teamId) => set({ teamId }),
       setMemberIds: (memberIds) => set({ memberIds }),
       setIsCorrect: (isCorrect) => set({ isCorrect }),
+      setProgressStatus: (progressStatus) => set({ progressStatus }),
       reset: () => set(initialState),
     }),
     {
