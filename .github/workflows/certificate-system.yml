@@ -2,9 +2,9 @@ name: cert-system deploy (Production/Development, self-hosted)
 
 on:
   push:
-    branches: 
-      - 'main'
-      - 'deploy/cert-develop'
+    branches:
+      - main
+      - deploy/cert-develop
     paths:
       - 'cert/**'
       - '.github/workflows/certificate-system.yml'
@@ -16,75 +16,75 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  deploy-prod:
+    if: github.ref_name == 'main'
+    name: 🚀 Deploy cert-system (Production)
     runs-on: oracle
-    environment: cert-system
+    environment: cert_prod_deploy
     defaults:
       run:
         working-directory: ./cert
-    env:
-      # 공용(운영/개발 공통) - 중복 제거
-      SMTP_HOST: ${{ vars.SMTP_HOST }}
-      SMTP_PORT: ${{ vars.SMTP_PORT }}
-
     steps:
       - uses: actions/checkout@v4
 
-      # === main 배포 ===
-      - name: Build & up (main)
-        if: github.ref == 'refs/heads/main'
-        env:
-          ENV_MODE: production
-          
-          # --- Frontend build arg / 운영 ---
-          FRONTEND_EXTERNAL_API_URL: ${{ vars.FRONTEND_EXTERNAL_API_URL }}
-          FRONTEND_PORT: ${{ vars.FRONTEND_PORT }}
-          BACKEND_PORT: ${{ vars.BACKEND_PORT }}
+      - name: Write .env (prod)
+        run: |
+          cat > .env <<'EOF'
+          APP_HOST=${{ vars.APP_HOST }}
+          ENVIRONMENT=${{ vars.ENVIRONMENT }}
+          NODE_ENV=${{ vars.NODE_ENV }}
+          CERT_TEMPLATE_ARCHIVE_PASSWORD=${{ secrets.CERT_TEMPLATE_ARCHIVE_PASSWORD }}
+          NOTION_API_KEY=${{ secrets.NOTION_API_KEY }}
+          NOTION_CERT_DB_ID=${{ secrets.NOTION_CERT_DB_ID }}
+          NOTION_PROJ_DB_ID=${{ secrets.NOTION_PROJ_DB_ID }}
+          SMTP_HOST=${{ vars.SMTP_HOST }}
+          SMTP_PORT=${{ vars.SMTP_PORT }}
+          SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
+          CORS_ORIGINS=${{ vars.CORS_ORIGINS }}
+          FRONTEND_EXTERNAL_API_URL=${{ vars.FRONTEND_EXTERNAL_API_URL }}
+          EOF
 
-          # --- Backend runtime / 운영 ---
-          CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
-          SMTP_USERNAME: ${{ vars.SMTP_USERNAME }}
-
-          # --- Notion, Secrets / 운영 ---
-          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
-          NOTION_CERT_DB_ID: ${{ secrets.NOTION_CERT_DB_ID }}
-          NOTION_PROJ_DB_ID: ${{ secrets.NOTION_PROJ_DB_ID }}
-          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      - name: Build & up (prod)
         run: |
           set -euxo pipefail
-          : "${FRONTEND_PORT:?FRONTEND_PORT is empty}"
-          : "${BACKEND_PORT:?BACKEND_PORT is empty}"
-          echo "ENV_MODE=$ENV_MODE"
           docker compose -p cert-main config -q
           docker compose -p cert-main down --remove-orphans
           docker compose -p cert-main up -d --build --remove-orphans
           docker image prune -f --filter "label=org.pseudolab.project=cert"
 
-      # === 개발 배포 (deploy/cert-develop) ===
-      - name: Build & up (develop)
-        if: github.ref == 'refs/heads/deploy/cert-develop'
-        env:
-          ENV_MODE: development
+  deploy-dev:
+    if: github.ref_name == 'deploy/cert-develop'
+    name: 🚀 Deploy cert-system (Development)
+    runs-on: oracle
+    environment: cert_dev_deploy
+    defaults:
+      run:
+        working-directory: ./cert
+    steps:
+      - uses: actions/checkout@v4
 
-          # --- Frontend build arg / 개발 ---
-          FRONTEND_EXTERNAL_API_URL: ${{ vars.DEV_FRONTEND_EXTERNAL_API_URL }}
-          FRONTEND_PORT: ${{ vars.DEV_FRONTEND_PORT }}
-          BACKEND_PORT: ${{ vars.DEV_BACKEND_PORT }}
+      - name: Write .env (dev)
+        run: |
+          cat > .env <<'EOF'
+          APP_HOST=${{ vars.APP_HOST }}
+          ENVIRONMENT=${{ vars.ENVIRONMENT }}
+          NODE_ENV=${{ vars.NODE_ENV }}
+          CERT_TEMPLATE_ARCHIVE_PASSWORD=${{ secrets.CERT_TEMPLATE_ARCHIVE_PASSWORD }}
+          NOTION_API_KEY=${{ secrets.NOTION_API_KEY }}
+          NOTION_CERT_DB_ID=${{ secrets.NOTION_CERT_DB_ID }}
+          NOTION_PROJ_DB_ID=${{ secrets.NOTION_PROJ_DB_ID }}
+          SMTP_HOST=${{ vars.SMTP_HOST }}
+          SMTP_PORT=${{ vars.SMTP_PORT }}
+          SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
+          CORS_ORIGINS=${{ vars.CORS_ORIGINS }}
+          FRONTEND_EXTERNAL_API_URL=${{ vars.FRONTEND_EXTERNAL_API_URL }}
+          EOF
 
-          # --- Backend runtime / 개발 ---
-          CORS_ORIGINS: ${{ vars.DEV_CORS_ORIGINS }}
-          SMTP_USERNAME: ${{ vars.DEV_SMTP_USERNAME }}
-
-          # --- Notion, Secrets / 개발 ---
-          NOTION_API_KEY: ${{ secrets.DEV_NOTION_API_KEY }}
-          NOTION_CERT_DB_ID: ${{ secrets.DEV_NOTION_CERT_DB_ID }}
-          NOTION_PROJ_DB_ID: ${{ secrets.DEV_NOTION_PROJ_DB_ID }}
-          SMTP_PASSWORD: ${{ secrets.DEV_SMTP_PASSWORD }}
+      - name: Build & up (dev)
         run: |
           set -euxo pipefail
-          : "${FRONTEND_PORT:?FRONTEND_PORT is empty}"
-          : "${BACKEND_PORT:?BACKEND_PORT is empty}"
-          echo "ENV_MODE=$ENV_MODE"
           docker compose -p cert-dev config -q
           docker compose -p cert-dev down --remove-orphans
           docker compose -p cert-dev up -d --build --remove-orphans
