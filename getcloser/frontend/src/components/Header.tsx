@@ -35,7 +35,7 @@ export default function Header() {
       <p className="text-md mt-1 text-center" style={{ margin: 0, padding: 0, lineHeight: '1em' }}>
         Pseudo Lab<br />
         2nd Grand Gathering<br />
-        2025. 12. 20
+        2026. 1. 10
       </p>
       {id && userName && <p className="text-sm mt-2">ID: <strong>{id}</strong>, 이름: <strong>{userName}</strong></p>}
       {id && !userName && <p className="text-sm mt-2">ID: <strong>{id}</strong></p>}

@@ -4,8 +4,8 @@
 import { Geist, Geist_Mono, Dongle } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
-import { usePathname } from 'next/navigation';
 import Header from '@/components/Header';
+import { useNavigationStore } from '../store/navigationStore'; // Import the navigation store
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -34,20 +34,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-  const hideHeader = pathname === '/page1';
+  const { currentPage } = useNavigationStore(); // Get the current page from the store
+  const hideHeader = currentPage === 'page1'; // Determine if header should be hidden
 
   return (
     <html lang="en" style={{ background: 'linear-gradient(to bottom, hsl(160 40% 10%) 0%, hsl(160 40% 15%) 40%, hsl(160 40% 20%) 100%)' }} className="min-h-screen">
       <head>
-        <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="icon" href="/pseudolab.svg" type="image/svg+xml" sizes="any" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${dongle.variable} antialiased`}
       >
-        {!hideHeader && <Header />}
+        {!hideHeader && <Header />} {/* Conditionally render the Header */}
         <Providers>{children}</Providers>
       </body>
     </html>

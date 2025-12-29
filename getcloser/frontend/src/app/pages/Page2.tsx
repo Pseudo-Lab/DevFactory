@@ -3,14 +3,13 @@
 import Avatar from 'boring-avatars';
 import Cookies from 'js-cookie';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Modal from '@/components/Modal';
 import { authenticatedFetch } from '../../lib/api';
 import { useFormStore } from '../../store/formStore';
+import { useNavigationStore } from '../../store/navigationStore';
 
 type View = 'loading' | 'create' | 'waiting';
 type TeamMember = {
@@ -89,6 +88,7 @@ const CreateTeamView = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { setCurrentPage } = useNavigationStore();
 
   useEffect(() => {
     const hasSeenModal = Cookies.get('doNotShowModalPage2');
@@ -107,7 +107,7 @@ const CreateTeamView = ({
     <div className="container mx-auto p-4">
       <Modal
         title="미션 소개"
-        content={('1. 참가자들의 코드를 모으세요!<br />   코드는 위에 개인별 다른 코드가 있습니다.<br />2. 5명이 함께 문제 풀기에 도전하세요!<br />   (팁! 문제는 팀원들과 관련된 문제가 나옵니다.)<br />3. 성공 시 부스 방문해주세요.<br />   성공 선물을 드립니다.')}
+        content={('1. 참가자들의 코드를 모으세요!\n   코드는 위에 개인별 다른 코드가 있습니다.\n2. 5명이 함께 문제 풀기에 도전하세요!\n   (팁! 문제는 팀원들과 관련된 문제가 나옵니다.)\n3. 성공 시 부스 방문해주세요.\n   성공 선물을 드립니다.')}
         onConfirm={handleConfirm}
         onDoNotShowAgain={handleDoNotShowAgain}
         isOpen={showModal}
@@ -133,8 +133,8 @@ const CreateTeamView = ({
         <Button onClick={handleCreateTeam} className="w-full">문제 풀기</Button>
       </div>
       <nav className="flex justify-between mt-8">
-        <Button asChild className="rounded-full" variant={'outline'}>
-          <Link href="/page1">&lt;</Link>
+        <Button onClick={() => setCurrentPage('page1')} className="rounded-full" variant={'outline'}>
+          &lt;
         </Button>
       </nav>
     </div>
@@ -142,20 +142,13 @@ const CreateTeamView = ({
 };
 
 export default function Page2() {
-  const { id: myId, teamId, setTeamId, setMemberIds } = useFormStore();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!myId) {
-      router.push('/page1');
-    }
-  }, [myId, router]);
+  const { id: myId, teamId, setTeamId, setMemberIds, reset } = useFormStore();
+  const { setCurrentPage } = useNavigationStore();
 
   const [view, setView] = useState<View>('loading');
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [inputs, setInputs] = useState<InputState[]>(() => Array(TEAM_SIZE).fill({ id: '', displayName: '' }));
 
-  const hasCheckedTeamStatus = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchUserDisplayName = useCallback(async (userId: number | string): Promise<string> => {
@@ -190,34 +183,90 @@ export default function Page2() {
   }, [myId, inputs, fetchUserDisplayName]);
 
   useEffect(() => {
-    if (myId && inputs[0].id === '') {
-      fetchUserById(0, String(myId));
-    }
-  }, [myId, fetchUserById, inputs]);
+    const initialize = async () => {
+      if (!myId) {
+        setCurrentPage('page1');
+        return;
+      }
+      if (view !== 'loading') return;
 
-  useEffect(() => {
-    if (!myId || hasCheckedTeamStatus.current) return;
-
-    const checkUserTeam = async () => {
-      hasCheckedTeamStatus.current = true;
       try {
-        const response = await authenticatedFetch('/api/v1/users/me');
-        if (response.ok) {
-          const teamData = await response.json();
-          if (teamData && teamData.status === 'PENDING') {
+        const response = await authenticatedFetch('/api/v1/teams/me');
+
+        if (response.status === 404) {
+          setView('create');
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}, message: ${(await response.json()).detail || response.statusText}`);
+        }
+
+        const teamData = await response.json();
+
+        if (teamData && teamData.team_id) {
+          if (teamData.status === 'ACTIVE') {
+            setCurrentPage('page3');
+            return;
+          }
+
+          if (teamData.status === 'PENDING') {
             setTeamId(teamData.team_id);
-            setView('waiting');
+            if (teamData.members && teamData.members.length > 0) {
+              const me = teamData.members.find((m: {id: number}) => Number(m.id) === Number(myId));
+              const others = teamData.members.filter((m: {id: number}) => Number(m.id) !== Number(myId));
+              const newInputs: InputState[] = Array(TEAM_SIZE).fill({ id: '', displayName: '' });
+
+              if (me) {
+                newInputs[0] = { id: String(me.id), displayName: me.name };
+              } else {
+                newInputs[0] = { id: String(myId), displayName: '' }; // Fallback
+              }
+
+              others.forEach((member: { id: number; name: string }, i: number) => {
+                if (i + 1 < TEAM_SIZE) {
+                  newInputs[i + 1] = { id: String(member.id), displayName: member.name };
+                }
+              });
+
+              const initialTeamMembers: TeamMember[] = teamData.members.map((member: { id: number; name: string; }) => ({
+                user_id: Number(member.id),
+                displayName: member.name,
+                is_ready: false,
+              }));
+              
+              setInputs(newInputs);
+              setTeamMembers(initialTeamMembers);
+              setView('waiting');
+            } else {
+              setView('create');
+            }
             return;
           }
         }
         setView('create');
       } catch (error) {
-        console.error('Error checking user\'s team status:', error);
+        console.error('Error during page initialization:', error);
+        if (teamId && teamId > 0) {
+          try {
+            await authenticatedFetch(`/api/v1/teams/${teamId}/cancel`, { method: 'POST' });
+          } catch (cancelError) {
+            console.error(`Failed to leave team ${teamId} after init error:`, cancelError);
+          }
+        }
+        reset();
         setView('create');
       }
     };
-    checkUserTeam();
-  }, [myId, setTeamId]);
+
+    initialize();
+  }, [myId, view, setCurrentPage, setTeamId, setInputs, setTeamMembers, reset]);
+
+  useEffect(() => {
+    if (myId && inputs[0].id === '') {
+      fetchUserById(0, String(myId));
+    }
+  }, [myId, fetchUserById, inputs]);
 
   useEffect(() => {
     if (view !== 'waiting' || !teamId) return;
@@ -246,9 +295,9 @@ export default function Page2() {
   useEffect(() => {
     if (view === 'waiting' && teamMembers.length > 0 && teamMembers.every(m => m.is_ready)) {
       setMemberIds(teamMembers.map(m => m.user_id));
-      router.push('/page3');
+      setCurrentPage('page3');
     }
-  }, [view, teamMembers, router, setMemberIds]);
+  }, [view, teamMembers, setCurrentPage, setMemberIds]);
 
   const handleInputChange = (index: number, value: string) => {
     const newInputs = [...inputs];
