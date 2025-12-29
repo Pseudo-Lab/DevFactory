@@ -2,6 +2,7 @@ from models.challenges import UserChallengeStatus
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from models.teams import Team, TeamMember, TeamStatus
+from models.challenge_question import ChallengeQuestion
 from models.users import User
 from schemas.team_schema import TeamCreateRequest, TeamInfoResponse, MemberChallengeResponse, TeamMemberInfo
 from fastapi import HTTPException
@@ -264,7 +265,7 @@ def get_team_member_challenge(
 
   record = (
       db.query(UserChallengeStatus)
-      .join(Challenge, Challenge.id == UserChallengeStatus.challenge_id)
+      .join(ChallengeQuestion, ChallengeQuestion.id == UserChallengeStatus.challenge_id)
       .filter(UserChallengeStatus.user_id == user_id)
       .order_by(UserChallengeStatus.created_at.desc())
       .first()
