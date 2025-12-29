@@ -1,13 +1,26 @@
+import logging
+import os
+
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
-import os
 
 from .routers import certificate
 
 
-# .env 파일 로드
+def configure_logging() -> None:
+    """기본 로깅 설정을 구성한다."""
+    log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+    logging.basicConfig(
+        level=log_level,
+        format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
+    )
+
+
+# .env 파일 로드 및 로깅 설정
 load_dotenv()
+configure_logging()
+logger = logging.getLogger(__name__)
 
 # FastAPI 앱 생성
 app = FastAPI(
@@ -22,13 +35,16 @@ app = FastAPI(
 origins = os.getenv("CORS_ORIGINS", "").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(certificate.certificate_router)
+# 모든 환경에서 /api 프리픽스 사용 (개발/프로덕션 통일)
+app.include_router(certificate.certificate_router, prefix="/api")
+logger.info("FastAPI app initialized", extra={"environment": os.getenv("ENVIRONMENT")})
+
 
 @app.get("/")
 async def read_root():
@@ -36,8 +52,9 @@ async def read_root():
     return {
         "message": "PseudoLab 수료증 발급 시스템 API 서버",
         "version": "1.0.0",
-        "status": "running"
+        "status": "running",
     }
+
 
 @app.get("/health")
 async def health_check():

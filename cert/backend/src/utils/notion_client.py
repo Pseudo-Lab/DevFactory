@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 import os
 import aiohttp
 from typing import Optional, Dict, Any, List
@@ -6,6 +7,9 @@ from typing import Optional, Dict, Any, List
 from ..constants.error_codes import NotEligibleError, ResponseStatus
 from ..models.certificate import CertificateStatus
 from ..models.project import Project, SeasonGroup, ProjectsBySeasonResponse
+
+
+logger = logging.getLogger(__name__)
 
 class NotionClient:
     """Notion API 클라이언트 (캐싱 포함)"""
@@ -75,10 +79,17 @@ class NotionClient:
                 async with session.post(url, headers=self.headers, json=payload) as response:
                     if response.status == 200:
                         data = await response.json()
-                        # print("data: ", data)
                         if data["results"]:
                             if len(data["results"]) > 1:
-                                print(f"다 수{(len(data['results']))}의 결과가 검색되었습니다.")
+                                logger.warning(
+                                    "여러 개의 프로젝트가 검색되었습니다",
+                                    extra={
+                                        "result_count": len(data["results"]),
+                                        "user_name": user_name,
+                                        "season": season,
+                                        "course_name": course_name,
+                                    },
+                                )
                             project = data["results"][0]
                             properties = project.get("properties", {})
                             
@@ -87,7 +98,19 @@ class NotionClient:
                             runners = properties.get("러너", {}).get("multi_select", [])
                             completers = properties.get("수료자", {}).get("rich_text", [])
                             dropouts = properties.get("이탈자", {}).get("multi_select", [])
-                            project_code = properties.get("코드", {}).get("rich_text", [])[0].get("plain_text", "")
+
+                            code_prop = properties.get("코드", {}).get("rich_text", [])
+                            project_code = code_prop[0].get("plain_text", "") if code_prop else ""
+                            if not project_code:
+                                logger.warning(
+                                    "프로젝트 코드가 비어 있습니다.",
+                                    extra={
+                                        "user_name": user_name,
+                                        "season": season,
+                                        "course_name": course_name,
+                                        "project_id": project.get("id"),
+                                    },
+                                )
                             
                             builder_names = [b.get("name", "") for b in builders]
                             runner_names = [r.get("name", "") for r in runners]
@@ -115,7 +138,15 @@ class NotionClient:
                                 # TODO: 추후 처리 필요
                                 raise SystemError("기간 정보가 없습니다.")
 
-                            print(f"사용자 {user_name} 검증 성공: {user_role}")
+                            logger.info(
+                                "사용자 검증 성공",
+                                extra={
+                                    "user_name": user_name,
+                                    "season": season,
+                                    "course_name": course_name,
+                                    "user_role": user_role,
+                                },
+                            )
                             return {
                                 "found": True,
                                 "project_id": project.get("id"),
@@ -126,7 +157,14 @@ class NotionClient:
                             }
                         else:
                             # 프로젝트가 검색되지 않은 경우 (Edge case)
-                            print(f"프로젝트 검색 결과 없음: {user_name}, {season}기, {course_name}")
+                            logger.warning(
+                                "프로젝트 검색 결과 없음",
+                                extra={
+                                    "user_name": user_name,
+                                    "season": season,
+                                    "course_name": course_name,
+                                },
+                            )
                             raise Exception("해당 프로젝트가 검색되지 않습니다. \nDevFactory로 연락부탁드립니다.")
         except Exception as e:
             raise e
@@ -192,9 +230,9 @@ class NotionClient:
                         
                         raise Exception(f"Notion API 오류 ({response.status}): {error_text}")
                     
-        except Exception as e:
-            print(f"수료증 신청 생성 중 오류: {e}")
-            raise e
+        except Exception:
+            logger.exception("수료증 신청 생성 중 오류")
+            raise
     
     async def update_certificate_status(
         self,
@@ -242,26 +280,40 @@ class NotionClient:
                     if response.status == 200:
                         return True
                     else:
-                        print(f"상태 업데이트 오류: {response.status}")
+                        logger.warning(
+                            "상태 업데이트 오류",
+                            extra={
+                                "status_code": response.status,
+                                "page_id": page_id,
+                            },
+                        )
                         return False
                         
-        except Exception as e:
-            print(f"상태 업데이트 중 오류: {e}")
+        except Exception:
+            logger.exception("상태 업데이트 중 오류")
             return False
 
     def _get_cached_projects(self) -> Optional[List[Project]]:
         """캐시된 프로젝트 목록 가져오기"""
         cache_key = "all_projects"
         
-        print(f"🔍 캐시 확인: {cache_key}")
-        print(f"   - 캐시 존재: {cache_key in self._cache}")
-        print(f"   - 로드 완료: {self._projects_loaded}")
+        logger.debug(
+            "캐시 확인",
+            extra={
+                "cache_key": cache_key,
+                "exists": cache_key in self._cache,
+                "loaded": self._projects_loaded,
+            },
+        )
         
         if cache_key in self._cache and self._projects_loaded:
-            print(f"=== 캐시에서 프로젝트 로드: {len(self._cache[cache_key])}개 ===")
+            logger.info(
+                "캐시에서 프로젝트 로드",
+                extra={"project_count": len(self._cache[cache_key])},
+            )
             return self._cache[cache_key]
         
-        print("❌ 캐시 없음 - API 호출 필요")
+        logger.info("캐시 없음 - API 호출 예정", extra={"cache_key": cache_key})
         return None
     
     def _set_cached_projects(self, projects: List[Project]):
@@ -270,14 +322,17 @@ class NotionClient:
         self._cache[cache_key] = projects
         self._cache_timestamps[cache_key] = datetime.now()
         self._projects_loaded = True  # 한 번 로드 완료
-        print(f"=== 프로젝트 캐시 저장: {len(projects)}개 ===")
+        logger.info(
+            "프로젝트 캐시 저장 완료",
+            extra={"project_count": len(projects)},
+        )
     
     def clear_cache(self):
         """캐시 삭제"""
         self._cache.clear()
         self._cache_timestamps.clear()
         self._projects_loaded = False
-        print("=== 캐시 삭제 완료 ===")
+        logger.info("프로젝트 캐시 삭제 완료")
 
     async def get_all_projects(self) -> Optional[list[Project]]:
         """모든 프로젝트 조회 (페이지네이션 처리 + 캐싱)"""
@@ -290,7 +345,7 @@ class NotionClient:
             async with aiohttp.ClientSession() as session:
                 url = f"{self.base_url}/databases/{self.databases['project_history']}/query"
                 
-                print("🔄 Notion API에서 프로젝트 조회 중...")
+                logger.info("Notion API에서 프로젝트 조회 시작")
                 
                 all_projects = []
                 has_more = True
@@ -366,8 +421,10 @@ class NotionClient:
                                     all_projects.append(project)
                                     
                                 except Exception as e:
-                                    print(f"   ❌ 프로젝트 파싱 오류: {e}")
-                                    print(f"   🔍 문제 데이터: {properties}")
+                                    logger.exception(
+                                        "프로젝트 파싱 오류",
+                                        extra={"properties": properties},
+                                    )
                                     continue
                             
                             # 다음 페이지 확인
@@ -375,25 +432,36 @@ class NotionClient:
                             start_cursor = data.get("next_cursor")
                             
                             if has_more:
-                                print(f"⏭️ 다음 페이지로 이동 (cursor: {start_cursor})")
+                                logger.info(
+                                    "다음 페이지 조회",
+                                    extra={"next_cursor": start_cursor, "page": page_count},
+                                )
                             else:
-                                print("✅ 모든 페이지 조회 완료")
+                                logger.info("모든 프로젝트 페이지 조회 완료")
                                 
                         else:
                             error_text = await response.text()
-                            print(f"API 오류: {response.status}")
-                            print(f"오류 내용: {error_text}")
+                            logger.error(
+                                "프로젝트 목록 조회 실패",
+                                extra={
+                                    "status_code": response.status,
+                                    "error_text": error_text,
+                                },
+                            )
                             return None
                 
-                print(f"🎉 총 {len(all_projects)}개 프로젝트 조회 완료")
+                logger.info(
+                    "프로젝트 조회 완료",
+                    extra={"project_count": len(all_projects)},
+                )
                 
                 # 캐시에 저장
                 self._set_cached_projects(all_projects)
                 
                 return all_projects
             
-        except Exception as e:
-            print(f"모든 프로젝트 조회 중 오류: {e}")
+        except Exception:
+            logger.exception("모든 프로젝트 조회 중 오류")
             return None
 
     async def get_projects_by_season(self) -> Optional[ProjectsBySeasonResponse]:
@@ -438,14 +506,26 @@ class NotionClient:
                 message="기수별 프로젝트 조회 완료"
             )
             
-            print(f"🎯 기수별 그룹화 완료: {len(season_list)}개 기수, {len(all_projects)}개 프로젝트")
+            logger.info(
+                "기수별 그룹화 완료",
+                extra={
+                    "season_count": len(season_list),
+                    "project_count": len(all_projects),
+                },
+            )
             for season_group in season_list:
-                print(f"   📊 {season_group.season}: {season_group.project_count}개 프로젝트")
+                logger.debug(
+                    "기수별 프로젝트 요약",
+                    extra={
+                        "season": season_group.season,
+                        "project_count": season_group.project_count,
+                    },
+                )
             
             return response
             
-        except Exception as e:
-            print(f"기수별 프로젝트 조회 중 오류: {e}")
+        except Exception:
+            logger.exception("기수별 프로젝트 조회 중 오류")
             return None
                         
     async def check_existing_certificate(
@@ -522,13 +602,18 @@ class NotionClient:
                                 if email_prop:
                                     existing_email = email_prop
                             
-                            print("🔍 기존 수료증 발견 (이름, 코스, 기수 일치):")
-                            print(f"   - 이름: {applicant_name}")
-                            print(f"   - 코스: {course_name}")
-                            print(f"   - 기수: {season}기")
-                            print(f"   - 수료증 번호: '{certificate_number}'")
-                            print(f"   - 역할: '{role}'")
-                            print(f"   - 상태: '{status}'")
+                            logger.info(
+                                "기존 수료증 발견",
+                                extra={
+                                    "applicant_name": applicant_name,
+                                    "course_name": course_name,
+                                    "season": season,
+                                    "certificate_number": certificate_number,
+                                    "role": role,
+                                    "status": status,
+                                    "existing_email": existing_email,
+                                },
+                            )
                             
                             return {
                                 "found": True,
@@ -541,15 +626,28 @@ class NotionClient:
                                 "existing_data": existing_cert
                             }
                         else:
-                            print(f"🔍 기존 수료증 없음: {applicant_name}, {course_name}, {season}기")
+                            logger.info(
+                                "기존 수료증 없음",
+                                extra={
+                                    "applicant_name": applicant_name,
+                                    "course_name": course_name,
+                                    "season": season,
+                                },
+                            )
                             return {"found": False}
                     else:
                         error_text = await response.text()
-                        print(f"기존 수료증 확인 오류: {response.status} - {error_text}")
+                        logger.error(
+                            "기존 수료증 확인 오류",
+                            extra={
+                                "status_code": response.status,
+                                "error_text": error_text,
+                            },
+                        )
                         return None
                         
-        except Exception as e:
-            print(f"기존 수료증 확인 중 오류: {e}")
+        except Exception:
+            logger.exception("기존 수료증 확인 중 오류")
             return None
 
     async def get_database_structure(self, database_type: str = "project_history") -> Optional[Dict[str, Any]]:
@@ -562,10 +660,13 @@ class NotionClient:
                     if response.status == 200:
                         return await response.json()
                     else:
-                        print(f"데이터베이스 구조 조회 오류: {response.status}")
+                        logger.error(
+                            "데이터베이스 구조 조회 오류",
+                            extra={"status_code": response.status, "database_type": database_type},
+                        )
                         return None
                         
-        except Exception as e:
-            print(f"데이터베이스 구조 조회 중 오류: {e}")
+        except Exception:
+            logger.exception("데이터베이스 구조 조회 중 오류")
             return None
         

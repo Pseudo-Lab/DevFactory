@@ -1,5 +1,9 @@
+import logging
 import os
 import requests
+import tarfile
+import tempfile
+import subprocess
 from io import BytesIO
 
 from reportlab.pdfgen import canvas
@@ -7,6 +11,9 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 from .template_content import TemplateContent
+
+
+logger = logging.getLogger(__name__)
 
 class PDFGenerator:
     """PDF 인증서 """
@@ -57,12 +64,20 @@ class PDFGenerator:
         # 경로 설정
         self.font_dir_name = "fonts"
         self.template_dir_name = "templates"
+        self.template_archive_password_env = "CERT_TEMPLATE_ARCHIVE_PASSWORD"
         self.certificate_dir_name = "certificates"
         
         # 기본 템플릿
-        self.default_template = "default.png"
-        self.builder_template = "default0.png"
-        self.runner_template = "default1.png"
+        self.ds_template = "ds.png"
+        self.builder_template = "builder.png"
+        self.runner_template = "runner.png"
+        self.template_archive_name = "templates.tar.gz"
+        self.template_archive_enc_name = f"{self.template_archive_name}.enc"
+        self.required_templates = [
+            self.ds_template,
+            self.builder_template,
+            self.runner_template,
+        ]
         
         # 폰트 로드 상태
         self._fonts_loaded = False
@@ -81,7 +96,10 @@ class PDFGenerator:
             return os.path.join(current_dir, f"../../{self.certificate_dir_name}")
         elif asset_type == "template_file":
             template_dir = self.get_asset_path(self.template_dir_name)
-            return os.path.join(template_dir, filename or self.default_template)
+            return os.path.join(template_dir, filename or self.ds_template)
+        elif asset_type == "ds_template":
+            template_dir = self.get_asset_path(self.template_dir_name)
+            return os.path.join(template_dir, self.ds_template)
         elif asset_type == "runner_template":
             template_dir = self.get_asset_path(self.template_dir_name)
             return os.path.join(template_dir, self.runner_template)
@@ -109,22 +127,22 @@ class PDFGenerator:
                     response = requests.get(url, timeout=30)
                     with open(font_path, 'wb') as f:
                         f.write(response.content)
-                    print(f"{name} 폰트 다운로드 완료")
-                except:
-                    print(f"{name} 폰트 다운로드 실패")
+                    logger.info("폰트 다운로드 완료", extra={"font_name": name})
+                except Exception:
+                    logger.exception("폰트 다운로드 실패", extra={"font_name": name})
             
             if os.path.exists(font_path):
                 pdfmetrics.registerFont(TTFont(name, font_path))
-                print(f"{name} 폰트 등록 완료")
+                logger.info("폰트 등록 완료", extra={"font_name": name})
         
         # 영어 폰트 등록
         english_font_path = os.path.join(font_dir, "HeptaSlab-SemiBold.ttf")
         
         if os.path.exists(english_font_path):
             pdfmetrics.registerFont(TTFont('HeptaSlab-SemiBold', english_font_path))
-            print("HeptaSlab-SemiBold 폰트 등록 완료")
+            logger.info("HeptaSlab-SemiBold 폰트 등록 완료")
         else:
-            print("HeptaSlab-SemiBold.ttf 파일을 찾을 수 없습니다.")
+            logger.warning("HeptaSlab-SemiBold.ttf 파일을 찾을 수 없습니다.")
         
         self._fonts_loaded = True
 
@@ -248,12 +266,13 @@ class PDFGenerator:
         
         if current_line:
             lines.append(current_line)
-        
+
         return lines
 
     def create_certificate(self, name:str, season: int, course_name:str, role:str, period:str="", save_file:bool=False, output_path:str=None):
         """인증서 생성 (기본적으로 bytes 반환, 옵션으로 파일 저장)"""
         self._download_fonts()
+        self._prepare_templates()
         
         # 경로 설정
         if role == "BUILDER":
@@ -261,7 +280,7 @@ class PDFGenerator:
         elif role == "RUNNER":
             template_path = self.get_asset_path("runner_template")
         else:
-            template_path = self.get_asset_path("default_template")
+            template_path = self.get_asset_path("ds_template")
         
         # 이미지 크기 확인
         width, height = self._get_image_size(template_path)
@@ -273,9 +292,12 @@ class PDFGenerator:
         # 배경 이미지
         if os.path.exists(template_path):
             c.drawImage(template_path, 0, 0, width, height)
-            print(f"템플릿 이미지 추가: {template_path}")
+            logger.info("템플릿 이미지 추가", extra={"template_path": template_path})
         else:
-            raise ValueError("템플릿 이미지를 찾을 수 없습니다.")
+            raise ValueError(
+                f"템플릿 이미지를 찾을 수 없습니다: {template_path}. "
+                f"템플릿 디렉터리에 필수 PNG가 있는지 확인하세요."
+            )
         
         # Season 정보 설정
         season_english = f"Season {season} ({period['start']} ~ {period['end']}) / "
@@ -369,11 +391,109 @@ class PDFGenerator:
             # 바이트를 파일로 저장
             with open(output_path, 'wb') as f:
                 f.write(pdf_bytes)
-            print(f"인증서 파일 저장 완료: {output_path}")
+            logger.info("인증서 파일 저장 완료", extra={"output_path": output_path})
         
         buffer.close()
-        print(f"인증서 생성 완료 (메모리)")
+        logger.info(
+            "인증서 생성 완료",
+            extra={
+                "recipient_name": name,
+                "season": season,
+                "role": role,
+                "saved_to_file": save_file,
+            },
+        )
         return pdf_bytes
+
+    def _templates_exist(self, template_dir: str) -> bool:
+        """필수 템플릿이 모두 존재하는지 확인"""
+        return all(os.path.exists(os.path.join(template_dir, name)) for name in self.required_templates)
+
+    def _prepare_templates(self):
+        """템플릿 디렉터리를 준비하고 없으면 복호화/압축 해제"""
+        template_dir = self.get_asset_path(self.template_dir_name)
+        os.makedirs(template_dir, exist_ok=True)
+
+        if self._templates_exist(template_dir):
+            return
+
+        # 아카이브 경로 설정
+        base_archive_path = os.path.join(template_dir, self.template_archive_name)
+
+        if base_archive_path.endswith(".enc"):
+            encrypted_archive_path = base_archive_path
+            archive_path = base_archive_path[:-4]
+        else:
+            archive_path = base_archive_path
+            encrypted_archive_path = f"{base_archive_path}.enc"
+
+        # 복호화 + 압축 해제 시도
+        temp_decrypted_path = None
+        try:
+            if os.path.exists(archive_path):
+                self._extract_archive(archive_path, template_dir)
+            elif os.path.exists(encrypted_archive_path):
+                password = os.getenv(self.template_archive_password_env)
+                if not password:
+                    raise ValueError(
+                        f"암호화된 템플릿 아카이브를 복호화하려면 {self.template_archive_password_env} "
+                        f"환경변수가 필요합니다. 경로: {encrypted_archive_path}"
+                    )
+                temp_decrypted_path = self._decrypt_archive(encrypted_archive_path, password)
+                self._extract_archive(temp_decrypted_path, template_dir)
+            else:
+                raise ValueError(
+                    "템플릿 파일을 찾을 수 없습니다. "
+                    f"{template_dir} 아래에 필수 PNG 또는 {self.template_archive_name}[.enc]을 배치하세요."
+                )
+        finally:
+            if temp_decrypted_path and os.path.exists(temp_decrypted_path):
+                os.remove(temp_decrypted_path)
+
+        if not self._templates_exist(template_dir):
+            raise ValueError(
+                f"템플릿 압축 해제 후에도 필수 템플릿이 없습니다. 경로: {template_dir}"
+            )
+
+    def _decrypt_archive(self, encrypted_path: str, password: str) -> str:
+        """openssl로 .enc 아카이브 복호화"""
+        fd, temp_path = tempfile.mkstemp(suffix=".tar.gz")
+        os.close(fd)
+
+        result = subprocess.run(
+            [
+                "openssl",
+                "enc",
+                "-d",
+                "-aes-256-cbc",
+                "-pbkdf2",
+                "-in",
+                encrypted_path,
+                "-out",
+                temp_path,
+                "-pass",
+                f"pass:{password}",
+            ],
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode != 0:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            raise ValueError(
+                f"템플릿 아카이브 복호화 실패: {result.stderr.strip() or result.stdout.strip()}"
+            )
+
+        return temp_path
+
+    def _extract_archive(self, archive_path: str, target_dir: str):
+        """tar.gz 아카이브 압축 해제"""
+        if not tarfile.is_tarfile(archive_path):
+            raise ValueError(f"유효하지 않은 아카이브 파일입니다: {archive_path}")
+
+        with tarfile.open(archive_path, "r:gz") as tar:
+            tar.extractall(path=target_dir)
 
 
 
@@ -397,4 +517,3 @@ if __name__ == "__main__":
         period={"start": "2025-01-01", "end": "2025-01-01"},
         save_file=True,
     )
-

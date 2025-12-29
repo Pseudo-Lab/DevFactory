@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 import aiohttp
 import aiosmtplib
@@ -9,6 +10,9 @@ from email.mime.application import MIMEApplication
 from typing import Optional
 
 from .template_content import TemplateContent
+
+
+logger = logging.getLogger(__name__)
 
 class EmailSender:
     """이메일 발송 유틸리티"""
@@ -31,14 +35,23 @@ class EmailSender:
     ) -> bool:
         """수료증 이메일 발송"""
         try:
-            print(f"📧 이메일 발송 시도: {recipient_email}")
-            print(f"  발신자: {self.smtp_username}")
-            print(f"  SMTP 서버: {self.smtp_host}:{self.smtp_port}")
+            logger.info(
+                "이메일 발송 시도",
+                extra={
+                    "recipient_email": recipient_email,
+                    "smtp_host": self.smtp_host,
+                    "smtp_port": self.smtp_port,
+                },
+            )
             
             if not all([self.smtp_username, self.smtp_password]):
-                print("❌ SMTP 설정이 완료되지 않았습니다.")
-                print(f"  USERNAME: {self.smtp_username}")
-                print(f"  PASSWORD: {'설정됨' if self.smtp_password else '설정되지 않음'}")
+                logger.error(
+                    "SMTP 설정이 완료되지 않았습니다.",
+                    extra={
+                        "username_configured": bool(self.smtp_username),
+                        "password_configured": bool(self.smtp_password),
+                    },
+                )
                 return False
             
             # 이메일 메시지 생성
@@ -57,14 +70,20 @@ class EmailSender:
                 pdf_attachment = MIMEApplication(certificate_bytes, _subtype='pdf')
                 pdf_attachment.add_header('Content-Disposition', 'attachment', filename=f'certificate_{recipient_name}.pdf')
                 msg.attach(pdf_attachment)
-                print(f"📎 PDF 첨부 완료 (메모리): {len(certificate_bytes)} bytes")
+                logger.info(
+                    "PDF 첨부 완료 (메모리)",
+                    extra={"bytes": len(certificate_bytes)},
+                )
 
             elif certificate_path and os.path.exists(certificate_path):
                 with open(certificate_path, 'rb') as f:
                     img = MIMEImage(f.read())
                     img.add_header('Content-Disposition', 'attachment', filename='certificate.jpg')
                     msg.attach(img)
-                print(f"📎 이미지 첨부 완료: {certificate_path}")
+                logger.info(
+                    "이미지 첨부 완료",
+                    extra={"certificate_path": certificate_path},
+                )
             
             # 이메일 발송
             async with aiosmtplib.SMTP(
@@ -76,18 +95,24 @@ class EmailSender:
                 await smtp.login(self.smtp_username, self.smtp_password)
                 await smtp.send_message(msg)
             
-            print(f"✅ 수료증 이메일 발송 완료: {recipient_email}")
+            logger.info(
+                "수료증 이메일 발송 완료",
+                extra={"recipient_email": recipient_email},
+            )
             return True
             
-        except Exception as e:
-            print(f"❌ 이메일 발송 중 오류: {e}")
+        except Exception:
+            logger.exception("이메일 발송 중 오류")
             return False
     
 
-
 if __name__ == "__main__":
     async def main():
-        print("=== 이메일 발송 테스트 ===")
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
+        )
+        logger.info("=== 이메일 발송 테스트 ===")
         
         email_sender = EmailSender()
         success = await email_sender.send_certificate_email(
@@ -99,8 +124,8 @@ if __name__ == "__main__":
         )
         
         if success:
-            print("✅ 테스트 이메일 발송 성공!")
+            logger.info("테스트 이메일 발송 성공!")
         else:
-            print("❌ 테스트 이메일 발송 실패!")
+            logger.error("테스트 이메일 발송 실패!")
     
     asyncio.run(main())

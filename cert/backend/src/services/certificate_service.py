@@ -1,11 +1,17 @@
+import logging
 import uuid
 from datetime import datetime
 from typing import Optional, List
+
+from ..constants.error_codes import NotEligibleError
 from ..models.project import Project, ProjectsBySeasonResponse
 from ..models.certificate import CertificateResponse, CertificateData, CertificateStatus, Role
 from ..utils.notion_client import NotionClient
 from ..utils.pdf_generator import PDFGenerator
 from ..utils.email_sender import EmailSender
+
+
+logger = logging.getLogger(__name__)
 class ProjectService:
     """프로젝트 서비스"""
 
@@ -54,7 +60,14 @@ class CertificateService:
             
             # 기존 수료증 확인이 성공하고 기존 수료증이 있는 경우 재발급 처리
             if existing_cert and existing_cert.get("found"):
-                print(f"기존 수료증 발견: {existing_cert.get('certificate_number')}")
+                logger.info(
+                    "기존 수료증 발견",
+                    extra={
+                        "certificate_number": existing_cert.get("certificate_number"),
+                        "applicant_name": certificate_data.get("applicant_name"),
+                        "season": certificate_data.get("season"),
+                    },
+                )
                 return await CertificateService._reissue_certificate(
                     certificate_data, existing_cert, notion_client
                 )
@@ -64,12 +77,26 @@ class CertificateService:
                 certificate_data, notion_client
             )
             
+        except NotEligibleError as e:
+            logger.warning(
+                "수료 이력 없음",
+                extra={
+                    "applicant_name": certificate_data.get("applicant_name"),
+                    "season": certificate_data.get("season"),
+                    "course_name": certificate_data.get("course_name"),
+                },
+            )
+            return CertificateResponse(
+                status="404",
+                message=e.message,
+                data=None,
+            )
         except Exception as e:
-            print(f"수료증 발급 중 오류: {e}")
+            logger.exception("수료증 발급 중 오류")
             return CertificateResponse(
                 status="500",
-                message=f"수료증 발급 중 오류가 발생했습니다: {str(e)}",
-                data=None
+                message="수료증 발급을 완료하지 못했습니다. 관리자에게 문의해주세요.",
+                data=None,
             )
     
     @staticmethod
@@ -84,9 +111,15 @@ class CertificateService:
             existing_page_id = existing_cert.get("page_id")
             existing_cert_number = existing_cert.get("certificate_number")
             
-            print("🔄 기존 수료증 재발급 시작 (이름, 코스, 기수 일치):")
-            print(f"   - 기존 수료증 번호: '{existing_cert_number}'")
-            print(f"   - 요청 이메일: '{certificate_data.get('recipient_email', '')}'")
+            logger.info(
+                "기존 수료증 재발급 시작",
+                extra={
+                    "existing_certificate_number": existing_cert_number,
+                    "recipient_email": certificate_data.get("recipient_email", ""),
+                    "applicant_name": certificate_data.get("applicant_name"),
+                    "season": certificate_data.get("season"),
+                },
+            )
             
             # 사용자 참여 이력 재확인 (역할 정보 가져오기)
             participation_info = await notion_client.verify_user_participation(
@@ -97,9 +130,15 @@ class CertificateService:
             
             # 수료증 번호가 없는 경우 새로 생성 
             if not existing_cert_number:
-                print("⚠️ 기존 수료증에 번호가 없어 새로 생성합니다.")
+                logger.warning(
+                    "기존 수료증 번호 없음. 새로 생성",
+                    extra={"applicant_name": certificate_data["applicant_name"]},
+                )
                 existing_cert_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{str(uuid.uuid4())[:2].upper()}"
-                print(f"🆕 새로 생성된 수료증 번호: {existing_cert_number}")
+                logger.info(
+                    "새로운 수료증 번호 생성",
+                    extra={"certificate_number": existing_cert_number},
+                )
             
             # PDF 수료증 재생성
             pdf_generator = PDFGenerator()
@@ -130,7 +169,13 @@ class CertificateService:
                 role=participation_info["user_role"]
             )
             
-            print(f"수료증 재발급 완료: {existing_cert_number}")
+            logger.info(
+                "수료증 재발급 완료",
+                extra={
+                    "certificate_number": existing_cert_number,
+                    "recipient_email": certificate_data["recipient_email"],
+                },
+            )
             
             return CertificateResponse(
                 status="200",
@@ -149,7 +194,7 @@ class CertificateService:
             )
             
         except Exception as e:
-            print(f"수료증 재발급 중 오류: {e}")
+            logger.exception("수료증 재발급 중 오류")
             raise e
     
     @staticmethod
@@ -167,7 +212,10 @@ class CertificateService:
                 raise Exception("수료증 신청 기록 생성 실패")
             
             request_id = certificate_request.get("id")
-            # print(f"수료증 신청 기록 생성 완료: {request_id}")
+            logger.info(
+                "수료증 신청 기록 생성 완료",
+                extra={"request_id": request_id, "recipient_email": certificate_data.get("recipient_email")},
+            )
             
             # 사용자 참여 이력 확인
             participation_info = await notion_client.verify_user_participation(
@@ -200,7 +248,13 @@ class CertificateService:
             )
             
             # 수료증 상태 업데이트
-            print("수료증 상태 업데이트")
+            logger.info(
+                "수료증 상태 업데이트",
+                extra={
+                    "request_id": request_id,
+                    "certificate_number": certificate_number,
+                },
+            )
 
             
             await notion_client.update_certificate_status(
@@ -210,7 +264,13 @@ class CertificateService:
                 role=participation_info["user_role"]
             )
             
-            print(f"수료증 발급 완료: {certificate_number}")
+            logger.info(
+                "수료증 발급 완료",
+                extra={
+                    "certificate_number": certificate_number,
+                    "recipient_email": certificate_data["recipient_email"],
+                },
+            )
             
             # 5. 성공 응답 반환
             return CertificateResponse(
@@ -231,7 +291,7 @@ class CertificateService:
             
         except Exception as e:
             # 시스템 오류
-            print(f"신규 수료증 발급 중 시스템 오류: {e}")
+            logger.exception("신규 수료증 발급 중 시스템 오류")
             if request_id:  # request_id가 존재하는 경우에만 상태 업데이트
                 await notion_client.update_certificate_status(
                     page_id=request_id,
