@@ -8,6 +8,15 @@ import { useFormStore } from '../../store/formStore';
 import { authenticatedFetch } from '../../lib/api';
 import { useNavigationStore } from '../../store/navigationStore';
 
+interface TeamMember {
+  id: number;
+  user_id: number;
+  name: string;
+  email: string;
+  github_url?: string;
+  linkedin_url?: string;
+}
+
 const questions = [
   { category: '1', keyword: '관심사', problem: '사용자의 관심사를 맞춰주세요. 예: 기술, 예술, 환경 등' },
   { category: '2', keyword: '취미', problem: '사용자의 취미를 맞춰주세요. 예: 등산, 독서, 요리 등' },
@@ -35,6 +44,30 @@ export default function Page3() {
 
     const initializeChallenge = async () => {
       if (!question && id && teamId) {
+        // Fetch team members to get their names
+        let members: TeamMember[] = [];
+        try {
+          const teamResponse = await authenticatedFetch('/api/v1/teams/me', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          if (teamResponse.ok) {
+            const teamData = await teamResponse.json();
+            if (teamData && teamData.members) {
+              members = teamData.members;
+            }
+          } else {
+            console.error('Failed to fetch team data');
+          }
+        } catch (error) {
+          console.error('Error fetching team members:', error);
+        }
+
+        const findMemberName = (userId: number): string => {
+          const member = members.find((m) => m.user_id === userId);
+          return member ? member.name : String(userId); // Fallback to user_id as string
+        };
+
         // 1. Try to restore challenge from localStorage
         const savedChallengeJSON = localStorage.getItem(CHALLENGE_DATA_KEY);
         if (savedChallengeJSON) {
@@ -44,7 +77,8 @@ export default function Page3() {
             if (savedChallenge.category && savedChallenge.assigned_challenge_id) {
               const questionInfo = questions.find((q) => q.category === String(savedChallenge.category));
               if (questionInfo) {
-                setQuestion(questionInfo.problem);
+                const memberName = findMemberName(savedChallenge.user_id);
+                setQuestion([memberName, questionInfo.problem].join(' '));
                 setChallengeId(savedChallenge.assigned_challenge_id);
                 return; // Challenge successfully restored
               }
@@ -61,7 +95,7 @@ export default function Page3() {
           const assignResponse = await authenticatedFetch('/api/v1/challenges/assign', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ team_id: teamId, my_id: id, members_ids: memberIds }),
+            body: JSON.stringify({ team_id: teamId, my_id: id, members_ids: memberIds.filter((memberId) => memberId !== Number(id)) }),
           });
 
           if (!assignResponse.ok) {
@@ -76,6 +110,7 @@ export default function Page3() {
             const dataToSave = {
               category: String(newChallengeData.my_assigned.category),
               assigned_challenge_id: newChallengeData.my_assigned.assigned_challenge_id,
+              user_id: newChallengeData.my_assigned.user_id,
             };
 
             // Save to localStorage for future restoration
@@ -85,7 +120,8 @@ export default function Page3() {
             // Set state from the new challenge data
             const questionInfo = questions.find((q) => q.category === dataToSave.category);
             if (questionInfo) {
-              setQuestion(questionInfo.problem);
+              const memberName = findMemberName(dataToSave.user_id);
+              setQuestion([memberName, questionInfo.problem].join(' '));
               setChallengeId(dataToSave.assigned_challenge_id);
             }
           } else {
