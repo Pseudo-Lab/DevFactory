@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'getcloser/**'
+      - '.github/workflows/deploy-getcloser.yml'
   workflow_dispatch:
 
 # 같은 브랜치 동시 실행 시 이전 잡 취소(경쟁 배포 방지)
