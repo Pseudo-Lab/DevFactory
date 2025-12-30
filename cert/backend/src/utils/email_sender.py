@@ -58,7 +58,7 @@ class EmailSender:
             msg = MIMEMultipart()
             msg['From'] = self.smtp_username
             msg['To'] = recipient_email
-            msg['Subject'] = f"[PseudoLab] {course_name} 수료증 발급 완료 🎉"
+            msg['Subject'] = f"[PseudoLab] 『{course_name}』 수료증 발급 완료 🎉"
             
             # 이메일 본문
             body = TemplateContent.get_email_template(recipient_name, course_name, season, role)

@@ -46,7 +46,7 @@ class PDFGenerator:
         # 텍스트 위치 설정
         self.positions = {
             "season": {"x": 299, "y": 1080 - 326 - 30, "font_size": 32, "char_space": -1.2},
-            "content": {"x": 299, "y": 1080 - 385 - 65, "font_size": 20, "char_space": -0.5},
+            "content": {"x": 299, "y": 1080 - 485 - 65, "font_size": 26, "char_space": -0.5},
             "name": {"x": 299, "y": 1080 - 902 - 65, "font_size": 72, "char_space": -1.2},
         }
         
