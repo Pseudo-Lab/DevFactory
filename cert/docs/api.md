@@ -4,7 +4,7 @@
 사용자가 입력한 정보를 통해 수료증 발급 파이프라인에 수료증을 요청합니다.
 
 HTTP Method : POST  
-URL : https://cert.pseudolab-devfactory/certs/create
+URL : https://cert.pseudolab-devfactory/api/certs/create
 
 ### Request
 #### Header 

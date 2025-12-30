@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from ..models.project import Project, ProjectsBySeasonResponse
 from ..models.certificate import CertificateCreate, CertificateResponse, ErrorResponse
@@ -28,7 +28,13 @@ certificate_router = APIRouter(prefix="/certs", tags=["certs"])
 )
 async def create_certificate(certificate: CertificateCreate):
     """수료증을 생성합니다."""
-    return await CertificateService.create_certificate(certificate.dict())
+    result = await CertificateService.create_certificate(certificate.dict())
+    if result.status == "404":
+        raise HTTPException(status_code=404, detail=result.message)
+    if result.status != "200":
+        # 서비스 내부 오류(템플릿/외부 연동 등)는 HTTP 500으로 전달
+        raise HTTPException(status_code=500, detail=result.message)
+    return result
 
 
 

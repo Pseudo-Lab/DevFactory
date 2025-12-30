@@ -1,0 +1,91 @@
+name: cert-system deploy (Production/Development, self-hosted)
+
+on:
+  push:
+    branches:
+      - main
+      - deploy/cert-develop
+    paths:
+      - 'cert/**'
+      - '.github/workflows/certificate-system.yml'
+  workflow_dispatch:
+
+# 같은 브랜치 동시 실행 시 이전 잡 취소(경쟁 배포 방지)
+concurrency:
+  group: cert-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-prod:
+    if: github.ref_name == 'main'
+    name: 🚀 Deploy cert-system (Production)
+    runs-on: oracle
+    environment: cert_prod_deploy
+    defaults:
+      run:
+        working-directory: ./cert
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write .env (prod)
+        run: |
+          cat > .env <<'EOF'
+          APP_HOST=${{ vars.APP_HOST }}
+          ENVIRONMENT=${{ vars.ENVIRONMENT }}
+          NODE_ENV=${{ vars.NODE_ENV }}
+          CERT_TEMPLATE_ARCHIVE_PASSWORD=${{ secrets.CERT_TEMPLATE_ARCHIVE_PASSWORD }}
+          NOTION_API_KEY=${{ secrets.NOTION_API_KEY }}
+          NOTION_CERT_DB_ID=${{ secrets.NOTION_CERT_DB_ID }}
+          NOTION_PROJ_DB_ID=${{ secrets.NOTION_PROJ_DB_ID }}
+          SMTP_HOST=${{ vars.SMTP_HOST }}
+          SMTP_PORT=${{ vars.SMTP_PORT }}
+          SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
+          CORS_ORIGINS=${{ vars.CORS_ORIGINS }}
+          FRONTEND_EXTERNAL_API_URL=${{ vars.FRONTEND_EXTERNAL_API_URL }}
+          EOF
+
+      - name: Build & up (prod)
+        run: |
+          set -euxo pipefail
+          docker compose -p cert-main config -q
+          docker compose -p cert-main down --remove-orphans
+          docker compose -p cert-main up -d --build --remove-orphans
+          docker image prune -f --filter "label=org.pseudolab.project=cert"
+
+  deploy-dev:
+    if: github.ref_name == 'deploy/cert-develop'
+    name: 🚀 Deploy cert-system (Development)
+    runs-on: oracle
+    environment: cert_dev_deploy
+    defaults:
+      run:
+        working-directory: ./cert
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write .env (dev)
+        run: |
+          cat > .env <<'EOF'
+          APP_HOST=${{ vars.APP_HOST }}
+          ENVIRONMENT=${{ vars.ENVIRONMENT }}
+          NODE_ENV=${{ vars.NODE_ENV }}
+          CERT_TEMPLATE_ARCHIVE_PASSWORD=${{ secrets.CERT_TEMPLATE_ARCHIVE_PASSWORD }}
+          NOTION_API_KEY=${{ secrets.NOTION_API_KEY }}
+          NOTION_CERT_DB_ID=${{ secrets.NOTION_CERT_DB_ID }}
+          NOTION_PROJ_DB_ID=${{ secrets.NOTION_PROJ_DB_ID }}
+          SMTP_HOST=${{ vars.SMTP_HOST }}
+          SMTP_PORT=${{ vars.SMTP_PORT }}
+          SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
+          CORS_ORIGINS=${{ vars.CORS_ORIGINS }}
+          FRONTEND_EXTERNAL_API_URL=${{ vars.FRONTEND_EXTERNAL_API_URL }}
+          EOF
+
+      - name: Build & up (dev)
+        run: |
+          set -euxo pipefail
+          docker compose -p cert-dev config -q
+          docker compose -p cert-dev down --remove-orphans
+          docker compose -p cert-dev up -d --build --remove-orphans
+          docker image prune -f --filter "label=org.pseudolab.project=cert"

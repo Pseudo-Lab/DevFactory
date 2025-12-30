@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, Field
 from enum import Enum
 
@@ -36,7 +38,7 @@ class CertificateResponse(BaseModel):
     """수료증 응답 모델"""
     status: str = Field(..., example="success", description="응답 상태")
     message: str = Field(..., example="수료증이 성공적으로 생성되었습니다.", description="응답 메시지")
-    data: CertificateData = Field(..., description="수료증 데이터")
+    data: Optional[CertificateData] = Field(None, description="수료증 데이터")
 
 
 class ErrorResponse(BaseModel):

@@ -68,7 +68,10 @@ async function fetchStudyMeta(): Promise<StudyMeta> {
     studies.push(item.name);
   }
 
-  const periods = Object.keys(studiesByPeriod).sort();
+  const periods = Object.keys(studiesByPeriod)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map(String);
 
   return {
     periods,
@@ -380,15 +383,18 @@ const ExportCertificateForm = () => {
           return { tag: tags[idx], code: 500 }; // 네트워크 오류 같은 경우
         }
       });
-  
+
       // 모두 200이면 200
-      // 500이 하나라도 있으면 500 ("명단에 없음" 시나리오)
+      // 404가 하나라도 있으면 404 (명단 없음)
+      // 500이 하나라도 있으면 500 (서버 오류)
       // 그 외 300(일반 실패)
       const codes = perTagResults.map(r => r.code);
       let overall: number;
 
       if (codes.every(c => c === 200)) {
         overall = 200;
+      } else if (codes.some(c => c === 404)) {
+        overall = 404;
       } else if (codes.some(c => c === 500)) {
         overall = 500;
       } else {
@@ -666,6 +672,26 @@ const ExportCertificateForm = () => {
             )}
 
             {!isLoading && returnCode === 500 && (
+              /* 서버 오류 */
+              <Box>
+                <FailIcon />
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, color: '#1f2937' }}>
+                  수료증 발급 실패
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 0 }}>
+                  발급 처리 중 오류가 발생했습니다. 🥲
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 0 }}>
+                  디스코드를 통해
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  질문게시판에 문의해주세요.
+                </Typography>
+                <DiscordButton onClick={handleModalClose}/>
+              </Box>
+            )}
+
+            {!isLoading && returnCode === 404 && (
               /* 명단 없음 */
               <Box>
                 <FailIcon />
