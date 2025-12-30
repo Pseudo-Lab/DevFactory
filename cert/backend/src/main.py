@@ -22,13 +22,17 @@ load_dotenv()
 configure_logging()
 logger = logging.getLogger(__name__)
 
+environment = os.getenv("ENVIRONMENT", "dev").lower()
+hide_docs = environment.startswith("prod")
+
 # FastAPI 앱 생성
 app = FastAPI(
     title="PseudoLab 수료증 발급 시스템",
     description="PseudoLab 수료증 발급을 위한 API 서버",
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    docs_url=None if hide_docs else "/docs",
+    redoc_url=None if hide_docs else "/redoc",
+    openapi_url=None if hide_docs else "/openapi.json",
 )
 
 # CORS 미들웨어 설정
