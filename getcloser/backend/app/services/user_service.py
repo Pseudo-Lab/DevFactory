@@ -75,7 +75,7 @@ def progress_status(
     if ucs.is_correct:
         return team.id, ucs.challenge_id, ProgressStatus.CHALLENGE_SUCCESS
 
-    if ucs.retry_count >= 3:
+    if ucs.retry_count >= 2:
         return team.id, ucs.challenge_id, ProgressStatus.CHALLENGE_FAILED
 
     return team.id, ucs.challenge_id, ProgressStatus.CHALLENGE_ASSIGNED
