@@ -58,7 +58,8 @@ services:
       - traefik.docker.network=traefik
 
       # --- Traefik Router (backend) ---
-      - traefik.http.routers.cert-${ENVIRONMENT}-api.rule=Host(`${APP_HOST}`) && (PathPrefix(`/api`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/health`) || Path(`/openapi.json`))
+      # Docs/Redoc/OpenAPI 경로는 라우팅하되, 백엔드에서 prod 환경에서는 비활성화된다.
+      - traefik.http.routers.cert-${ENVIRONMENT}-api.rule=Host(`${APP_HOST}`) && (PathPrefix(`/api`) || PathPrefix(`/health`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || Path(`/openapi.json`))
       - traefik.http.routers.cert-${ENVIRONMENT}-api.entrypoints=websecure
       - traefik.http.routers.cert-${ENVIRONMENT}-api.tls=true
       - traefik.http.routers.cert-${ENVIRONMENT}-api.tls.certresolver=le
