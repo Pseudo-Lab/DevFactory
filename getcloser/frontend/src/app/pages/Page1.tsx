@@ -5,11 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useFormStore } from '../../store/formStore';
-import { useNavigationStore } from '../../store/navigationStore';
 
 export default function Page1() {
-  const { email, setEmail, setId, setAccessToken } = useFormStore();
-  const { setCurrentPage } = useNavigationStore();
+  const { email, setEmail, setId, setAccessToken, setTeamId, setChallengeId, setProgressStatus } = useFormStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,8 +52,15 @@ export default function Page1() {
       if (userMeResult.sub) {
         setId(userMeResult.sub);
       }
-      alert('정보가 제출되었습니다!');
-      setCurrentPage('page2');
+      if (userMeResult.team_id) {
+        setTeamId(userMeResult.team_id);
+      }
+      if (userMeResult.challenge_id) {
+        setChallengeId(userMeResult.challenge_id);
+      }
+      if (userMeResult.progress_status) {
+        setProgressStatus(userMeResult.progress_status);
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('정보 제출에 실패했습니다.');

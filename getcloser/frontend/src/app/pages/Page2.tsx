@@ -142,7 +142,7 @@ const CreateTeamView = ({
 };
 
 export default function Page2() {
-  const { id: myId, teamId, setTeamId, setMemberIds, reset } = useFormStore();
+  const { id: myId, teamId, setTeamId, setMemberIds, progressStatus } = useFormStore();
   const { setCurrentPage } = useNavigationStore();
 
   const [view, setView] = useState<View>('loading');
@@ -184,83 +184,33 @@ export default function Page2() {
 
   useEffect(() => {
     const initialize = async () => {
-      if (!myId) {
-        setCurrentPage('page1');
-        return;
-      }
-      if (view !== 'loading') return;
-
-      try {
-        const response = await authenticatedFetch('/api/v1/teams/me');
-
-        if (response.status === 404) {
-          setView('create');
-          return;
-        }
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}, message: ${(await response.json()).detail || response.statusText}`);
-        }
-
-        const teamData = await response.json();
-
-        if (teamData && teamData.team_id) {
-          if (teamData.status === 'ACTIVE') {
-            setCurrentPage('page3');
-            return;
-          }
-
-          if (teamData.status === 'PENDING') {
-            setTeamId(teamData.team_id);
-            if (teamData.members && teamData.members.length > 0) {
-              const me = teamData.members.find((m: {id: number}) => Number(m.id) === Number(myId));
-              const others = teamData.members.filter((m: {id: number}) => Number(m.id) !== Number(myId));
-              const newInputs: InputState[] = Array(TEAM_SIZE).fill({ id: '', displayName: '' });
-
-              if (me) {
-                newInputs[0] = { id: String(me.id), displayName: me.name };
-              } else {
-                newInputs[0] = { id: String(myId), displayName: '' }; // Fallback
-              }
-
-              others.forEach((member: { id: number; name: string }, i: number) => {
-                if (i + 1 < TEAM_SIZE) {
-                  newInputs[i + 1] = { id: String(member.id), displayName: member.name };
-                }
-              });
-
-              const initialTeamMembers: TeamMember[] = teamData.members.map((member: { id: number; name: string; }) => ({
-                user_id: Number(member.id),
-                displayName: member.name,
-                is_ready: false,
-              }));
-              
-              setInputs(newInputs);
-              setTeamMembers(initialTeamMembers);
-              setView('waiting');
-            } else {
-              setView('create');
-            }
-            return;
-          }
-        }
+      if (progressStatus === 'NONE_TEAM') {
         setView('create');
-      } catch (error) {
-        console.error('Error during page initialization:', error);
-        if (teamId && teamId > 0) {
-          try {
-            await authenticatedFetch(`/api/v1/teams/${teamId}/cancel`, { method: 'POST' });
-          } catch (cancelError) {
-            console.error(`Failed to leave team ${teamId} after init error:`, cancelError);
+      } else if (progressStatus === 'TEAM_WAITING') {
+        try {
+          const response = await authenticatedFetch('/api/v1/teams/me');
+          if (!response.ok) {
+            throw new Error('Failed to fetch team data');
           }
+          const teamData = await response.json();
+          if (teamData && teamData.members) {
+            const initialTeamMembers: TeamMember[] = teamData.members.map((member: { id: number; name: string; }) => ({
+              user_id: Number(member.id),
+              displayName: member.name,
+              is_ready: false,
+            }));
+            setTeamMembers(initialTeamMembers);
+          }
+          setView('waiting');
+        } catch (error) {
+          console.error('Error fetching team data for waiting view:', error);
+          setView('create'); // Fallback to create view
         }
-        reset();
-        setView('create');
       }
     };
 
     initialize();
-  }, [myId, view, setCurrentPage, setTeamId, setInputs, setTeamMembers, reset]);
+  }, [progressStatus]);
 
   useEffect(() => {
     if (myId && inputs[0].id === '') {

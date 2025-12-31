@@ -34,7 +34,7 @@ interface ChallengeResult {
 }
 
 export default function Page4() {
-  const { id, isCorrect } = useFormStore(); // Added isCorrect
+  const { id, progressStatus } = useFormStore(); // Use progressStatus
   const { setCurrentPage } = useNavigationStore();
 
   const [result, setResult] = useState<string>('');
@@ -44,15 +44,17 @@ export default function Page4() {
   const [selectedMemberChallenge, setSelectedMemberChallenge] = useState<ChallengeResult | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // This useEffect will set the initial success/failure based on isCorrect from the store
+  // This useEffect will set the initial success/failure based on progressStatus from the store
   useEffect(() => {
-    if (isCorrect === null) {
-      console.warn('isCorrect is not set, defaulting to 실패');
+    if (progressStatus === 'CHALLENGE_SUCCESS' || progressStatus === 'REDEEMED') {
+      setResult('성공');
+    } else if (progressStatus === 'CHALLENGE_FAILED') {
       setResult('실패');
     } else {
-      setResult(isCorrect ? '성공' : '실패');
+      console.warn('progressStatus is not set to a known success/failure state, defaulting to 실패');
+      setResult('실패');
     }
-  }, [isCorrect]); // Depend on isCorrect from the store
+  }, [progressStatus]); // Depend on progressStatus from the store
 
   // New useEffect to fetch team data when result is '성공'
   useEffect(() => {
@@ -166,21 +168,24 @@ export default function Page4() {
               <div className="mt-8 text-left">
                 <h3 className="text-2xl font-bold mb-4">우리 팀원들</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {teamData.members.map((member) => (
-                    <div key={member.user_id} className="bg-muted p-4 rounded-lg shadow-md cursor-pointer hover:bg-muted/80" onClick={() => handleMemberClick(member.user_id)}>
-                      <p className="text-lg font-semibold">{member.name}</p>
-                      {member.github_url && (
-                        <p className="text-sm text-gray-600">
+                  {teamData.members
+                    .filter(member => member.id !== id) // Filter out current user's info
+                    .map((member) => (
+                      <div key={member.id} className="bg-muted p-4 rounded-lg shadow-md">
+                        <p className="text-lg font-semibold">{member.name}</p>
+                        <p className="text-sm text-gray-600">Email: {member.email}</p>
+                        {member.github_url && (
+                          <p className="text-sm text-gray-600">
                           GitHub: <a href={member.github_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{member.github_url}</a>
-                        </p>
-                      )}
-                      {member.linkedin_url && (
-                        <p className="text-sm text-gray-600">
+                          </p>
+                        )}
+                        {member.linkedin_url && (
+                          <p className="text-sm text-gray-600">
                           LinkedIn: <a href={member.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{member.linkedin_url}</a>
-                        </p>
-                      )}
-                    </div>
-                  ))}
+                          </p>
+                        )}
+                      </div>
+                    ))}
                 </div>
               </div>
             )}

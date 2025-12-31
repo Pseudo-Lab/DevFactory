@@ -40,10 +40,18 @@ export default function Page3() {
   const { setCurrentPage } = useNavigationStore();
 
   useEffect(() => {
-    const CHALLENGE_DATA_KEY = 'challengeData';
-
     const initializeChallenge = async () => {
-      if (!question && id && teamId) {
+      // If a question is already loaded, do nothing.
+      if (question) {
+        console.log('Question already exists, skipping initialization.');
+        return;
+      }
+
+      // If we are on page3, we should have the necessary IDs.
+      // If not, something is wrong, but providers.tsx should redirect.
+      if (id && teamId) {
+        console.log('No question found in store. Fetching/assigning challenge from server...');
+
         // Fetch team members to get their names
         let members: TeamMember[] = [];
         try {
@@ -68,30 +76,9 @@ export default function Page3() {
           return member ? member.name : String(userId); // Fallback to user_id as string
         };
 
-        // 1. Try to restore challenge from localStorage
-        const savedChallengeJSON = localStorage.getItem(CHALLENGE_DATA_KEY);
-        if (savedChallengeJSON) {
-          console.log('Restoring challenge from localStorage...');
-          try {
-            const savedChallenge = JSON.parse(savedChallengeJSON);
-            if (savedChallenge.category && savedChallenge.assigned_challenge_id) {
-              const questionInfo = questions.find((q) => q.category === String(savedChallenge.category));
-              if (questionInfo) {
-                const memberName = findMemberName(savedChallenge.user_id);
-                setQuestion([memberName, questionInfo.problem].join(' '));
-                setChallengeId(savedChallenge.assigned_challenge_id);
-                return; // Challenge successfully restored
-              }
-            }
-          } catch (e) {
-            console.error('Failed to parse challenge data from localStorage', e);
-            localStorage.removeItem(CHALLENGE_DATA_KEY); // Clear corrupted data
-          }
-        }
-
-        // 2. If no valid saved data, assign a new challenge
-        console.log('No valid saved challenge found. Assigning a new one...');
         try {
+          // This endpoint will assign a new challenge if one doesn't exist,
+          // or it should ideally return the existing one.
           const assignResponse = await authenticatedFetch('/api/v1/challenges/assign', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -100,64 +87,40 @@ export default function Page3() {
 
           if (!assignResponse.ok) {
             const errorData = await getJsonFromResponse(assignResponse);
-            throw new Error(`Failed to assign challenge: ${errorData.detail}`);
+            throw new Error(`Failed to assign/fetch challenge: ${errorData.detail}`);
           }
 
           const newChallengeData = await assignResponse.json();
-          console.log('Successfully assigned new challenge:', newChallengeData);
+          console.log('Successfully assigned/fetched challenge:', newChallengeData);
 
           if (newChallengeData.my_assigned && newChallengeData.my_assigned.category && newChallengeData.my_assigned.assigned_challenge_id) {
-            const dataToSave = {
-              category: String(newChallengeData.my_assigned.category),
-              assigned_challenge_id: newChallengeData.my_assigned.assigned_challenge_id,
-              user_id: newChallengeData.my_assigned.user_id,
-            };
+            const { user_id: userId, category, assigned_challenge_id } = newChallengeData.my_assigned;
 
-            // Save to localStorage for future restoration
-            localStorage.setItem(CHALLENGE_DATA_KEY, JSON.stringify(dataToSave));
-            console.log('Saved new challenge to localStorage.');
-
-            // Set state from the new challenge data
-            const questionInfo = questions.find((q) => q.category === dataToSave.category);
+            // Set state from the challenge data
+            const questionInfo = questions.find((q) => q.category === String(category));
             if (questionInfo) {
-              const memberName = findMemberName(dataToSave.user_id);
+              const memberName = findMemberName(userId);
               setQuestion([memberName, questionInfo.problem].join(' '));
-              setChallengeId(dataToSave.assigned_challenge_id);
+              setChallengeId(assigned_challenge_id);
+            } else {
+              throw new Error(`Could not find question for category: ${category}`);
             }
           } else {
             throw new Error('Assigned challenge data is incomplete or malformed.');
           }
         } catch (error) {
-          console.error('Error assigning challenge:', error);
-          // General error handling: leave team, reset state, clear local storage
-          if (teamId && teamId > 0) {
-            try {
-              console.log(`Attempting to leave team ${teamId} due to error...`);
-              await authenticatedFetch(`/api/v1/teams/${teamId}/cancel`, { method: 'POST' });
-              console.log(`Successfully left team ${teamId}.`);
-            } catch (cancelError) {
-              console.error(`Failed to leave team ${teamId}:`, cancelError);
-            }
-          }
-          localStorage.removeItem(CHALLENGE_DATA_KEY);
+          console.error('Error in challenge initialization:', error);
+          // Attempt to recover by going back to team formation
           reset();
-          localStorage.removeItem('lastPage');
-          setCurrentPage('page1');
+          setCurrentPage('page2');
         }
-      } else if (question) {
-        console.log('Question already exists, skipping initialization.');
-      } else {
-        console.log('Missing id or teamId, cannot initialize challenge. Resetting.');
-        localStorage.removeItem(CHALLENGE_DATA_KEY);
-        reset();
-        localStorage.removeItem('lastPage');
-        setCurrentPage('page1');
       }
     };
 
     initializeChallenge();
-  }, [id, teamId, question, memberIds, setQuestion, setChallengeId, reset, setCurrentPage]);
-
+    // Added challengeId to dependency array to react to changes if needed,
+    // though the main trigger is the absence of `question`.
+  }, [id, teamId, question, memberIds, setQuestion, setChallengeId, reset, setCurrentPage, challengeId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,8 +130,6 @@ export default function Page3() {
       challenge_id: challengeId,
       submitted_answer: answer,
     };
-
-    console.log(JSON.stringify(requestBody));
 
     try {
       const response = await authenticatedFetch('/api/v1/challenges/submit', {
