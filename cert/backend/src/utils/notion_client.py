@@ -135,8 +135,27 @@ class NotionClient:
                             period = project.get("properties", {}).get("기간", {}).get("date", {})
 
                             if not period:
-                                # TODO: 추후 처리 필요
-                                raise SystemError("기간 정보가 없습니다.")
+                                raise SystemError(
+                                    "프로젝트 기간 정보가 없습니다. "
+                                    "스터디 빌더에게 문의해주세요."
+                                )
+
+                            # 종료일 검증
+                            if not period.get('end'):
+                                raise SystemError(
+                                    "프로젝트 종료일 정보가 없습니다. "
+                                    "스터디 빌더에게 문의해주세요."
+                                )
+
+                            end_date_str = period['end']
+                            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+                            today = datetime.now().date()
+
+                            if today < end_date:
+                                raise NotEligibleError(
+                                    f"수료 완료일({end_date_str})이 지나지 않았습니다. "
+                                    f"수료증은 수료 후 발급 가능합니다."
+                                )
 
                             logger.info(
                                 "사용자 검증 성공",
