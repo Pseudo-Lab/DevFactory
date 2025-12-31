@@ -416,7 +416,11 @@ class NotionClient:
                                         "updated_at": result.get("last_edited_time", ""),
                                         "season": season
                                     }
-                                    
+
+                                    # 템플릿용 0기는 제외
+                                    if season == 0:
+                                        continue
+
                                     project = Project(**project_data)
                                     all_projects.append(project)
                                     
@@ -472,11 +476,14 @@ class NotionClient:
             if not all_projects:
                 return None
             
-            # 기수별로 그룹화
+            # 기수별로 그룹화 (템플릿용 0기는 제외)
             season_groups: Dict[str, List[Project]] = {}
-            
+
             for project in all_projects:
                 season = project.season
+                # 템플릿용 0기는 제외
+                if season == 0:
+                    continue
                 if season not in season_groups:
                     season_groups[season] = []
                 season_groups[season].append(project)
