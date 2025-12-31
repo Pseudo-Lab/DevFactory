@@ -32,6 +32,8 @@ type IssuePayload = {
 
 type IssueResponse = {
   returnCode: number; // 200, 404, 500 등
+  message?: string; // 백엔드 응답 메시지
+  status?: string; // 응답 상태
 };
 
 type ApiStudy = {
@@ -287,6 +289,7 @@ const ExportCertificateForm = () => {
   const [progress, setProgress] = useState(0);
 
   const [returnCode, setReturnCode] = useState<number | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -378,9 +381,9 @@ const ExportCertificateForm = () => {
       // 태그별 코드 수집
       const perTagResults = settled.map((r, idx) => {
         if (r.status === "fulfilled") {
-          return { tag: tags[idx], code: r.value.returnCode };
+          return { tag: tags[idx], code: r.value.returnCode, message: r.value.message };
         } else {
-          return { tag: tags[idx], code: 500 }; // 네트워크 오류 같은 경우
+          return { tag: tags[idx], code: 500, message: "네트워크 오류가 발생했습니다." };
         }
       });
 
@@ -390,18 +393,26 @@ const ExportCertificateForm = () => {
       // 그 외 300(일반 실패)
       const codes = perTagResults.map(r => r.code);
       let overall: number;
+      let overallMessage: string | null = null;
 
       if (codes.every(c => c === 200)) {
         overall = 200;
       } else if (codes.some(c => c === 404)) {
         overall = 404;
+        // 404 에러 메시지 찾기
+        const error404 = perTagResults.find(r => r.code === 404);
+        overallMessage = error404?.message || "수료 명단에 존재하지 않습니다.";
       } else if (codes.some(c => c === 500)) {
         overall = 500;
+        // 500 에러 메시지 찾기
+        const error500 = perTagResults.find(r => r.code === 500);
+        overallMessage = error500?.message || "서버 오류가 발생했습니다.";
       } else {
         overall = 300;
       }
-  
+
       setReturnCode(overall);
+      setErrorMessage(overallMessage);
     } catch (e) {
       // 예외적으로 여기까지 떨어지면 일반 실패
       setReturnCode(500);
@@ -678,14 +689,12 @@ const ExportCertificateForm = () => {
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, color: '#1f2937' }}>
                   수료증 발급 실패
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 0 }}>
-                  발급 처리 중 오류가 발생했습니다. 🥲
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 0 }}>
-                  디스코드를 통해
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                  질문게시판에 문의해주세요.
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 3, whiteSpace: 'pre-line' }}
+                >
+                  {errorMessage || "발급 처리 중 오류가 발생했습니다. 🥲\n디스코드를 통해 질문게시판에 문의해주세요."}
                 </Typography>
                 <DiscordButton onClick={handleModalClose}/>
               </Box>
@@ -698,14 +707,12 @@ const ExportCertificateForm = () => {
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, color: '#1f2937' }}>
                   수료증 발급 실패
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 0 }}>
-                  수료 명단에 존재하지 않습니다. 🥲
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 0 }}>
-                  디스코드를 통해
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                  질문게시판에 문의해주세요.
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 3, whiteSpace: 'pre-line' }}
+                >
+                  {errorMessage || "수료 명단에 존재하지 않습니다. 🥲\n디스코드를 통해 질문게시판에 문의해주세요."}
                 </Typography>
                 <DiscordButton onClick={handleModalClose}/>
               </Box>
