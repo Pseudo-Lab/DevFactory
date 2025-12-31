@@ -126,11 +126,11 @@ class NotionClient:
                             
                             # 2. 사용자가 이탈자에 있는지 확인
                             if user_name in dropout_names:
-                                raise NotEligibleError(f"사용자 {user_name}이(가) 이탈자 목록에 있습니다.")
+                                raise NotEligibleError(f"수료 명단에 존재하지 않습니다. 🥲\n디스코드를 통해 질문게시판에 문의해주세요.")
                             
                             # 3. 사용자가 참여자 목록에 있는지 확인
                             if user_role is None:
-                                raise NotEligibleError(f"사용자 {user_name}이(가) 참여자 목록에 없습니다.")
+                                raise NotEligibleError(f"수료 명단에 존재하지 않습니다. 🥲\n디스코드를 통해 질문게시판에 문의해주세요.")
                             
                             period = project.get("properties", {}).get("기간", {}).get("date", {})
 
@@ -153,7 +153,6 @@ class NotionClient:
 
                             if today < end_date:
                                 raise NotEligibleError(
-                                    f"수료 완료일({end_date_str})이 지나지 않았습니다. "
                                     f"수료증은 수료 후 발급 가능합니다."
                                 )
 

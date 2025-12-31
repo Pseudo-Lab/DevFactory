@@ -337,7 +337,7 @@ const ExportCertificateForm = () => {
     // 이메일 체크
     return /\S+@\S+\.\S+/.test(formData.email);
   }, [formData.email]);
-  
+
   const isFormValid = useMemo(() => {
     return (
       !!formData.name.trim() &&
@@ -353,7 +353,7 @@ const ExportCertificateForm = () => {
     setIsComplete(false);
     setReturnCode(null);
     setProgress(0);
-  
+
     // 가짜 진행바
     const interval = setInterval(() => {
       setProgress(prev => {
@@ -364,7 +364,7 @@ const ExportCertificateForm = () => {
         return prev + 1;
       });
     }, 200); // 0.2초마다 1% → 총 20초
-  
+
     try {
       // 각 태그별 호출을 allSettled로 수행하여 부분 실패도 수집
       const settled = await Promise.allSettled(
@@ -377,7 +377,7 @@ const ExportCertificateForm = () => {
           })
         )
       );
-  
+
       // 태그별 코드 수집
       const perTagResults = settled.map((r, idx) => {
         if (r.status === "fulfilled") {
@@ -678,7 +678,7 @@ const ExportCertificateForm = () => {
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                   질문게시판에 문의해주세요.
                 </Typography>
-                <DiscordButton onClick={handleModalClose}/>
+                <DiscordButton onClick={handleModalClose} />
               </Box>
             )}
 
@@ -694,9 +694,9 @@ const ExportCertificateForm = () => {
                   color="text.secondary"
                   sx={{ mb: 3, whiteSpace: 'pre-line' }}
                 >
-                  {errorMessage || "발급 처리 중 오류가 발생했습니다. 🥲\n디스코드를 통해 질문게시판에 문의해주세요."}
+                  {"발급 처리 중 오류가 발생했습니다. 🥲\n디스코드를 통해 질문게시판에 문의해주세요."}
                 </Typography>
-                <DiscordButton onClick={handleModalClose}/>
+                <DiscordButton onClick={handleModalClose} />
               </Box>
             )}
 
@@ -714,7 +714,7 @@ const ExportCertificateForm = () => {
                 >
                   {errorMessage || "수료 명단에 존재하지 않습니다. 🥲\n디스코드를 통해 질문게시판에 문의해주세요."}
                 </Typography>
-                <DiscordButton onClick={handleModalClose}/>
+                <DiscordButton onClick={handleModalClose} />
               </Box>
             )}
           </DialogContent>
