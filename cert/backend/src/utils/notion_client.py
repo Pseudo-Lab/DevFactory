@@ -126,17 +126,35 @@ class NotionClient:
                             
                             # 2. 사용자가 이탈자에 있는지 확인
                             if user_name in dropout_names:
-                                raise NotEligibleError(f"사용자 {user_name}이(가) 이탈자 목록에 있습니다.")
+                                raise NotEligibleError(f"수료 명단에 존재하지 않습니다. 🥲\n디스코드를 통해 질문게시판에 문의해주세요.")
                             
                             # 3. 사용자가 참여자 목록에 있는지 확인
                             if user_role is None:
-                                raise NotEligibleError(f"사용자 {user_name}이(가) 참여자 목록에 없습니다.")
+                                raise NotEligibleError(f"수료 명단에 존재하지 않습니다. 🥲\n디스코드를 통해 질문게시판에 문의해주세요.")
                             
                             period = project.get("properties", {}).get("기간", {}).get("date", {})
 
                             if not period:
-                                # TODO: 추후 처리 필요
-                                raise SystemError("기간 정보가 없습니다.")
+                                raise SystemError(
+                                    "프로젝트 기간 정보가 없습니다. "
+                                    "스터디 빌더에게 문의해주세요."
+                                )
+
+                            # 종료일 검증
+                            if not period.get('end'):
+                                raise SystemError(
+                                    "프로젝트 종료일 정보가 없습니다. "
+                                    "스터디 빌더에게 문의해주세요."
+                                )
+
+                            end_date_str = period['end']
+                            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+                            today = datetime.now().date()
+
+                            if today < end_date:
+                                raise NotEligibleError(
+                                    f"수료증은 수료 후 발급 가능합니다."
+                                )
 
                             logger.info(
                                 "사용자 검증 성공",
@@ -416,7 +434,11 @@ class NotionClient:
                                         "updated_at": result.get("last_edited_time", ""),
                                         "season": season
                                     }
-                                    
+
+                                    # 템플릿용 0기는 제외
+                                    if season == 0:
+                                        continue
+
                                     project = Project(**project_data)
                                     all_projects.append(project)
                                     
@@ -472,11 +494,14 @@ class NotionClient:
             if not all_projects:
                 return None
             
-            # 기수별로 그룹화
+            # 기수별로 그룹화 (템플릿용 0기는 제외)
             season_groups: Dict[str, List[Project]] = {}
-            
+
             for project in all_projects:
                 season = project.season
+                # 템플릿용 0기는 제외
+                if season == 0:
+                    continue
                 if season not in season_groups:
                     season_groups[season] = []
                 season_groups[season].append(project)
