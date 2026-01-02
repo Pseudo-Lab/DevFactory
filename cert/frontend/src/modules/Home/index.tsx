@@ -494,6 +494,9 @@ const ExportCertificateForm = () => {
                   size="medium"
                   error={!!formData.email && !isEmailValid}
                 />
+                <Typography variant="caption" sx={{ color: '#6b7280', display: 'block', mt: 1 }}>
+                  수료증이 전달될 이메일 주소를 적어주세요.
+                </Typography>
               </FieldRow>
 
               {/* Period */}
