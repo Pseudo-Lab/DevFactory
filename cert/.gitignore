@@ -73,3 +73,6 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+backend/scripts
+backend/src/assets/templates/*.png
