@@ -140,6 +140,9 @@ class CertificateService:
                     extra={"certificate_number": existing_cert_number},
                 )
             
+            # 발급일(재발급 시점 기준)
+            issue_date = datetime.now().strftime("%Y-%m-%d")
+
             # PDF 수료증 재생성
             pdf_generator = PDFGenerator()
             pdf_bytes = pdf_generator.create_certificate(
@@ -148,6 +151,8 @@ class CertificateService:
                 course_name=certificate_data["course_name"],
                 role=participation_info["user_role"],
                 period=participation_info["period"],
+                certificate_number=existing_cert_number,
+                issue_date=issue_date,
             )
             
             # 이메일 재발송
@@ -185,7 +190,7 @@ class CertificateService:
                     name=certificate_data["applicant_name"],
                     recipient_email=certificate_data["recipient_email"],
                     certificate_number=existing_cert_number,
-                    issue_date=datetime.now().strftime("%Y-%m-%d"),
+                    issue_date=issue_date,
                     certificate_status=CertificateStatus.ISSUED,
                     season=certificate_data["season"],
                     course_name=certificate_data["course_name"],
@@ -226,6 +231,7 @@ class CertificateService:
             
             # TODO: 임시 값, 추후 수정 필요
             certificate_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{str(uuid.uuid4())[:2].upper()}"
+            issue_date = datetime.now().strftime("%Y-%m-%d")
 
             # PDF 수료증 생성
             pdf_generator = PDFGenerator()
@@ -235,6 +241,8 @@ class CertificateService:
                 course_name=certificate_data["course_name"],
                 role=participation_info["user_role"],
                 period=participation_info["period"],
+                certificate_number=certificate_number,
+                issue_date=issue_date,
             )
             # 이메일 발송
             email_sender = EmailSender()
@@ -281,7 +289,7 @@ class CertificateService:
                     name=certificate_data["applicant_name"],
                     recipient_email=certificate_data["recipient_email"],
                     certificate_number=certificate_number,
-                    issue_date=datetime.now().strftime("%Y-%m-%d"),
+                    issue_date=issue_date,
                     certificate_status=CertificateStatus.ISSUED,
                     season=certificate_data["season"],
                     course_name=certificate_data["course_name"],
