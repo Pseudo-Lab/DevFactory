@@ -7,6 +7,7 @@ class CertificateStatus(str, Enum):
     """수료증 상태"""
     PENDING = "Pending"
     NOT_ELIGIBLE = "Not Eligible"
+    REISSUED = "Reissued"
     ISSUED = "Issued"
     SYSTEM_ERROR = "System Error"
 

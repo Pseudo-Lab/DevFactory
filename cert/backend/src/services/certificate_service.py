@@ -60,16 +60,29 @@ class CertificateService:
             
             # 기존 수료증 확인이 성공하고 기존 수료증이 있는 경우 재발급 처리
             if existing_cert and existing_cert.get("found"):
+                existing_status = existing_cert.get("status", "")
+                if existing_status in [CertificateStatus.ISSUED, CertificateStatus.REISSUED]:
+                    logger.info(
+                        "기존 수료증 발견 (재발급 진행)",
+                        extra={
+                            "certificate_number": existing_cert.get("certificate_number"),
+                            "applicant_name": certificate_data.get("applicant_name"),
+                            "season": certificate_data.get("season"),
+                            "status": existing_status,
+                        },
+                    )
+                    return await CertificateService._reissue_certificate(
+                        certificate_data, existing_cert, notion_client
+                    )
+
                 logger.info(
-                    "기존 수료증 발견",
+                    "기존 수료증 발견했지만 상태가 Issued/Reissued가 아님. 신규 발급으로 진행",
                     extra={
                         "certificate_number": existing_cert.get("certificate_number"),
                         "applicant_name": certificate_data.get("applicant_name"),
                         "season": certificate_data.get("season"),
+                        "status": existing_status,
                     },
-                )
-                return await CertificateService._reissue_certificate(
-                    certificate_data, existing_cert, notion_client
                 )
             
             # 2. 신규 수료증 발급 처리
@@ -165,6 +178,22 @@ class CertificateService:
                 role=participation_info["user_role"],
                 certificate_bytes=pdf_bytes
             )
+
+            # 재발급 로그 기록
+            reissue_log = await notion_client.log_certificate_reissue(
+                certificate_data=certificate_data,
+                certificate_number=existing_cert_number,
+                role=participation_info["user_role"],
+                issue_date=issue_date
+            )
+            if not reissue_log:
+                logger.warning(
+                    "재발급 로그 기록 실패",
+                    extra={
+                        "certificate_number": existing_cert_number,
+                        "recipient_email": certificate_data["recipient_email"],
+                    },
+                )
             
             # 기존 수료증 상태를 재발급으로 업데이트
             await notion_client.update_certificate_status(

@@ -340,6 +340,115 @@ class NotionClient:
         except Exception:
             logger.exception("수료증 신청 생성 중 오류")
             raise
+
+    async def log_certificate_reissue(
+        self,
+        certificate_data: Dict[str, Any],
+        certificate_number: str,
+        role: str,
+        issue_date: str
+    ) -> Optional[Dict[str, Any]]:
+        """재발급 이력 로그 생성 (수료증 DB 기록)"""
+        try:
+            async with aiohttp.ClientSession() as session:
+                url = f"{self.base_url}/pages"
+
+                base_properties = {
+                    "Name": {
+                        "title": [
+                            {
+                                "text": {
+                                    "content": certificate_data["applicant_name"]
+                                }
+                            }
+                        ]
+                    },
+                    "Issue Date": {
+                        "date": {
+                            "start": issue_date
+                        }
+                    },
+                    "Recipient Email": {
+                        "email": certificate_data["recipient_email"]
+                    },
+                    "Course Name": {
+                        "rich_text": [
+                            {
+                                "text": {
+                                    "content": certificate_data["course_name"]
+                                }
+                            }
+                        ]
+                    },
+                    "Season": {
+                        "select": { 
+                            "name": f"{certificate_data['season']}기"
+                        }
+                    },
+                    "Certificate Number": {
+                        "rich_text": [
+                            {
+                                "text": {
+                                    "content": certificate_number
+                                }
+                            }
+                        ]
+                    },
+                    "Role": {
+                        "select": {
+                            "name": role
+                        }
+                    }
+                }
+
+                # 재발급 상태로 먼저 시도, 실패 시 기존 Issued로 폴백하여 서비스 영향 최소화
+                status_candidates = [CertificateStatus.REISSUED, CertificateStatus.ISSUED]
+
+                for status_candidate in status_candidates:
+                    payload = {
+                        "parent": {
+                            "database_id": self.databases["certificate_requests"]
+                        },
+                        "properties": {
+                            **base_properties,
+                            "Certificate Status": {
+                                "status": {
+                                    "name": status_candidate
+                                }
+                            }
+                        }
+                    }
+
+                    async with session.post(url, headers=self.headers, json=payload) as response:
+                        if response.status == 200:
+                            log_page = await response.json()
+                            logger.info(
+                                "재발급 로그 생성 완료",
+                                extra={
+                                    "page_id": log_page.get("id"),
+                                    "certificate_number": certificate_number,
+                                    "recipient_email": certificate_data.get("recipient_email"),
+                                    "certificate_status": status_candidate,
+                                },
+                            )
+                            return log_page
+
+                        error_text = await response.text()
+                        logger.warning(
+                            "재발급 로그 생성 실패",
+                            extra={
+                                "status_code": response.status,
+                                "certificate_number": certificate_number,
+                                "error_text": error_text,
+                                "certificate_status": status_candidate,
+                            },
+                        )
+
+                return None
+
+        except Exception:
+            logger.exception("재발급 로그 생성 중 오류")
+            return None
     
     async def update_certificate_status(
         self,
