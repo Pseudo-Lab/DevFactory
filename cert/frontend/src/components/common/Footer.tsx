@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
       <Container>
         <Box sx={{ textAlign: 'center', pt: 1 }}>
           <Typography variant="body2" color="#9ca3af">
-            &copy; 2025 PseudoLab. All rights reserved.
+            &copy; 2020 PseudoLab. All rights reserved.
           </Typography>
         </Box>
       </Container>
