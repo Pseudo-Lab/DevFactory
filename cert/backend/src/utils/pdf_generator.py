@@ -46,8 +46,12 @@ class PDFGenerator:
         # 텍스트 위치 설정
         self.positions = {
             "season": {"x": 299, "y": 1080 - 326 - 30, "font_size": 32, "char_space": -1.2},
-            "content": {"x": 299, "y": 1080 - 485 - 65, "font_size": 26, "char_space": -0.5},
+            "content": {"x": 299, "y": 1080 - 485 - 20, "font_size": 26, "char_space": -0.5},
             "name": {"x": 299, "y": 1080 - 902 - 65, "font_size": 72, "char_space": -1.2},
+        }
+        self.metadata_positions = {
+            "certificate_number": {"x": 1050, "y": 140, "font_size": 18, "char_space": -0.2},
+            "issue_date": {"x": 1050, "y": 110, "font_size": 18, "char_space": -0.2},
         }
         
         # 텍스트 설정
@@ -269,7 +273,18 @@ class PDFGenerator:
 
         return lines
 
-    def create_certificate(self, name:str, season: int, course_name:str, role:str, period:str="", save_file:bool=False, output_path:str=None):
+    def create_certificate(
+        self,
+        name: str,
+        season: int,
+        course_name: str,
+        role: str,
+        period: str | dict = "",
+        certificate_number: str | None = None,
+        issue_date: str | None = None,
+        save_file: bool = False,
+        output_path: str | None = None,
+    ):
         """인증서 생성 (기본적으로 bytes 반환, 옵션으로 파일 저장)"""
         self._download_fonts()
         self._prepare_templates()
@@ -300,59 +315,67 @@ class PDFGenerator:
             )
         
         # Season 정보 설정
-        season_english = f"Season {season} ({period['start']} ~ {period['end']}) / "
+        season_english = f"Season {season} ({period['start']} ~ {period['end']})"
         season_korean = course_name
         
         # 폰트 설정
         english_font = 'HeptaSlab-SemiBold' if 'HeptaSlab-SemiBold' in pdfmetrics.getRegisteredFontNames() else 'Helvetica'
         korean_font = 'IBMPlexSansKR-Regular' if 'IBMPlexSansKR-Regular' in pdfmetrics.getRegisteredFontNames() else 'Helvetica'
         korean_bold_font = 'IBMPlexSansKR-Bold' if 'IBMPlexSansKR-Bold' in pdfmetrics.getRegisteredFontNames() else 'Helvetica'
+        season_font = 'Helvetica'  # 시즌/기간은 가독성 위주로 일반 두께 사용
         
         # 1. Season 정보
         season_config = self.positions['season']
         season_x = season_config['x']
         season_y = season_config['y']
-        season_font_size = season_config['font_size']
+        season_font_size = 25  # 시즌/기간은 더 작게
+        course_font_size = 44  # 프로젝트 타이틀은 더 크게
         season_char_space = season_config.get('char_space', 0)
+        course_char_space = -0.6  # 코스명 전용 자간 (시즌과 분리)
         
-        # 프로젝트 이름: 기수는 고정, 코스명만 개행 처리
+        # 프로젝트 이름: 첫 줄(필요 시 여러 줄)로 배치
         project_x = season_x
         project_y = season_y
-        
-        # 첫 번째 줄: 기수 정보 (예: "10기 /")
-        first_line = season_english + " "
-        self._draw_text(c, first_line, project_x, project_y, english_font, season_font_size, season_char_space)
-        
-        # 코스명 길이 측정
-        course_width = self._measure_text_width(season_korean, season_font_size, korean_bold_font, english_font, season_char_space)
-        first_line_width = self._measure_text_width(first_line, season_font_size, english_font, english_font, season_char_space)
-        remaining_width = 1000 - first_line_width  # 첫 줄 이후 남은 너비
-        
-        if course_width <= remaining_width:
-            # 코스명이 남은 공간에 들어가면 같은 줄에 그리기
-            course_x = project_x + first_line_width
-            self._draw_text(c, season_korean, course_x, project_y, None, season_font_size, season_char_space,
-                          auto_font=True, korean_font=korean_bold_font, english_font=english_font)
-            total_extra_height = 0
-        else:
-            # 코스명이 길면 다음 줄부터 개행
-            lines = self._wrap_text_by_width(season_korean, season_font_size, korean_bold_font, english_font, season_char_space, 1200)
-            normal_line_height = season_font_size * 1.2
-            tight_line_height = season_font_size * 1.0
-            
-            for i, line in enumerate(lines):
-                if i == 0:
-                    # 첫 번째 개행: 일반 행간
-                    line_y = project_y - normal_line_height
-                else:
-                    # 두 번째 개행부터: 축소된 행간
-                    line_y = project_y - normal_line_height - (i * tight_line_height)
-                
-                self._draw_text(c, line, project_x, line_y, None, season_font_size, season_char_space,
-                              auto_font=True, korean_font=korean_bold_font, english_font=english_font)
-            
-            # 총 높이 계산: 첫 개행(일반) + 나머지 개행(축소)
-            total_extra_height = normal_line_height + (len(lines) - 1) * tight_line_height
+        course_lines = self._wrap_text_by_width(
+            season_korean,
+            course_font_size,
+            korean_bold_font,
+            english_font,
+            course_char_space,
+            1200,
+        )
+        course_line_height = course_font_size * 1.2
+
+        for i, line in enumerate(course_lines):
+            line_y = project_y - (i * course_line_height)
+            self._draw_text(
+                c,
+                line,
+                project_x,
+                line_y,
+                None,
+                course_font_size,
+                course_char_space,
+                auto_font=True,
+                korean_font=korean_bold_font,
+                english_font=english_font,
+            )
+
+        course_block_height = (len(course_lines) - 1) * course_line_height if course_lines else 0
+
+        # 두 번째 줄: 시즌/기간 정보 (더 작은 폰트, 일반 두께)
+        season_line_y = project_y - course_block_height - (course_line_height * 0.8)
+        self._draw_text(
+            c,
+            season_english,
+            project_x,
+            season_line_y,
+            season_font,
+            season_font_size,
+            season_char_space,
+        )
+
+        total_extra_height = course_block_height + (course_line_height * 0.8) + season_font_size * 1.0
 
         
         
@@ -375,6 +398,38 @@ class PDFGenerator:
         name_char_space = name_config.get('char_space', 0)
         
         self._draw_text(c, name, name_x, name_y, korean_font, name_font_size, name_char_space)
+
+        # 4. 발급번호/발급일 (우측 하단에 작게 표기)
+        metadata_number_config = self.metadata_positions["certificate_number"]
+        metadata_date_config = self.metadata_positions["issue_date"]
+
+        if certificate_number:
+            self._draw_text(
+                c,
+                f"발급번호: {certificate_number}",
+                metadata_number_config["x"],
+                metadata_number_config["y"],
+                None,
+                metadata_number_config["font_size"],
+                metadata_number_config.get("char_space", 0),
+                auto_font=True,
+                korean_font=korean_font,
+                english_font=english_font,
+            )
+
+        if issue_date:
+            self._draw_text(
+                c,
+                f"발급일: {issue_date}",
+                metadata_date_config["x"],
+                metadata_date_config["y"],
+                None,
+                metadata_date_config["font_size"],
+                metadata_date_config.get("char_space", 0),
+                auto_font=True,
+                korean_font=korean_font,
+                english_font=english_font,
+            )
         
         # PDF 저장
         c.save()
