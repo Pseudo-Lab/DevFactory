@@ -86,10 +86,13 @@ class EmailSender:
                 )
             
             # 이메일 발송
+            # Port 465(SSL)는 use_tls=True, Port 587(STARTTLS)은 use_tls=False 필요
+            use_tls = (self.smtp_port == 465)
+            
             async with aiosmtplib.SMTP(
                 hostname=self.smtp_host,
                 port=self.smtp_port,
-                use_tls=False  # 포트 587은 STARTTLS 사용
+                use_tls=use_tls
             ) as smtp:
                 # STARTTLS는 aiosmtplib가 자동으로 처리
                 await smtp.login(self.smtp_username, self.smtp_password)

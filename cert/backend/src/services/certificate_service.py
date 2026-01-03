@@ -147,7 +147,26 @@ class CertificateService:
                     "기존 수료증 번호 없음. 새로 생성",
                     extra={"applicant_name": certificate_data["applicant_name"]},
                 )
-                existing_cert_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{str(uuid.uuid4())[:2].upper()}"
+                # 기존 수료증 번호가 없으면 DB ID(Unique ID) 기반으로 생성
+                existing_data = existing_cert.get("existing_data", {})
+                properties = existing_data.get("properties", {})
+                
+                # 로그에서 확인된 구조: properties['ID']['unique_id']['number']
+                id_prop = properties.get("ID", {})
+                unique_identifier = None
+                
+                if id_prop.get("type") == "unique_id":
+                    unique_identifier = str(id_prop.get("unique_id", {}).get("number"))
+                
+                if not unique_identifier:
+                    # fallback: 혹시 ID 컬럼명이 다를 경우를 대비해 기존 방식 유지
+                    for prop_val in properties.values():
+                        if prop_val.get("type") == "unique_id":
+                            unique_identifier = str(prop_val.get("unique_id", {}).get("number"))
+                            break
+
+                
+                existing_cert_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{unique_identifier.upper()}"
                 logger.info(
                     "새로운 수료증 번호 생성",
                     extra={"certificate_number": existing_cert_number},
@@ -170,7 +189,7 @@ class CertificateService:
             
             # 이메일 재발송
             email_sender = EmailSender()
-            await email_sender.send_certificate_email(
+            email_sent = await email_sender.send_certificate_email(
                 recipient_email=certificate_data["recipient_email"],
                 recipient_name=certificate_data["applicant_name"],
                 course_name=certificate_data["course_name"],
@@ -178,6 +197,9 @@ class CertificateService:
                 role=participation_info["user_role"],
                 certificate_bytes=pdf_bytes
             )
+            
+            if not email_sent:
+                raise Exception("재발급 이메일 발송 실패")
 
             # 재발급 로그 기록
             reissue_log = await notion_client.log_certificate_reissue(
@@ -258,8 +280,27 @@ class CertificateService:
                 season=certificate_data["season"]
             )
             
-            # TODO: 임시 값, 추후 수정 필요
-            certificate_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{str(uuid.uuid4())[:2].upper()}"
+            # DB ID(Unique ID)를 사용하여 수료증 번호 생성
+            properties = certificate_request.get("properties", {})
+            unique_identifier = None
+            
+            # 로그에서 확인된 구조: properties['ID']['unique_id']['number']
+            id_prop = properties.get("ID", {})
+            if id_prop.get("type") == "unique_id":
+                unique_identifier = str(id_prop.get("unique_id", {}).get("number"))
+
+            if not unique_identifier:
+                 # fallback: 혹시 ID 컬럼명이 다를 경우를 대비해 순회 검색
+                for prop_val in properties.values():
+                    if prop_val.get("type") == "unique_id":
+                        unique_identifier = str(prop_val.get("unique_id", {}).get("number"))
+                        break
+            
+            if not unique_identifier:
+                # fallback: Page ID의 마지막 5자리
+                unique_identifier = request_id.replace("-", "")[-5:]
+
+            certificate_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{unique_identifier.upper()}"
             issue_date = datetime.now().strftime("%Y-%m-%d")
 
             # PDF 수료증 생성
@@ -275,7 +316,7 @@ class CertificateService:
             )
             # 이메일 발송
             email_sender = EmailSender()
-            await email_sender.send_certificate_email(
+            email_sent = await email_sender.send_certificate_email(
                 recipient_email=certificate_data["recipient_email"],
                 recipient_name=certificate_data["applicant_name"],
                 course_name=certificate_data["course_name"],
@@ -283,6 +324,9 @@ class CertificateService:
                 role=participation_info["user_role"],
                 certificate_bytes=pdf_bytes
             )
+
+            if not email_sent:
+                raise Exception("이메일 발송 실패")
             
             # 수료증 상태 업데이트
             logger.info(
