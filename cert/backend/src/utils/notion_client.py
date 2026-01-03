@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 import logging
 import os
 import aiohttp
@@ -43,8 +44,39 @@ class NotionClient:
         self._cache = {}
         self._cache_timestamps = {}
         self._projects_loaded = False  # 서버 시작 후 한 번만 로드
+        self.default_periods = self._load_default_periods()
         
         self._initialized = True
+
+    def _load_default_periods(self) -> Dict[str, Dict[str, str]]:
+        """시즌별 기본 기간 정보 로드"""
+        env_path = os.getenv("DEFAULT_PERIODS_FILE")
+        default_file_path = env_path or os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "config",
+            "default_periods.json",
+        )
+        try:
+            with open(default_file_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except FileNotFoundError:
+            logger.warning(
+                "기본 기간 파일이 존재하지 않습니다.",
+                extra={"path": default_file_path},
+            )
+        except json.JSONDecodeError:
+            logger.warning(
+                "기본 기간 파일 파싱에 실패했습니다.",
+                extra={"path": default_file_path},
+            )
+        except Exception:
+            logger.exception(
+                "기본 기간 파일 로드 중 알 수 없는 오류가 발생했습니다.",
+                extra={"path": default_file_path},
+            )
+        return {}
     
     async def verify_user_participation(
         self,
@@ -132,29 +164,86 @@ class NotionClient:
                             if user_role is None:
                                 raise NotEligibleError(f"수료 명단에 존재하지 않습니다. 🥲\n디스코드를 통해 질문게시판에 문의해주세요.")
                             
-                            period = project.get("properties", {}).get("기간", {}).get("date", {})
+                            study_status = properties.get("단계", {}).get("select", {})
+                            period_raw = project.get("properties", {}).get("기간", {}).get("date", {}) or {}
 
-                            if not period:
+                            if not study_status:
                                 raise SystemError(
-                                    "프로젝트 기간 정보가 없습니다. "
-                                    "스터디 빌더에게 문의해주세요."
+                                    "스터디의 완료 정보가 없습니다.\n디스코드를 통해 질문게시판에 문의해주세요."
                                 )
 
-                            # 종료일 검증
-                            if not period.get('end'):
-                                raise SystemError(
-                                    "프로젝트 종료일 정보가 없습니다. "
-                                    "스터디 빌더에게 문의해주세요."
-                                )
-
-                            end_date_str = period['end']
-                            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
-                            today = datetime.now().date()
-
-                            if today < end_date:
+                            if study_status.get("name") != "완료":
                                 raise NotEligibleError(
-                                    f"수료증은 수료 후 발급 가능합니다."
+                                    "수료증은 스터디가 완료된 이후 발급 가능합니다.\n디스코드를 통해 질문게시판에 문의해주세요."
                                 )
+
+                            fallback_period = self.default_periods.get(str(season), {})
+                            raw_start = period_raw.get("start")
+                            raw_end = period_raw.get("end")
+
+                            # 1) 기본값으로 초기화
+                            period = {
+                                "start": fallback_period.get("start"),
+                                "end": fallback_period.get("end"),
+                            }
+
+                            # 2) Notion 값이 완전하면 덮어쓰기
+                            if raw_start and raw_end:
+                                period["start"] = raw_start
+                                period["end"] = raw_end
+                            # 3) 한쪽만 있을 때
+                            elif raw_start or raw_end:
+                                if fallback_period:
+                                    logger.warning(
+                                        "스터디 기간이 한쪽만 있어 기본 기간으로 대체합니다.",
+                                        extra={
+                                            "user_name": user_name,
+                                            "season": season,
+                                            "course_name": course_name,
+                                            "project_id": project.get("id"),
+                                            "raw_start": raw_start,
+                                            "raw_end": raw_end,
+                                            "fallback_start": period["start"],
+                                            "fallback_end": period["end"],
+                                        },
+                                    )
+                                else:
+                                    message = (
+                                        "스터디 기간 정보가 없습니다. "
+                                        f"(season={season}, course={course_name}) "
+                                        "config/default_periods.json의 기본 기간을 확인해주세요."
+                                    )
+                                    logger.error(
+                                        message,
+                                        extra={
+                                            "user_name": user_name,
+                                            "season": season,
+                                            "course_name": course_name,
+                                            "project_id": project.get("id"),
+                                            "raw_start": raw_start,
+                                            "raw_end": raw_end,
+                                            "default_period_found": bool(fallback_period),
+                                        },
+                                    )
+                                    raise SystemError(message)
+                            # 4) Notion 값도 없고 기본값도 없음
+                            elif not period["start"] and not period["end"]:
+                                message = (
+                                    "스터디 기간 정보가 없습니다. "
+                                    f"(season={season}, course={course_name}) "
+                                    "config/default_periods.json의 기본 기간을 확인해주세요."
+                                )
+                                logger.error(
+                                    message,
+                                    extra={
+                                        "user_name": user_name,
+                                        "season": season,
+                                        "course_name": course_name,
+                                        "project_id": project.get("id"),
+                                        "default_period_found": bool(fallback_period),
+                                    },
+                                )
+                                raise SystemError(message)
 
                             logger.info(
                                 "사용자 검증 성공",
@@ -183,7 +272,7 @@ class NotionClient:
                                     "course_name": course_name,
                                 },
                             )
-                            raise Exception("해당 프로젝트가 검색되지 않습니다. \nDevFactory로 연락부탁드립니다.")
+                            raise Exception("해당 프로젝트가 검색되지 않습니다. \n디스코드를 통해 질문게시판에 문의해주세요.")
         except Exception as e:
             raise e
     
@@ -251,6 +340,115 @@ class NotionClient:
         except Exception:
             logger.exception("수료증 신청 생성 중 오류")
             raise
+
+    async def log_certificate_reissue(
+        self,
+        certificate_data: Dict[str, Any],
+        certificate_number: str,
+        role: str,
+        issue_date: str
+    ) -> Optional[Dict[str, Any]]:
+        """재발급 이력 로그 생성 (수료증 DB 기록)"""
+        try:
+            async with aiohttp.ClientSession() as session:
+                url = f"{self.base_url}/pages"
+
+                base_properties = {
+                    "Name": {
+                        "title": [
+                            {
+                                "text": {
+                                    "content": certificate_data["applicant_name"]
+                                }
+                            }
+                        ]
+                    },
+                    "Issue Date": {
+                        "date": {
+                            "start": issue_date
+                        }
+                    },
+                    "Recipient Email": {
+                        "email": certificate_data["recipient_email"]
+                    },
+                    "Course Name": {
+                        "rich_text": [
+                            {
+                                "text": {
+                                    "content": certificate_data["course_name"]
+                                }
+                            }
+                        ]
+                    },
+                    "Season": {
+                        "select": { 
+                            "name": f"{certificate_data['season']}기"
+                        }
+                    },
+                    "Certificate Number": {
+                        "rich_text": [
+                            {
+                                "text": {
+                                    "content": certificate_number
+                                }
+                            }
+                        ]
+                    },
+                    "Role": {
+                        "select": {
+                            "name": role
+                        }
+                    }
+                }
+
+                # 재발급 상태로 먼저 시도, 실패 시 기존 Issued로 폴백하여 서비스 영향 최소화
+                status_candidates = [CertificateStatus.REISSUED, CertificateStatus.ISSUED]
+
+                for status_candidate in status_candidates:
+                    payload = {
+                        "parent": {
+                            "database_id": self.databases["certificate_requests"]
+                        },
+                        "properties": {
+                            **base_properties,
+                            "Certificate Status": {
+                                "status": {
+                                    "name": status_candidate
+                                }
+                            }
+                        }
+                    }
+
+                    async with session.post(url, headers=self.headers, json=payload) as response:
+                        if response.status == 200:
+                            log_page = await response.json()
+                            logger.info(
+                                "재발급 로그 생성 완료",
+                                extra={
+                                    "page_id": log_page.get("id"),
+                                    "certificate_number": certificate_number,
+                                    "recipient_email": certificate_data.get("recipient_email"),
+                                    "certificate_status": status_candidate,
+                                },
+                            )
+                            return log_page
+
+                        error_text = await response.text()
+                        logger.warning(
+                            "재발급 로그 생성 실패",
+                            extra={
+                                "status_code": response.status,
+                                "certificate_number": certificate_number,
+                                "error_text": error_text,
+                                "certificate_status": status_candidate,
+                            },
+                        )
+
+                return None
+
+        except Exception:
+            logger.exception("재발급 로그 생성 중 오류")
+            return None
     
     async def update_certificate_status(
         self,

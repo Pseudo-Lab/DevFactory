@@ -60,16 +60,29 @@ class CertificateService:
             
             # 기존 수료증 확인이 성공하고 기존 수료증이 있는 경우 재발급 처리
             if existing_cert and existing_cert.get("found"):
+                existing_status = existing_cert.get("status", "")
+                if existing_status in [CertificateStatus.ISSUED, CertificateStatus.REISSUED]:
+                    logger.info(
+                        "기존 수료증 발견 (재발급 진행)",
+                        extra={
+                            "certificate_number": existing_cert.get("certificate_number"),
+                            "applicant_name": certificate_data.get("applicant_name"),
+                            "season": certificate_data.get("season"),
+                            "status": existing_status,
+                        },
+                    )
+                    return await CertificateService._reissue_certificate(
+                        certificate_data, existing_cert, notion_client
+                    )
+
                 logger.info(
-                    "기존 수료증 발견",
+                    "기존 수료증 발견했지만 상태가 Issued/Reissued가 아님. 신규 발급으로 진행",
                     extra={
                         "certificate_number": existing_cert.get("certificate_number"),
                         "applicant_name": certificate_data.get("applicant_name"),
                         "season": certificate_data.get("season"),
+                        "status": existing_status,
                     },
-                )
-                return await CertificateService._reissue_certificate(
-                    certificate_data, existing_cert, notion_client
                 )
             
             # 2. 신규 수료증 발급 처리
@@ -140,6 +153,9 @@ class CertificateService:
                     extra={"certificate_number": existing_cert_number},
                 )
             
+            # 발급일(재발급 시점 기준)
+            issue_date = datetime.now().strftime("%Y-%m-%d")
+
             # PDF 수료증 재생성
             pdf_generator = PDFGenerator()
             pdf_bytes = pdf_generator.create_certificate(
@@ -148,6 +164,8 @@ class CertificateService:
                 course_name=certificate_data["course_name"],
                 role=participation_info["user_role"],
                 period=participation_info["period"],
+                certificate_number=existing_cert_number,
+                issue_date=issue_date,
             )
             
             # 이메일 재발송
@@ -160,6 +178,22 @@ class CertificateService:
                 role=participation_info["user_role"],
                 certificate_bytes=pdf_bytes
             )
+
+            # 재발급 로그 기록
+            reissue_log = await notion_client.log_certificate_reissue(
+                certificate_data=certificate_data,
+                certificate_number=existing_cert_number,
+                role=participation_info["user_role"],
+                issue_date=issue_date
+            )
+            if not reissue_log:
+                logger.warning(
+                    "재발급 로그 기록 실패",
+                    extra={
+                        "certificate_number": existing_cert_number,
+                        "recipient_email": certificate_data["recipient_email"],
+                    },
+                )
             
             # 기존 수료증 상태를 재발급으로 업데이트
             await notion_client.update_certificate_status(
@@ -185,7 +219,7 @@ class CertificateService:
                     name=certificate_data["applicant_name"],
                     recipient_email=certificate_data["recipient_email"],
                     certificate_number=existing_cert_number,
-                    issue_date=datetime.now().strftime("%Y-%m-%d"),
+                    issue_date=issue_date,
                     certificate_status=CertificateStatus.ISSUED,
                     season=certificate_data["season"],
                     course_name=certificate_data["course_name"],
@@ -226,6 +260,7 @@ class CertificateService:
             
             # TODO: 임시 값, 추후 수정 필요
             certificate_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{str(uuid.uuid4())[:2].upper()}"
+            issue_date = datetime.now().strftime("%Y-%m-%d")
 
             # PDF 수료증 생성
             pdf_generator = PDFGenerator()
@@ -235,6 +270,8 @@ class CertificateService:
                 course_name=certificate_data["course_name"],
                 role=participation_info["user_role"],
                 period=participation_info["period"],
+                certificate_number=certificate_number,
+                issue_date=issue_date,
             )
             # 이메일 발송
             email_sender = EmailSender()
@@ -281,7 +318,7 @@ class CertificateService:
                     name=certificate_data["applicant_name"],
                     recipient_email=certificate_data["recipient_email"],
                     certificate_number=certificate_number,
-                    issue_date=datetime.now().strftime("%Y-%m-%d"),
+                    issue_date=issue_date,
                     certificate_status=CertificateStatus.ISSUED,
                     season=certificate_data["season"],
                     course_name=certificate_data["course_name"],
