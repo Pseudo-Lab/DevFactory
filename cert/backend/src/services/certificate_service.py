@@ -111,6 +111,82 @@ class CertificateService:
                 message="수료증 발급을 완료하지 못했습니다. 관리자에게 문의해주세요.",
                 data=None,
             )
+
+    @staticmethod
+    async def verify_certificate(file_bytes: bytes) -> dict:
+        """수료증 검증"""
+        try:
+            pdf_generator = PDFGenerator()
+            watermark_text = pdf_generator.extract_watermark_from_pdf(file_bytes)
+            
+            if not watermark_text:
+                return {
+                    "valid": False,
+                    "message": "수료증에서 워터마크를 찾을 수 없습니다."
+                }
+                
+            # 기본 검증 (PSEUDOLAB 접두사 확인)
+            if not watermark_text.startswith("PSEUDOLAB"):
+                return {
+                    "valid": False,
+                    "message": "유효하지 않은 수료증 워터마크입니다.",
+                    "debug_text": watermark_text
+                }
+                
+            # 수료증 번호 추출 (PSEUDOLAB_CERT-XXXX 포맷 기대)
+            cert_number = ""
+            if "_" in watermark_text:
+                cert_number = watermark_text.split("_")[1]
+            
+            # 번호가 없는 경우 (테스트용 등)
+            if not cert_number:
+                return {
+                    "valid": True,
+                    "message": "워터마크가 확인되었습니다 (테스트용/번호없음).",
+                    "watermark_text": watermark_text
+                }
+
+            # Notion 실데이터 조회
+            notion_client = NotionClient()
+            cert_page = await notion_client.get_certificate_by_number(cert_number)
+            
+            if not cert_page:
+                return {
+                    "valid": False,
+                    "message": f"수료증 번호({cert_number})에 해당하는 발급 기록을 찾을 수 없습니다."
+                }
+            
+            # Notion 결과 파싱
+            props = cert_page.get("properties", {})
+            
+            name = props.get("Name", {}).get("title", [{}])[0].get("plain_text", "알 수 없음")
+            course = props.get("Course Name", {}).get("rich_text", [{}])[0].get("plain_text", "알 수 없음")
+            season = props.get("Season", {}).get("select", {}).get("name", "알 수 없음")
+            issue_date = props.get("Issue Date", {}).get("date", {}).get("start", "알 수 없음")
+            status = props.get("Certificate Status", {}).get("status", {}).get("name", "알 수 없음")
+
+            return {
+                "valid": True,
+                "message": "수료증 진위 확인에 성공했습니다.",
+                "data": {
+                    "name": name,
+                    "course": course,
+                    "season": season,
+                    "issue_date": issue_date,
+                    "certificate_number": cert_number,
+                    "status": status
+                }
+            }
+            
+        except Exception as e:
+            if "워터마크를 찾을 수 없습니다" in str(e):
+                logger.info(f"수료증 검증 실패 (워터마크 없음): {str(e)}")
+            else:
+                logger.exception("수료증 검증 중 예상치 못한 오류")
+            return {
+                "valid": False,
+                "message": "수료증 검증 처리 중 오류가 발생했습니다."
+            }
     
     @staticmethod
     async def _reissue_certificate(
@@ -147,7 +223,26 @@ class CertificateService:
                     "기존 수료증 번호 없음. 새로 생성",
                     extra={"applicant_name": certificate_data["applicant_name"]},
                 )
-                existing_cert_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{str(uuid.uuid4())[:2].upper()}"
+                # 기존 수료증 번호가 없으면 DB ID(Unique ID) 기반으로 생성
+                existing_data = existing_cert.get("existing_data", {})
+                properties = existing_data.get("properties", {})
+                
+                # 로그에서 확인된 구조: properties['ID']['unique_id']['number']
+                id_prop = properties.get("ID", {})
+                unique_identifier = None
+                
+                if id_prop.get("type") == "unique_id":
+                    unique_identifier = str(id_prop.get("unique_id", {}).get("number"))
+                
+                if not unique_identifier:
+                    # fallback: 혹시 ID 컬럼명이 다를 경우를 대비해 기존 방식 유지
+                    for prop_val in properties.values():
+                        if prop_val.get("type") == "unique_id":
+                            unique_identifier = str(prop_val.get("unique_id", {}).get("number"))
+                            break
+
+                
+                existing_cert_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{unique_identifier.upper()}"
                 logger.info(
                     "새로운 수료증 번호 생성",
                     extra={"certificate_number": existing_cert_number},
@@ -170,7 +265,7 @@ class CertificateService:
             
             # 이메일 재발송
             email_sender = EmailSender()
-            await email_sender.send_certificate_email(
+            email_sent = await email_sender.send_certificate_email(
                 recipient_email=certificate_data["recipient_email"],
                 recipient_name=certificate_data["applicant_name"],
                 course_name=certificate_data["course_name"],
@@ -178,6 +273,9 @@ class CertificateService:
                 role=participation_info["user_role"],
                 certificate_bytes=pdf_bytes
             )
+            
+            if not email_sent:
+                raise Exception("재발급 이메일 발송 실패")
 
             # 재발급 로그 기록
             reissue_log = await notion_client.log_certificate_reissue(
@@ -258,8 +356,27 @@ class CertificateService:
                 season=certificate_data["season"]
             )
             
-            # TODO: 임시 값, 추후 수정 필요
-            certificate_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{str(uuid.uuid4())[:2].upper()}"
+            # DB ID(Unique ID)를 사용하여 수료증 번호 생성
+            properties = certificate_request.get("properties", {})
+            unique_identifier = None
+            
+            # 로그에서 확인된 구조: properties['ID']['unique_id']['number']
+            id_prop = properties.get("ID", {})
+            if id_prop.get("type") == "unique_id":
+                unique_identifier = str(id_prop.get("unique_id", {}).get("number"))
+
+            if not unique_identifier:
+                 # fallback: 혹시 ID 컬럼명이 다를 경우를 대비해 순회 검색
+                for prop_val in properties.values():
+                    if prop_val.get("type") == "unique_id":
+                        unique_identifier = str(prop_val.get("unique_id", {}).get("number"))
+                        break
+            
+            if not unique_identifier:
+                # fallback: Page ID의 마지막 5자리
+                unique_identifier = request_id.replace("-", "")[-5:]
+
+            certificate_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{unique_identifier.upper()}"
             issue_date = datetime.now().strftime("%Y-%m-%d")
 
             # PDF 수료증 생성
@@ -275,7 +392,7 @@ class CertificateService:
             )
             # 이메일 발송
             email_sender = EmailSender()
-            await email_sender.send_certificate_email(
+            email_sent = await email_sender.send_certificate_email(
                 recipient_email=certificate_data["recipient_email"],
                 recipient_name=certificate_data["applicant_name"],
                 course_name=certificate_data["course_name"],
@@ -283,6 +400,9 @@ class CertificateService:
                 role=participation_info["user_role"],
                 certificate_bytes=pdf_bytes
             )
+
+            if not email_sent:
+                raise Exception("이메일 발송 실패")
             
             # 수료증 상태 업데이트
             logger.info(

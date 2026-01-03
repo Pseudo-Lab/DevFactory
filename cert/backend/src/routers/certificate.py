@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response, File, UploadFile
 
 from ..models.project import Project, ProjectsBySeasonResponse
 from ..models.certificate import CertificateCreate, CertificateResponse, ErrorResponse
@@ -91,3 +91,19 @@ async def clear_cache():
     """캐시 삭제"""
     ProjectService.clear_cache()
     return {"message": "캐시 삭제 완료"}
+
+@certificate_router.post("/verify")
+async def verify_certificate(file: UploadFile = File(...)):
+    """수료증의 진위 여부를 확인합니다."""
+    # 파일 확장자 체크 (PDF만 허용)
+    if not file.filename.lower().endswith('.pdf'):
+        raise HTTPException(status_code=400, detail="PDF 파일만 업로드 가능합니다.")
+    
+    try:
+        file_bytes = await file.read()
+        result = await CertificateService.verify_certificate(file_bytes)
+        return result
+    except Exception as e:
+        import logging
+        logging.error(f"검증 중 오류 발생: {e}")
+        raise HTTPException(status_code=500, detail="파일 처리 중 오류가 발생했습니다.")
