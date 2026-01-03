@@ -224,9 +224,27 @@ export default function Page2() {
     const interval = setInterval(async () => {
       try {
         const response = await authenticatedFetch(`/api/v1/teams/${String(teamId)}/status`);
-        if (!response.ok) throw new Error('Failed to fetch team status');
+
+        if (!response.ok) {
+          if (response.status === 404 || response.status === 403) {
+            console.error('Team not found or user not authorized. Returning to create view.');
+            setView('create');
+            clearInterval(interval);
+            return;
+          }
+          throw new Error(`Failed to fetch team status: ${response.status}`);
+        }
+
         const memberStatuses: { team_id: number, status: string, members_ready: number[] } = await response.json();
         const readyMemberIds = new Set(memberStatuses.members_ready);
+
+        // Per user request, if our ID is not in the list from the server, return to create view.
+        if (myId && !readyMemberIds.has(Number(myId))) {
+          console.log('User ID not in members_ready list. Returning to create view.', myId, readyMemberIds);
+          setView('create');
+          clearInterval(interval);
+          return;
+        }
 
         setTeamMembers(prevTeamMembers =>
           prevTeamMembers.map(member => ({
@@ -236,11 +254,13 @@ export default function Page2() {
         );
       } catch (error) {
         console.error('Error polling team status:', error);
+        setView('create');
+        clearInterval(interval);
       }
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [view, teamId]);
+  }, [view, teamId, myId, setView]);
 
   useEffect(() => {
     if (view === 'waiting' && teamMembers.length > 0 && teamMembers.every(m => m.is_ready)) {
