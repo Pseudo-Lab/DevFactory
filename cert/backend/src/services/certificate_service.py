@@ -178,8 +178,11 @@ class CertificateService:
                 }
             }
             
-        except Exception:
-            logger.exception("수료증 검증 중 오류")
+        except Exception as e:
+            if "워터마크를 찾을 수 없습니다" in str(e):
+                logger.info(f"수료증 검증 실패 (워터마크 없음): {str(e)}")
+            else:
+                logger.exception("수료증 검증 중 예상치 못한 오류")
             return {
                 "valid": False,
                 "message": "수료증 검증 처리 중 오류가 발생했습니다."

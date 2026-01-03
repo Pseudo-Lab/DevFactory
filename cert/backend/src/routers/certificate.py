@@ -95,9 +95,9 @@ async def clear_cache():
 @certificate_router.post("/verify")
 async def verify_certificate(file: UploadFile = File(...)):
     """수료증의 진위 여부를 확인합니다."""
-    # 파일 확장자 체크 (PDF, 이미지 등)
-    if not file.filename.lower().endswith(('.pdf', '.png', '.jpg', '.jpeg', '.webp')):
-        raise HTTPException(status_code=400, detail="지원하지 않는 파일 형식입니다. (PDF, PNG, JPG, WEBP만 가능)")
+    # 파일 확장자 체크 (PDF만 허용)
+    if not file.filename.lower().endswith('.pdf'):
+        raise HTTPException(status_code=400, detail="PDF 파일만 업로드 가능합니다.")
     
     try:
         file_bytes = await file.read()

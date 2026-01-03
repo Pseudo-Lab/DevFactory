@@ -270,8 +270,11 @@ class PDFGenerator:
                 logger.warning("워터마크 텍스트 디코딩 실패")
                 return None
 
-        except Exception:
-            logger.exception("PDF 워터마크 추출 중 오류")
+        except (PdfStreamError, Exception) as e:
+            if "pypdf" in str(type(e)):
+                logger.warning(f"유효하지 않은 PDF 형식 또는 손상된 파일: {str(e)}")
+            else:
+                logger.exception("PDF 워터마크 추출 중 예상치 못한 오류")
             return None
 
     def _get_next_certificate_path(self):
