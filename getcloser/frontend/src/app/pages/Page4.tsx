@@ -43,11 +43,16 @@ export default function Page4() {
   const [lastClickTime, setLastClickTime] = useState<number>(0);
   const [selectedMemberChallenge, setSelectedMemberChallenge] = useState<ChallengeResult | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRedeemed, setIsRedeemed] = useState(false);
 
   // This useEffect will set the initial success/failure based on progressStatus from the store
   useEffect(() => {
-    if (progressStatus === 'CHALLENGE_SUCCESS' || progressStatus === 'REDEEMED') {
+    if (progressStatus === 'CHALLENGE_SUCCESS') {
       setResult('성공');
+      setIsRedeemed(false);
+    } else if (progressStatus === 'REDEEMED') {
+      setResult('성공');
+      setIsRedeemed(true);
     } else if (progressStatus === 'CHALLENGE_FAILED') {
       setResult('실패');
     } else {
@@ -90,6 +95,8 @@ export default function Page4() {
   };
 
   const handleSuccessClick = async () => {
+    if (isRedeemed) return;
+
     const currentTime = new Date().getTime();
     if (currentTime - lastClickTime < 2000) { // 2 seconds window
       setClickCount(prevCount => prevCount + 1);
@@ -115,7 +122,7 @@ export default function Page4() {
       }
 
       alert('수령 완료!');
-
+      setIsRedeemed(true);
     }
   };
 
@@ -154,7 +161,7 @@ export default function Page4() {
           <>
             <p className="text-3xl font-bold">성공!</p>
             <Image
-              src="/free-icon-success.png"
+              src={isRedeemed ? '/redeemed-gift.svg' : '/free-icon-success.png'}
               alt="Success"
               width={100}
               height={100}
