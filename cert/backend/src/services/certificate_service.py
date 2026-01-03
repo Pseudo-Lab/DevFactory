@@ -111,6 +111,79 @@ class CertificateService:
                 message="수료증 발급을 완료하지 못했습니다. 관리자에게 문의해주세요.",
                 data=None,
             )
+
+    @staticmethod
+    async def verify_certificate(file_bytes: bytes) -> dict:
+        """수료증 검증"""
+        try:
+            pdf_generator = PDFGenerator()
+            watermark_text = pdf_generator.extract_watermark_from_pdf(file_bytes)
+            
+            if not watermark_text:
+                return {
+                    "valid": False,
+                    "message": "수료증에서 워터마크를 찾을 수 없습니다."
+                }
+                
+            # 기본 검증 (PSEUDOLAB 접두사 확인)
+            if not watermark_text.startswith("PSEUDOLAB"):
+                return {
+                    "valid": False,
+                    "message": "유효하지 않은 수료증 워터마크입니다.",
+                    "debug_text": watermark_text
+                }
+                
+            # 수료증 번호 추출 (PSEUDOLAB_CERT-XXXX 포맷 기대)
+            cert_number = ""
+            if "_" in watermark_text:
+                cert_number = watermark_text.split("_")[1]
+            
+            # 번호가 없는 경우 (테스트용 등)
+            if not cert_number:
+                return {
+                    "valid": True,
+                    "message": "워터마크가 확인되었습니다 (테스트용/번호없음).",
+                    "watermark_text": watermark_text
+                }
+
+            # Notion 실데이터 조회
+            notion_client = NotionClient()
+            cert_page = await notion_client.get_certificate_by_number(cert_number)
+            
+            if not cert_page:
+                return {
+                    "valid": False,
+                    "message": f"수료증 번호({cert_number})에 해당하는 발급 기록을 찾을 수 없습니다."
+                }
+            
+            # Notion 결과 파싱
+            props = cert_page.get("properties", {})
+            
+            name = props.get("Name", {}).get("title", [{}])[0].get("plain_text", "알 수 없음")
+            course = props.get("Course Name", {}).get("rich_text", [{}])[0].get("plain_text", "알 수 없음")
+            season = props.get("Season", {}).get("select", {}).get("name", "알 수 없음")
+            issue_date = props.get("Issue Date", {}).get("date", {}).get("start", "알 수 없음")
+            status = props.get("Certificate Status", {}).get("status", {}).get("name", "알 수 없음")
+
+            return {
+                "valid": True,
+                "message": "수료증 진위 확인에 성공했습니다.",
+                "data": {
+                    "name": name,
+                    "course": course,
+                    "season": season,
+                    "issue_date": issue_date,
+                    "certificate_number": cert_number,
+                    "status": status
+                }
+            }
+            
+        except Exception:
+            logger.exception("수료증 검증 중 오류")
+            return {
+                "valid": False,
+                "message": "수료증 검증 처리 중 오류가 발생했습니다."
+            }
     
     @staticmethod
     async def _reissue_certificate(

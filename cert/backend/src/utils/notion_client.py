@@ -873,6 +873,40 @@ class NotionClient:
             logger.exception("기존 수료증 확인 중 오류")
             return None
 
+    async def get_certificate_by_number(self, certificate_number: str) -> Optional[Dict[str, Any]]:
+        """수료증 번호로 수료증 정보 조회"""
+        db_id = self.databases.get("certificate_requests")
+        if not db_id:
+            logger.error("수료증 데이터베이스 ID가 설정되지 않았습니다.")
+            return None
+            
+        url = f"{self.base_url}/databases/{db_id}/query"
+        payload = {
+            "filter": {
+                "property": "Certificate Number",
+                "rich_text": {
+                    "equals": certificate_number
+                }
+            }
+        }
+        
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(url, headers=self.headers, json=payload) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        results = data.get("results", [])
+                        if results:
+                            return results[0]
+                        return None
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Notion 수료증 조회 실패: {response.status}, {error_text}")
+                        return None
+        except Exception:
+            logger.exception("Notion 수료증 조회 중 예외 발생")
+            return None
+
     async def get_database_structure(self, database_type: str = "project_history") -> Optional[Dict[str, Any]]:
         """데이터베이스 구조 조회 (디버깅용)"""
         try:
