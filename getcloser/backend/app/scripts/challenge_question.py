@@ -31,7 +31,3 @@ def seed_challenge_questions_from_csv(file_path: str):
 
     finally:
         db.close()
-
-
-# if __name__ == "__main__":
-#     seed_challenge_questions_from_csv("./scripts/challenge_question.csv")
