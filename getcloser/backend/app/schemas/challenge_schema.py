@@ -21,7 +21,6 @@ class ChallengeRequest(BaseModel):
 class AssignedChallenge(BaseModel):
   user_id: int
   assigned_challenge_id: int
-  from_user_id: int
   category: str
   answer: str
 
