@@ -46,7 +46,7 @@ const getJsonFromResponse = async (response: Response) => {
 };
 
 export default function Page4() {
-  const { id, progressStatus, teamId, memberIds, reset, setQuestion, setChallengeId, setTeamId, setProgressStatus } = useFormStore(); // Use progressStatus
+  const { id, progressStatus, teamId, memberIds, reset, setTeamId, setProgressStatus } = useFormStore(); // Use progressStatus
   const { setCurrentPage } = useNavigationStore();
 
   const [result, setResult] = useState<string>('');
