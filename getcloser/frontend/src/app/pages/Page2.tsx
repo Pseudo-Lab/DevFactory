@@ -11,7 +11,7 @@ import { authenticatedFetch } from '../../lib/api';
 import { useFormStore } from '../../store/formStore';
 import { useNavigationStore } from '../../store/navigationStore';
 
-type View = 'loading' | 'create' | 'waiting';
+type View = 'create' | 'waiting';
 type TeamMember = {
   user_id: number;
   is_ready: boolean;
@@ -145,7 +145,7 @@ export default function Page2() {
   const { id: myId, teamId, setTeamId, setMemberIds, progressStatus } = useFormStore();
   const { setCurrentPage } = useNavigationStore();
 
-  const [view, setView] = useState<View>('loading');
+  const [view, setView] = useState<View>('create');
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [inputs, setInputs] = useState<InputState[]>(() => Array(TEAM_SIZE).fill({ id: '', displayName: '' }));
 
@@ -314,14 +314,6 @@ export default function Page2() {
       alert(`팀 생성에 실패했습니다: ${error}`);
     }
   };
-
-  if (view === 'loading') {
-    return (
-      <div className="container mx-auto p-4 flex justify-center items-center h-screen">
-        <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-primary"></div>
-      </div>
-    );
-  }
 
   if (view === 'waiting') {
     return <WaitingView teamMembers={teamMembers} myId={myId as number} teamId={teamId as number} setView={setView} />;
