@@ -131,20 +131,11 @@ export default function Page4() {
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      alert(`재도전 실패: ${errorMessage}`);
+      alert('재도전 실패');
 
-      try {
-        console.log(`Canceling team ${teamId} due to challenge assignment failure.`);
-        await authenticatedFetch(`/api/v1/teams/${teamId}/cancel`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        setTeamId(0);
-        setProgressStatus('NONE_TEAM');
-        reset();
-      } catch (cancelError: unknown) {
-        console.error('Failed to cancel team:', cancelError);
-      }
+      reset();
+      setTeamId(0);
+      setProgressStatus('NONE_TEAM');
 
       setCurrentPage('page2'); // Fallback to page2 if something goes wrong
     }

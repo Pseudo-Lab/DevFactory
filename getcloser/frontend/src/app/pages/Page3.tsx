@@ -159,7 +159,7 @@ export default function Page3() {
 
       const responseData = await response.json();
       console.log('Challenge submission successful:', responseData);
-      setProgressStatus(responseData.is_correct);
+      setProgressStatus(responseData.is_correct ? 'CHALLENGE_SUCCESS' : 'CHALLENGE_FAILED');
       setCurrentPage('page4');
     } catch (error: unknown) {
       console.error('Error submitting challenge:', error);
