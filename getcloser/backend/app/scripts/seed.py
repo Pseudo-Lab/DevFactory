@@ -13,4 +13,4 @@ def seed_initial_data():
     """
     seed_users_from_csv(str(BASE_DIR / "user_data.csv"))
     seed_challenge_questions_from_csv(str(BASE_DIR / "challenge_question.csv"))
-    seed_challenges_from_csv(str(BASE_DIR / "challenge_data.csv"))
+    # seed_challenges_from_csv(str(BASE_DIR / "challenge_data.csv"))
