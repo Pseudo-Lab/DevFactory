@@ -40,7 +40,7 @@ const initialState = {
 
 export const useFormStore = create<FormState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialState,
       setEmail: (email) => set({ email }),
       setId: (id) => set({ id }),
@@ -50,9 +50,23 @@ export const useFormStore = create<FormState>()(
       setAnswer: (answer) => set({ answer }),
       setTeamId: (teamId) => set({ teamId }),
       setMemberIds: (memberIds) => set({ memberIds }),
-      setIsCorrect: (isCorrect) => set({ isCorrect }),
+      setIsCorrect: (isCorrect) =>
+        set({
+          isCorrect,
+          progressStatus: isCorrect ? 'CHALLENGE_SUCCESS' : 'CHALLENGE_FAILED',
+        }),
       setProgressStatus: (progressStatus) => set({ progressStatus }),
-      reset: () => set(initialState),
+      reset: () => {
+        const { email, id, accessToken, teamId, memberIds } = get();
+        set({
+          ...initialState,
+          email,
+          id,
+          accessToken,
+          teamId,
+          memberIds,
+        });
+      },
     }),
     {
       name: 'form-storage', // name of the item in the storage (must be unique)
