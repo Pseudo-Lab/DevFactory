@@ -8,7 +8,7 @@ from schemas.challenge_schema import AssignedChallenge
 from models.challenges import UserChallengeStatus
 
 
-def assign_challenges_logic(my_id: str, members: list, db: Session) -> list:
+def assign_challenges_logic(my_id: str, members: list, team_id: int, db: Session) -> list:
     # 현재 사용자 retry_count 조회
     status = db.query(UserChallengeStatus).filter(UserChallengeStatus.user_id == my_id).first()
 
@@ -26,7 +26,8 @@ def assign_challenges_logic(my_id: str, members: list, db: Session) -> list:
 
     # retry_count 검사
     if status.retry_count >= 2:
-        return {"message": "retry_count가 2 이상입니다. 팀을 다시 구성해주세요."}
+        team_service.dissolve_team_by_user(db, my_id, team_id)
+        raise HTTPException(status_code=500, detail="over retry count")
     
     # 팀원들이 만든 문제 조회
     team_questions = db.query(ChallengeQuestion).filter(ChallengeQuestion.user_id.in_(members)).all()

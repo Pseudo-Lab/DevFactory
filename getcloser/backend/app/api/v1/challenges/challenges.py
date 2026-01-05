@@ -17,7 +17,7 @@ def challenge_retry_controller(request: ChallengeRetryRequest, db: Session = Dep
 @router.post("/assign", response_model=ChallengeResponse)
 def assign_challenges(request: ChallengeRequest, db: Session = Depends(get_db)):
     try:
-        assigned = assign_challenges_logic(request.my_id, request.members_ids, db)
+        assigned = assign_challenges_logic(request.my_id, request.members_ids, request.team_id, db)
         return ChallengeResponse(team_id=request.team_id, my_assigned=assigned)
     
     except ValueError as e:
