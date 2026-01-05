@@ -48,6 +48,15 @@ services:
       CORS_ORIGINS: "https://${APP_HOST}"
       TEAM_SIZE: ${TEAM_SIZE}
       PENDING_TIMEOUT_MINUTES: ${PENDING_TIMEOUT_MINUTES}
+      # 시드 데이터 경로는 컨테이너 내에서 고정 (/app/seed-data)
+      DATA_DIR: /app/seed-data
+    volumes:
+      # 호스트에 있는 시드 데이터 경로를 컨테이너로 바인드
+      # DATA_DIR_HOST를 .env에 절대경로로 지정하면 앱 폴더 밖의 데이터도 사용 가능
+      - type: bind
+        source: ${DATA_DIR_HOST:-./backend/app/scripts}
+        target: /app/seed-data
+        read_only: true
     depends_on:
       db:
         condition: service_healthy
