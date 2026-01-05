@@ -12,7 +12,8 @@ def seed_users_from_csv(file_path: str):
             reader = csv.DictReader(csvfile)
             for row in reader:
                 user_challenge_status = UserChallengeStatus(
-                    user_id=row["user_id"],
+                    id=int(row["id"]),
+                    user_id=int(row["user_id"]),
                     is_correct=bool(row["is_correct"]),
                     submitted_at=row["submitted_at"],
                     is_redeemed=bool(row["is_redeemed"]),
