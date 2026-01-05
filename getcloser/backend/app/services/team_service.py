@@ -266,8 +266,11 @@ def get_team_member_challenge(
   record = (
       db.query(UserChallengeStatus)
       .join(ChallengeQuestion, ChallengeQuestion.id == UserChallengeStatus.challenge_id)
-      .filter(UserChallengeStatus.user_id == user_id)
-      .order_by(UserChallengeStatus.created_at.desc())
+      .filter(
+        UserChallengeStatus.user_id == user_id,
+        UserChallengeStatus.is_correct.is_(True)
+      )
+      .order_by(UserChallengeStatus.id.desc())
       .first()
   )
 
@@ -276,8 +279,7 @@ def get_team_member_challenge(
 
   return MemberChallengeResponse(
       user_id=user_id,
-      question=record.challenge.question,
-      user_answer=record.answer,
+      question=record.challenge.category,
       correct_answer=record.challenge.answer,
       is_correct=record.is_correct
   )
