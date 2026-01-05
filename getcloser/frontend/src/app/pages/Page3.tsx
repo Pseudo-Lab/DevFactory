@@ -16,9 +16,9 @@ interface TeamMember {
 }
 
 const questions = [
-    { category: '1', keyword: '관심사', problem: '님의 관심사를 맞춰주세요.', options: [ 'Agentic AI', 'AI Ethics', 'AI Security', 'Causal Inference', 'Computer Graphics', 'Computer Vision', 'Efficient AI', 'LLM/Multimodal', 'Physical AI', 'XAI' ]},
-    { category: '2', keyword: '계절', problem: '님이 좋아하는 계절을 맞춰주세요.', options: ['봄', '여름', '가을', '겨울'] },
-    { category: '3', keyword: 'MBTI', problem: '님의 MBTI 유형을 맞춰주세요.', options: ['INFP', 'ENFP', 'INFJ', 'ENFJ', 'INTJ', 'ENTJ', 'INTP', 'ENTP', 'ISFP', 'ESFP', 'ISTP', 'ESTP', 'ISFJ', 'ESFJ', 'ISTJ', 'ESTJ'] },
+  { category: '1', keyword: '관심사', problem: '님의 관심사를 맞춰주세요.', options: [ 'Agentic AI', 'AI Ethics', 'AI Security', 'Causal Inference', 'Computer Graphics', 'Computer Vision', 'Efficient AI', 'LLM/Multimodal', 'Physical AI', 'XAI' ] },
+  { category: '2', keyword: '계절', problem: '님이 좋아하는 계절을 맞춰주세요.', options: ['봄', '여름', '가을', '겨울'] },
+  { category: '3', keyword: 'MBTI', problem: '님의 MBTI 유형을 맞춰주세요.', options: ['INFP', 'ENFP', 'INFJ', 'ENFJ', 'INTJ', 'ENTJ', 'INTP', 'ENTP', 'ISFP', 'ESFP', 'ISTP', 'ESTP', 'ISFJ', 'ESFJ', 'ISTJ', 'ESTJ'] },
 ];
 
 interface QuestionInfo {
@@ -41,7 +41,7 @@ const getJsonFromResponse = async (response: Response) => {
 };
 
 export default function Page3() {
-  const { question, answer, challengeId, setAnswer, id, teamId, memberIds, setQuestion, setChallengeId, setProgressStatus, reset } = useFormStore(); // Destructure new state
+  const { question, challengeId, setAnswer, id, teamId, memberIds, setQuestion, setChallengeId, setProgressStatus, reset } = useFormStore(); // Destructure new state
   const { setCurrentPage } = useNavigationStore();
   const [currentQuestionInfo, setCurrentQuestionInfo] = useState<QuestionInfo | null>(null);
 
@@ -51,10 +51,10 @@ export default function Page3() {
       if (question) {
         // Still need to set the question info for rendering options
         if (!currentQuestionInfo) {
-            const loadedQuestionCategory = questions.find(q => question.includes(q.problem));
-            if(loadedQuestionCategory) {
-                setCurrentQuestionInfo(loadedQuestionCategory as QuestionInfo); // Cast to QuestionInfo
-            }
+          const loadedQuestionCategory = questions.find(q => question.includes(q.problem));
+          if(loadedQuestionCategory) {
+            setCurrentQuestionInfo(loadedQuestionCategory as QuestionInfo); // Cast to QuestionInfo
+          }
         }
         console.log('Question already exists, skipping initialization.');
         return;
