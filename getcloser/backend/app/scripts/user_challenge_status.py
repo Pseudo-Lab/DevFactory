@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from core.database import SessionLocal, engine, Base
 from models.challenges import UserChallengeStatus
 
-def seed_users_from_csv(file_path: str):
+def seed_challenges_from_csv(file_path: str):
     Base.metadata.create_all(bind=engine)
 
     db: Session = SessionLocal()
@@ -28,6 +28,3 @@ def seed_users_from_csv(file_path: str):
         print("❌ Error while seeding data:", e)
     finally:
         db.close()
-
-if __name__ == "__main__":
-    seed_users_from_csv("challenge_data.csv")
