@@ -1,9 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormStore } from '../../store/formStore';
 import { authenticatedFetch } from '../../lib/api';
 import { useNavigationStore } from '../../store/navigationStore';
@@ -18,10 +16,17 @@ interface TeamMember {
 }
 
 const questions = [
-  { category: '1', keyword: '관심사', problem: '사용자의 관심사를 맞춰주세요. 예: 기술, 예술, 환경 등' },
-  { category: '2', keyword: '취미', problem: '사용자의 취미를 맞춰주세요. 예: 등산, 독서, 요리 등' },
-  { category: '3', keyword: 'MBTI', problem: '사용자의 MBTI 유형을 맞춰주세요. 예: INFP, ESTJ 등' },
+    { category: '1', keyword: '관심사', problem: '님의 관심사를 맞춰주세요.', options: [ 'Agentic AI', 'AI Ethics', 'AI Security', 'Causal Inference', 'Computer Graphics', 'Computer Vision', 'Efficient AI', 'LLM/Multimodal', 'Physical AI', 'XAI' ]},
+    { category: '2', keyword: '계절', problem: '님이 좋아하는 계절을 맞춰주세요.', options: ['봄', '여름', '가을', '겨울'] },
+    { category: '3', keyword: 'MBTI', problem: '님의 MBTI 유형을 맞춰주세요.', options: ['INFP', 'ENFP', 'INFJ', 'ENFJ', 'INTJ', 'ENTJ', 'INTP', 'ENTP', 'ISFP', 'ESFP', 'ISTP', 'ESTP', 'ISFJ', 'ESFJ', 'ISTJ', 'ESTJ'] },
 ];
+
+interface QuestionInfo {
+    category: string;
+    keyword: string;
+    problem: string;
+    options: string[];
+}
 
 const getJsonFromResponse = async (response: Response) => {
   try {
@@ -36,13 +41,21 @@ const getJsonFromResponse = async (response: Response) => {
 };
 
 export default function Page3() {
-  const { question, answer, challengeId, setAnswer, id, teamId, memberIds, setQuestion, setChallengeId, setIsCorrect, reset } = useFormStore(); // Destructure new state
+  const { question, answer, challengeId, setAnswer, id, teamId, memberIds, setQuestion, setChallengeId, setProgressStatus, reset } = useFormStore(); // Destructure new state
   const { setCurrentPage } = useNavigationStore();
+  const [currentQuestionInfo, setCurrentQuestionInfo] = useState<QuestionInfo | null>(null);
 
   useEffect(() => {
     const initializeChallenge = async () => {
       // If a question is already loaded, do nothing.
       if (question) {
+        // Still need to set the question info for rendering options
+        if (!currentQuestionInfo) {
+            const loadedQuestionCategory = questions.find(q => question.includes(q.problem));
+            if(loadedQuestionCategory) {
+                setCurrentQuestionInfo(loadedQuestionCategory as QuestionInfo); // Cast to QuestionInfo
+            }
+        }
         console.log('Question already exists, skipping initialization.');
         return;
       }
@@ -102,6 +115,7 @@ export default function Page3() {
               const memberName = findMemberName(userId);
               setQuestion([memberName, questionInfo.problem].join(' '));
               setChallengeId(assigned_challenge_id);
+              setCurrentQuestionInfo(questionInfo as QuestionInfo); // Cast to QuestionInfo
             } else {
               throw new Error(`Could not find question for category: ${category}`);
             }
@@ -120,15 +134,13 @@ export default function Page3() {
     initializeChallenge();
     // Added challengeId to dependency array to react to changes if needed,
     // though the main trigger is the absence of `question`.
-  }, [id, teamId, question, memberIds, setQuestion, setChallengeId, reset, setCurrentPage, challengeId]);
+  }, [id, teamId, question, memberIds, setQuestion, setChallengeId, reset, setCurrentPage, challengeId, currentQuestionInfo]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const submitAnswer = async (submittedAnswer: string) => {
     const requestBody = {
       user_id: id,
       challenge_id: challengeId,
-      submitted_answer: answer,
+      submitted_answer: submittedAnswer,
     };
 
     try {
@@ -147,7 +159,7 @@ export default function Page3() {
 
       const responseData = await response.json();
       console.log('Challenge submission successful:', responseData);
-      setIsCorrect(responseData.is_correct);
+      setProgressStatus(responseData.is_correct);
       setCurrentPage('page4');
     } catch (error: unknown) {
       console.error('Error submitting challenge:', error);
@@ -159,25 +171,31 @@ export default function Page3() {
     }
   };
 
+  const handleOptionClick = async (option: string) => {
+    setAnswer(option); // Update the store
+    await submitAnswer(option); // Submit the answer immediately
+  };
+
   return (
     <div className="container mx-auto p-4">
       <main className="max-w-md mx-auto bg-card text-card-foreground p-6 rounded-lg shadow-md mt-8">
         <h2 className="text-xl font-semibold mb-4">질문:</h2>
         <p className="mb-4 p-2 border rounded bg-muted">{question || '질문이 입력되지 않았습니다.'}</p>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div>
-            <Label htmlFor="answer">답변 입력</Label>
-            <Textarea
-              id="answer"
-              placeholder="질문에 대한 답변을 입력해주세요."
-              required
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-            />
+        {currentQuestionInfo && currentQuestionInfo.options && (
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            {currentQuestionInfo.options.map((option) => (
+              <Button
+                key={option}
+                onClick={() => handleOptionClick(option)}
+                variant="outline"
+                className="justify-start text-left h-auto py-3"
+              >
+                {option}
+              </Button>
+            ))}
           </div>
-          <Button type="submit" className="w-full">제출 하기</Button>
-        </form>
+        )}
       </main>
 
       <nav className="flex justify-between mt-8">

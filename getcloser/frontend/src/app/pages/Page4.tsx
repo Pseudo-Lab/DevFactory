@@ -46,7 +46,7 @@ const getJsonFromResponse = async (response: Response) => {
 };
 
 export default function Page4() {
-  const { id, progressStatus, teamId, memberIds, reset, setQuestion, setChallengeId } = useFormStore(); // Use progressStatus
+  const { id, progressStatus, teamId, memberIds, reset, setQuestion, setChallengeId, setTeamId, setProgressStatus } = useFormStore(); // Use progressStatus
   const { setCurrentPage } = useNavigationStore();
 
   const [result, setResult] = useState<string>('');
@@ -132,6 +132,20 @@ export default function Page4() {
         errorMessage = error.message;
       }
       alert(`재도전 실패: ${errorMessage}`);
+
+      try {
+        console.log(`Canceling team ${teamId} due to challenge assignment failure.`);
+        await authenticatedFetch(`/api/v1/teams/${teamId}/cancel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        setTeamId(0);
+        setProgressStatus('NONE_TEAM');
+        reset();
+      } catch (cancelError: unknown) {
+        console.error('Failed to cancel team:', cancelError);
+      }
+
       setCurrentPage('page2'); // Fallback to page2 if something goes wrong
     }
   };
