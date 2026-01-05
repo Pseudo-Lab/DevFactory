@@ -49,8 +49,14 @@ def progress_status(
 
     if not team_member:
         return None, None, ProgressStatus.NONE_TEAM
+    
+    if not team_member.confirmed:
+        return None, None, ProgressStatus.NONE_TEAM
 
     team = db.query(Team).get(team_member.team_id)
+
+    if not team:
+        return None, None, ProgressStatus.NONE_TEAM
 
     # 2. 팀 상태
     if team.status == TeamStatus.PENDING:
