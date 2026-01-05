@@ -6,7 +6,7 @@ from core.database import Base
 class UserChallengeStatus(Base):
     __tablename__ = "user_challenge_status"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, index=True)
     challenge_id = Column(Integer, ForeignKey("challenge_questions.id"), nullable=True)
 
