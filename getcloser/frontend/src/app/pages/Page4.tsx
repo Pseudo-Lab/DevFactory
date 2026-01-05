@@ -33,8 +33,20 @@ interface ChallengeResult {
   is_correct: boolean;
 }
 
+const getJsonFromResponse = async (response: Response) => {
+  try {
+    const text = await response.text();
+    if (text) {
+      return JSON.parse(text);
+    }
+  } catch (e) {
+    console.error('Failed to parse response JSON', e);
+  }
+  return { detail: response.statusText || 'An unknown error occurred' };
+};
+
 export default function Page4() {
-  const { id, progressStatus } = useFormStore(); // Use progressStatus
+  const { id, progressStatus, teamId, memberIds, reset, setQuestion, setChallengeId } = useFormStore(); // Use progressStatus
   const { setCurrentPage } = useNavigationStore();
 
   const [result, setResult] = useState<string>('');
@@ -90,8 +102,38 @@ export default function Page4() {
     }
   }, [result]); // Depend on result
 
-  const handleTryAgain = () => {
-    setCurrentPage('page2');
+  const handleTryAgain = async () => {
+    try {
+      // First, reset the form store to clear previous challenge data.
+      // This preserves the user session while clearing challenge-specific state.
+      reset();
+
+      // Call assign API to get a new challenge
+      const assignResponse = await authenticatedFetch('/api/v1/challenges/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ team_id: teamId, my_id: id, members_ids: memberIds.filter((memberId) => memberId !== Number(id)) }),
+      });
+
+      if (!assignResponse.ok) {
+        const errorData = await getJsonFromResponse(assignResponse);
+        throw new Error(`Failed to assign new challenge: ${errorData.detail}`);
+      }
+
+      const newChallengeData = await assignResponse.json();
+      console.log('Successfully assigned new challenge:', newChallengeData);
+
+      // Navigate to page3 to start the new challenge. Page3's useEffect will handle populating the question.
+      setCurrentPage('page3');
+    } catch (error: unknown) {
+      console.error('Error trying again:', error);
+      let errorMessage = '새로운 챌린지를 할당하는 데 실패했습니다.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      alert(`재도전 실패: ${errorMessage}`);
+      setCurrentPage('page2'); // Fallback to page2 if something goes wrong
+    }
   };
 
   const handleSuccessClick = async () => {
@@ -176,11 +218,10 @@ export default function Page4() {
                 <h3 className="text-2xl font-bold mb-4">우리 팀원들</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {teamData.members
-                    .filter(member => member.id !== id) // Filter out current user's info
+                    .filter(member => member.user_id !== id) // Filter out current user's info, and use correct id
                     .map((member) => (
-                      <div key={member.id} className="bg-muted p-4 rounded-lg shadow-md">
+                      <div key={member.user_id} className="bg-muted p-4 rounded-lg shadow-md cursor-pointer hover:bg-muted/80" onClick={() => handleMemberClick(member.user_id)}>
                         <p className="text-lg font-semibold">{member.name}</p>
-                        <p className="text-sm text-gray-600">Email: {member.email}</p>
                         {member.github_url && (
                           <p className="text-sm text-gray-600">
                           GitHub: <a href={member.github_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{member.github_url}</a>
