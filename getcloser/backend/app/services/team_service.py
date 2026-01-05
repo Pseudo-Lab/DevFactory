@@ -189,6 +189,19 @@ def dissolve_team_by_user(db: Session, user_id: int, team_id: int):
       raise HTTPException(status_code=404, detail="User is not in a team")
 
   db.delete(team_entry)
+
+  status = (
+        db.query(UserChallengeStatus)
+        .filter(UserChallengeStatus.user_id == user_id)
+        .first()
+  )
+  
+  if status:
+        status.retry_count = 0
+        status.is_correct = False
+        status.is_redeemed = False
+        db.add(status)
+
   db.commit()
 
   remaining = (
@@ -201,7 +214,7 @@ def dissolve_team_by_user(db: Session, user_id: int, team_id: int):
         team = db.query(Team).get(team_id)
         team.status = TeamStatus.CANCELLED
         db.commit()
-        
+
 
 def get_team_info(db: Session, user_id: int):
   team_member = (
