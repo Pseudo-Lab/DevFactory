@@ -176,24 +176,32 @@ def get_team_status(db: Session, team_id: int, user_id: int):
         "members_ready": [m.user_id for m in team.members if m.confirmed]
     }
 
-def dissolve_team_by_user(db: Session, user_id: int):
+def dissolve_team_by_user(db: Session, user_id: int, team_id: int):
   team_entry = (
-        db.query(Team)
-        .join(TeamMember)
+        db.query(TeamMember)
         .filter(
             TeamMember.user_id == user_id, 
-            Team.status == TeamStatus.ACTIVE
+            TeamMember.team_id  == team_id
         ).first()
     )
 
   if not team_entry:
-      raise HTTPException(status_code=400, detail="User is not in an active team")
+      raise HTTPException(status_code=404, detail="User is not in a team")
 
-  team_entry.status = TeamStatus.FAILED
-  
+  db.delete(team_entry)
   db.commit()
-  
-  return {"message": f"Team {team_entry.id} dissolved due to quiz failure.", "team_id": team_entry.id}
+
+  remaining = (
+        db.query(TeamMember)
+        .filter(TeamMember.team_id == team_id)
+        .count()
+  )
+
+  if remaining == 0:
+        team = db.query(Team).get(team_id)
+        team.status = TeamStatus.CANCELLED
+        db.commit()
+        
 
 def get_team_info(db: Session, user_id: int):
   team_member = (
