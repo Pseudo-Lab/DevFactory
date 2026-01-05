@@ -43,6 +43,7 @@ jobs:
           echo "APP_HOST=${{ vars.APP_HOST }}" >> .env
           echo "TEAM_SIZE=${{ vars.TEAM_SIZE}}" >> .env
           echo "PENDING_TIMEOUT_MINUTES=${{ vars.PENDING_TIMEOUT_MINUTES}}" >> .env
+          echo "DATA_DIR_HOST=${{ vars.DATA_DIR_HOST }}" >> .env
 
       - name: 🚀 Deploy to PROD
         run: |
