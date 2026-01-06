@@ -201,6 +201,28 @@ export default function Page4() {
     }
   };
 
+  const modalContent = (() => {
+    if (!selectedMemberChallenge) return '';
+
+    const memberName = teamData?.members.find(m => m.user_id === selectedMemberChallenge.user_id)?.name || '';
+    const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
+    const questionText = questionInfo ? questionInfo.problem : selectedMemberChallenge.question;
+    const questionDisplay = `${memberName} ${questionText}`;
+    const keyword = questionInfo ? questionInfo.keyword : 'Unknown';
+    const userAnswer = selectedMemberChallenge.user_answer || (selectedMemberChallenge.is_correct ? selectedMemberChallenge.correct_answer : 'Unknown');
+    const answerClass = selectedMemberChallenge.is_correct ? 'text-green-400' : 'text-red-400';
+
+    let contentHtml = `<p class="mb-2"><strong>Question:</strong> ${questionDisplay}</p>`;
+    contentHtml += `<p class="mb-2"><strong>Keyword:</strong> ${keyword}</p>`;
+    contentHtml += `<p class="mb-1"><strong>Your Answer:</strong> <span class="${answerClass}">${userAnswer}</span></p>`;
+
+    if (!selectedMemberChallenge.is_correct) {
+      contentHtml += `<p class="mb-2"><strong>Correct Answer:</strong> <span class="text-green-400">${selectedMemberChallenge.correct_answer}</span></p>`;
+    }
+
+    return contentHtml;
+  })();
+
   return (
     <div className="container mx-auto p-4">
       <div className="mt-8 text-center">
@@ -255,24 +277,7 @@ export default function Page4() {
       <Modal
         isOpen={isModalOpen}
         title={selectedMemberChallenge && teamData ? teamData.members.find(m => m.user_id === selectedMemberChallenge.user_id)?.name || 'Challenge Result' : 'Challenge Result'}
-        content={
-          selectedMemberChallenge
-            ? `
-      <p class="mb-2"><strong>Question:</strong> ${(() => {
-              const memberName = teamData?.members.find(m => m.user_id === selectedMemberChallenge.user_id)?.name || '';
-              const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
-              const questionText = questionInfo ? questionInfo.problem : selectedMemberChallenge.question;
-              return `${memberName} ${questionText}`;
-            })()}</p>
-      <p class="mb-2"><strong>Keyword:</strong> ${(() => {
-              const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
-              return questionInfo ? questionInfo.keyword : 'Unknown';
-            })()}</p>
-      <p class="mb-1"><strong>Your Answer:</strong> <span class="${selectedMemberChallenge.is_correct ? 'text-green-400' : 'text-red-400'}">${selectedMemberChallenge.user_answer || (selectedMemberChallenge.is_correct ? selectedMemberChallenge.correct_answer : 'Unknown')}</span></p>
-      ${!selectedMemberChallenge.is_correct ? `<p class="mb-2"><strong>Correct Answer:</strong> <span class="text-green-400">${selectedMemberChallenge.correct_answer}</span></p>` : ''}
-        `
-            : ''
-        }
+        content={modalContent}
         onConfirm={() => setIsModalOpen(false)}
         onDoNotShowAgain={() => setIsModalOpen(false)}
         showDoNotShowAgain={false}
