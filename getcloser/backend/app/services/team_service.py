@@ -288,15 +288,15 @@ def get_team_member_challenge(
       db.query(UserChallengeStatus)
       .join(ChallengeQuestion, ChallengeQuestion.id == UserChallengeStatus.challenge_id)
       .filter(
-        UserChallengeStatus.user_id == user_id,
-        UserChallengeStatus.is_correct.is_(True)
+        UserChallengeStatus.user_id == requester_id,
+        ChallengeQuestion.user_id == user_id
       )
       .order_by(UserChallengeStatus.id.desc())
       .first()
   )
 
   if not record:
-      return {"status": "NO_CHALLENGE"}
+      raise HTTPException(status_code=404, detail="NO_CHALLENGE")
 
   return MemberChallengeResponse(
       user_id=user_id,
