@@ -7,6 +7,7 @@ import { authenticatedFetch } from '../../lib/api';
 import { useFormStore } from '../../store/formStore';
 import { useNavigationStore } from '../../store/navigationStore';
 import Modal from '@/components/Modal';
+import { questions } from '@/lib/constants';
 
 // Assuming a TeamMember interface for better typing
 interface TeamMember {
@@ -19,16 +20,16 @@ interface TeamMember {
 }
 
 interface TeamData {
-    id: number;
-    team_id: number;
-    name: string;
-    members: TeamMember[];
+  id: number;
+  team_id: number;
+  name: string;
+  members: TeamMember[];
 }
 
 interface ChallengeResult {
   user_id: number;
   question: string;
-  user_answer: string;
+  user_answer?: string;
   correct_answer: string;
   is_correct: boolean;
 }
@@ -229,12 +230,12 @@ export default function Page4() {
                         <p className="text-lg font-semibold">{member.name}</p>
                         {member.github_url && (
                           <p className="text-sm text-gray-600">
-                          GitHub: <a href={member.github_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{member.github_url}</a>
+                            GitHub: <a href={member.github_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline" onClick={(e) => e.stopPropagation()}>{member.github_url}</a>
                           </p>
                         )}
                         {member.linkedin_url && (
                           <p className="text-sm text-gray-600">
-                          LinkedIn: <a href={member.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{member.linkedin_url}</a>
+                            LinkedIn: <a href={member.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline" onClick={(e) => e.stopPropagation()}>{member.linkedin_url}</a>
                           </p>
                         )}
                       </div>
@@ -253,18 +254,28 @@ export default function Page4() {
       </div>
       <Modal
         isOpen={isModalOpen}
-        title="Challenge Result"
+        title={selectedMemberChallenge && teamData ? teamData.members.find(m => m.user_id === selectedMemberChallenge.user_id)?.name || 'Challenge Result' : 'Challenge Result'}
         content={
           selectedMemberChallenge
             ? `
-              <p class="mb-2"><strong>Question:</strong> ${selectedMemberChallenge.question}</p>
-              <p class="mb-1"><strong>Your Answer:</strong> <span class="${selectedMemberChallenge.is_correct ? 'text-green-400' : 'text-red-400'}">${selectedMemberChallenge.user_answer}</span></p>
+              <p class="mb-2"><strong>Question:</strong> ${(() => {
+              const memberName = teamData?.members.find(m => m.user_id === selectedMemberChallenge.user_id)?.name || '';
+              const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
+              const questionText = questionInfo ? questionInfo.problem : selectedMemberChallenge.question;
+              return `${memberName} ${questionText}`;
+            })()}</p>
+              <p class="mb-2"><strong>Keyword:</strong> ${(() => {
+              const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
+              return questionInfo ? questionInfo.keyword : 'Unknown';
+            })()}</p>
+              <p class="mb-1"><strong>Your Answer:</strong> <span class="${selectedMemberChallenge.is_correct ? 'text-green-400' : 'text-red-400'}">${selectedMemberChallenge.user_answer || (selectedMemberChallenge.is_correct ? selectedMemberChallenge.correct_answer : 'Unknown')}</span></p>
               ${!selectedMemberChallenge.is_correct ? `<p class="mb-2"><strong>Correct Answer:</strong> <span class="text-green-400">${selectedMemberChallenge.correct_answer}</span></p>` : ''}
             `
             : ''
         }
         onConfirm={() => setIsModalOpen(false)}
         onDoNotShowAgain={() => setIsModalOpen(false)}
+        showDoNotShowAgain={false}
       />
     </div>
   );
