@@ -30,15 +30,13 @@ export default function Header() {
   }, [id]);
 
   return (
-    <header className="py-4 bg-background text-foreground border-b border-border">
-      <h1 className="text-3xl font-bold">친해지길바라</h1>
-      <p className="text-md mt-1 text-center" style={{ margin: 0, padding: 0, lineHeight: '1em' }}>
-        Pseudo Lab<br />
-        2nd Grand Gathering<br />
-        2026. 1. 10
+    <header className="py-4 bg-background text-foreground border-b border-border text-center flex flex-col items-center">
+      <h1 className="text-4xl font-bold">친해지길바라</h1>
+      <p className="text-sm mt-2 text-center" style={{ margin: 0, padding: 0, lineHeight: '1.2em' }}>
+        Pseudo Lab 2nd Grand Gathering<br />2026. 1. 10
       </p>
-      {id && userName && <p className="text-sm mt-2">ID: <strong>{id}</strong>, 이름: <strong>{userName}</strong></p>}
-      {id && !userName && <p className="text-sm mt-2">ID: <strong>{id}</strong></p>}
+      {id && userName && <p className="text-lg mt-4"><strong className="text-emerald-400 text-xl">{userName}</strong></p>}
+      {id && !userName && <p className="text-lg mt-4"><strong className="text-emerald-400 text-xl">{id}</strong></p>}
     </header>
   );
 }

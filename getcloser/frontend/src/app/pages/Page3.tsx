@@ -173,18 +173,18 @@ export default function Page3() {
 
   return (
     <div className="container mx-auto p-4">
-      <main className="max-w-md mx-auto bg-card text-card-foreground p-6 rounded-lg shadow-md mt-8">
+      <main className={`mx-auto bg-card text-card-foreground p-6 rounded-lg shadow-md ${currentQuestionInfo?.category === '3' ? 'max-w-3xl' : 'max-w-md'}`}>
         <h2 className="text-xl font-semibold mb-4">질문:</h2>
         <p className="mb-4 p-2 border rounded bg-muted">{question || '질문이 입력되지 않았습니다.'}</p>
 
         {currentQuestionInfo && currentQuestionInfo.options && (
-          <div className="grid grid-cols-2 gap-4 mt-4">
+          <div className={`grid gap-2 mt-4 ${currentQuestionInfo.category === '3' ? 'grid-cols-4' : 'grid-cols-2'}`}>
             {currentQuestionInfo.options.map((option) => (
               <Button
                 key={option}
                 onClick={() => handleOptionClick(option)}
                 variant="outline"
-                className="justify-start text-left h-auto py-3"
+                className="justify-center text-center h-auto py-2 px-1 text-sm whitespace-normal break-words"
               >
                 {option}
               </Button>
