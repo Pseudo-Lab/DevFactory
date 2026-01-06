@@ -223,7 +223,7 @@ export default function Page4() {
                 <h3 className="text-2xl font-bold mb-4">우리 팀원들</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {teamData.members
-                    .filter(member => member.user_id !== id) // Filter out current user's info, and use correct id
+                    .filter(member => member.user_id !== Number(id)) // Filter out current user's info, and use correct id
                     .map((member) => (
                       <div key={member.user_id} className="bg-muted p-4 rounded-lg shadow-md cursor-pointer hover:bg-muted/80" onClick={() => handleMemberClick(member.user_id)}>
                         <p className="text-lg font-semibold">{member.name}</p>
