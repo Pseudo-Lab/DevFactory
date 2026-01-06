@@ -128,9 +128,8 @@ export default function Page4() {
       setCurrentPage('page3');
     } catch (error: unknown) {
       console.error('Error trying again:', error);
-      let errorMessage = '새로운 챌린지를 할당하는 데 실패했습니다.';
       if (error instanceof Error) {
-        errorMessage = error.message;
+        console.error(error.message);
       }
       alert('재도전 실패');
 
@@ -258,19 +257,19 @@ export default function Page4() {
         content={
           selectedMemberChallenge
             ? `
-              <p class="mb-2"><strong>Question:</strong> ${(() => {
-              const memberName = teamData?.members.find(m => m.user_id === selectedMemberChallenge.user_id)?.name || '';
-              const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
-              const questionText = questionInfo ? questionInfo.problem : selectedMemberChallenge.question;
-              return `${memberName} ${questionText}`;
-            })()}</p>
-              <p class="mb-2"><strong>Keyword:</strong> ${(() => {
-              const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
-              return questionInfo ? questionInfo.keyword : 'Unknown';
-            })()}</p>
-              <p class="mb-1"><strong>Your Answer:</strong> <span class="${selectedMemberChallenge.is_correct ? 'text-green-400' : 'text-red-400'}">${selectedMemberChallenge.user_answer || (selectedMemberChallenge.is_correct ? selectedMemberChallenge.correct_answer : 'Unknown')}</span></p>
-              ${!selectedMemberChallenge.is_correct ? `<p class="mb-2"><strong>Correct Answer:</strong> <span class="text-green-400">${selectedMemberChallenge.correct_answer}</span></p>` : ''}
-            `
+      <p class="mb-2"><strong>Question:</strong> ${(() => {
+      const memberName = teamData?.members.find(m => m.user_id === selectedMemberChallenge.user_id)?.name || '';
+      const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
+      const questionText = questionInfo ? questionInfo.problem : selectedMemberChallenge.question;
+      return `${memberName} ${questionText}`;
+    })()}</p>
+      <p class="mb-2"><strong>Keyword:</strong> ${(() => {
+      const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
+      return questionInfo ? questionInfo.keyword : 'Unknown';
+    })()}</p>
+      <p class="mb-1"><strong>Your Answer:</strong> <span class="${selectedMemberChallenge.is_correct ? 'text-green-400' : 'text-red-400'}">${selectedMemberChallenge.user_answer || (selectedMemberChallenge.is_correct ? selectedMemberChallenge.correct_answer : 'Unknown')}</span></p>
+      ${!selectedMemberChallenge.is_correct ? `<p class="mb-2"><strong>Correct Answer:</strong> <span class="text-green-400">${selectedMemberChallenge.correct_answer}</span></p>` : ''}
+        `
             : ''
         }
         onConfirm={() => setIsModalOpen(false)}
