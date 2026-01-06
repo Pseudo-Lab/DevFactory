@@ -38,14 +38,14 @@ export default function RootLayout({
   const hideHeader = currentPage === 'page1'; // Determine if header should be hidden
 
   return (
-    <html lang="en" style={{ background: 'linear-gradient(to bottom, hsl(160 40% 10%) 0%, hsl(160 40% 15%) 40%, hsl(160 40% 20%) 100%)' }} className="min-h-screen">
+    <html lang="en" style={{ background: 'linear-gradient(to bottom, hsl(160 40% 10%) 0%, hsl(160 40% 15%) 40%, hsl(160 40% 20%) 100%)', height: '100%' }}>
       <head>
         <link rel="icon" href="/pseudolab.svg" type="image/svg+xml" sizes="any" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${dongle.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${dongle.variable} antialiased min-h-full`}
       >
         {!hideHeader && <Header />} {/* Conditionally render the Header */}
         <Providers>{children}</Providers>

@@ -250,6 +250,7 @@ export default function Page4() {
             <Button onClick={handleTryAgain} className="mt-4">다시 도전하기</Button>
           </>
         )}
+        <div className="mt-4"><a href="https://forms.gle/LYq7zko1VyWJhWsV8" target="_blank" rel="noopener noreferrer" className="text-emerald-400 text-xl hover:underline">설문 참여하기</a></div>
       </div>
       <Modal
         isOpen={isModalOpen}
@@ -258,15 +259,15 @@ export default function Page4() {
           selectedMemberChallenge
             ? `
       <p class="mb-2"><strong>Question:</strong> ${(() => {
-      const memberName = teamData?.members.find(m => m.user_id === selectedMemberChallenge.user_id)?.name || '';
-      const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
-      const questionText = questionInfo ? questionInfo.problem : selectedMemberChallenge.question;
-      return `${memberName} ${questionText}`;
-    })()}</p>
+              const memberName = teamData?.members.find(m => m.user_id === selectedMemberChallenge.user_id)?.name || '';
+              const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
+              const questionText = questionInfo ? questionInfo.problem : selectedMemberChallenge.question;
+              return `${memberName} ${questionText}`;
+            })()}</p>
       <p class="mb-2"><strong>Keyword:</strong> ${(() => {
-      const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
-      return questionInfo ? questionInfo.keyword : 'Unknown';
-    })()}</p>
+              const questionInfo = questions.find(q => q.category === selectedMemberChallenge.question);
+              return questionInfo ? questionInfo.keyword : 'Unknown';
+            })()}</p>
       <p class="mb-1"><strong>Your Answer:</strong> <span class="${selectedMemberChallenge.is_correct ? 'text-green-400' : 'text-red-400'}">${selectedMemberChallenge.user_answer || (selectedMemberChallenge.is_correct ? selectedMemberChallenge.correct_answer : 'Unknown')}</span></p>
       ${!selectedMemberChallenge.is_correct ? `<p class="mb-2"><strong>Correct Answer:</strong> <span class="text-green-400">${selectedMemberChallenge.correct_answer}</span></p>` : ''}
         `
