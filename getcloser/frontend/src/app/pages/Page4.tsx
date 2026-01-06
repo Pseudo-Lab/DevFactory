@@ -131,7 +131,7 @@ export default function Page4() {
       if (error instanceof Error) {
         console.error(error.message);
       }
-      alert('재도전 실패');
+      alert('재도전 가능 횟수 초과! 새로운 팀원을 찾아 주세요.');
 
       reset();
       setTeamId(0);
