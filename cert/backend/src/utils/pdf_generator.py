@@ -56,8 +56,8 @@ class PDFGenerator:
             "name": {"x": 299, "y": 1080 - 902 - 65, "font_size": 72, "char_space": -1.2},
         }
         self.metadata_positions = {
-            "certificate_number": {"x": 1050, "y": 140, "font_size": 18, "char_space": -0.2},
-            "issue_date": {"x": 1050, "y": 110, "font_size": 18, "char_space": -0.2},
+            "certificate_number": {"x": 1030, "y": 140, "font_size": 18, "char_space": -0.2},
+            "issue_date": {"x": 1030, "y": 110, "font_size": 18, "char_space": -0.2},
         }
         
         # 텍스트 설정
@@ -519,14 +519,14 @@ class PDFGenerator:
         
         self._draw_text(c, name, name_x, name_y, korean_font, name_font_size, name_char_space)
 
-        # 4. 발급번호/발급일 (우측 하단에 작게 표기)
+        # 4. 수료증 번호/발급일 (우측 하단에 작게 표기)
         metadata_number_config = self.metadata_positions["certificate_number"]
         metadata_date_config = self.metadata_positions["issue_date"]
 
         if certificate_number:
             self._draw_text(
                 c,
-                f"발급번호: {certificate_number}",
+                f"수료증 번호: {certificate_number}",
                 metadata_number_config["x"],
                 metadata_number_config["y"],
                 None,
