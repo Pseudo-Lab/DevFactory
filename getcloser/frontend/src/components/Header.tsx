@@ -3,6 +3,7 @@
 import { authenticatedFetch } from '../lib/api';
 import React, { useState, useEffect } from 'react';
 import { useFormStore } from '../store/formStore';
+import SplitText from '@/app/pages/SplitText';
 
 export default function Header() {
   const { id } = useFormStore();
@@ -31,7 +32,19 @@ export default function Header() {
 
   return (
     <header className="py-4 bg-background text-foreground border-b border-border text-center flex flex-col items-center">
-      <h1 className="text-4xl font-bold">친해지길바라</h1>
+      <SplitText
+        text='친해지길바라'
+        className='text-2xl font-semibold text-center'
+        delay={100}
+        duration={0.6}
+        ease='power3.out'
+        splitType='chars'
+        from={{ opacity: 0, y: 40 }}
+        to={{ opacity: 1, y: 0 }}
+        threshold={0.1}
+        rootMargin='-100px'
+        textAlign='center'
+      />
       <p className="text-sm mt-2 text-center" style={{ margin: 0, padding: 0, lineHeight: '1.2em' }}>
         Pseudo Lab 2nd Grand Gathering<br />2026. 1. 10
       </p>
