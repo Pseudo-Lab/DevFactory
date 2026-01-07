@@ -185,7 +185,8 @@ export default function Page4() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.detail || response.statusText}`);
+        console.error('Error fetching challenge data:', errorData);
+        return;
       }
 
       const data: ChallengeResult = await response.json();
