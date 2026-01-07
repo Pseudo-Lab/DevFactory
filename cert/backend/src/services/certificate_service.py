@@ -133,7 +133,7 @@ class CertificateService:
                     "debug_text": watermark_text
                 }
                 
-            # 수료증 번호 추출 (PSEUDOLAB_CERT-XXXX 포맷 기대)
+            # 수료증 번호 추출 (CERT-2026XX 포맷 기대)
             cert_number = ""
             if "_" in watermark_text:
                 cert_number = watermark_text.split("_")[1]
@@ -155,28 +155,7 @@ class CertificateService:
                     "valid": False,
                     "message": f"수료증 번호({cert_number})에 해당하는 발급 기록을 찾을 수 없습니다."
                 }
-            
-            # Notion 결과 파싱
-            props = cert_page.get("properties", {})
-            
-            name = props.get("Name", {}).get("title", [{}])[0].get("plain_text", "알 수 없음")
-            course = props.get("Course Name", {}).get("rich_text", [{}])[0].get("plain_text", "알 수 없음")
-            season = props.get("Season", {}).get("select", {}).get("name", "알 수 없음")
-            issue_date = props.get("Issue Date", {}).get("date", {}).get("start", "알 수 없음")
-            status = props.get("Certificate Status", {}).get("status", {}).get("name", "알 수 없음")
-
-            return {
-                "valid": True,
-                "message": "수료증 진위 확인에 성공했습니다.",
-                "data": {
-                    "name": name,
-                    "course": course,
-                    "season": season,
-                    "issue_date": issue_date,
-                    "certificate_number": cert_number,
-                    "status": status
-                }
-            }
+            return CertificateService._build_verification_result(cert_page, cert_number)
             
         except Exception as e:
             if "워터마크를 찾을 수 없습니다" in str(e):
@@ -187,6 +166,49 @@ class CertificateService:
                 "valid": False,
                 "message": "수료증 검증 처리 중 오류가 발생했습니다."
             }
+
+    @staticmethod
+    async def verify_certificate_by_number(certificate_number: str) -> dict:
+        """수료증 번호로 수료 여부 확인"""
+        try:
+            notion_client = NotionClient()
+            cert_page = await notion_client.get_certificate_by_number(certificate_number)
+
+            if not cert_page:
+                return {
+                    "valid": False,
+                    "message": f"수료증 번호({certificate_number})에 해당하는 발급 기록을 찾을 수 없습니다."
+                }
+
+            return CertificateService._build_verification_result(cert_page, certificate_number)
+        except Exception:
+            logger.exception("수료증 번호 확인 중 오류")
+            return {
+                "valid": False,
+                "message": "수료증 번호 확인 처리 중 오류가 발생했습니다."
+            }
+
+    @staticmethod
+    def _build_verification_result(cert_page: dict, certificate_number: str) -> dict:
+        """Notion 수료증 페이지 응답 포맷팅"""
+        props = cert_page.get("properties", {})
+
+        name = props.get("Name", {}).get("title", [{}])[0].get("plain_text", "알 수 없음")
+        course = props.get("Course Name", {}).get("rich_text", [{}])[0].get("plain_text", "알 수 없음")
+        season = props.get("Season", {}).get("select", {}).get("name", "알 수 없음")
+        issue_date = props.get("Issue Date", {}).get("date", {}).get("start", "알 수 없음")
+        status = props.get("Certificate Status", {}).get("status", {}).get("name", "알 수 없음")
+
+        return {
+            "valid": True,
+            "message": "수료증 확인에 성공했습니다.",
+            "data": {
+                "name": name,
+                "course": course,
+                "season": season,
+                "issue_date": issue_date
+            }
+        }
     
     @staticmethod
     async def _reissue_certificate(

@@ -1,7 +1,13 @@
 from fastapi import APIRouter, HTTPException, Response, File, UploadFile
 
 from ..models.project import Project, ProjectsBySeasonResponse
-from ..models.certificate import CertificateCreate, CertificateResponse, ErrorResponse
+from ..models.certificate import (
+    CertificateCreate,
+    CertificateResponse,
+    CertificateVerifyRequest,
+    CertificateVerifyResponse,
+    ErrorResponse,
+)
 from ..services.certificate_service import CertificateService, ProjectService
 from ..constants.error_codes import ResponseStatus
 
@@ -107,3 +113,30 @@ async def verify_certificate(file: UploadFile = File(...)):
         import logging
         logging.error(f"검증 중 오류 발생: {e}")
         raise HTTPException(status_code=500, detail="파일 처리 중 오류가 발생했습니다.")
+
+@certificate_router.post(
+    "/verify-by-number",
+    response_model=CertificateVerifyResponse,
+    responses={
+        200: {
+            "description": "수료증 번호 확인 성공/실패",
+            "model": CertificateVerifyResponse
+        },
+        400: {
+            "description": "잘못된 요청",
+            "model": ErrorResponse
+        },
+        500: {
+            "description": "서버 내부 오류",
+            "model": ErrorResponse
+        }
+    }
+)
+async def verify_certificate_by_number(payload: CertificateVerifyRequest):
+    """수료증 번호로 수료 여부를 확인합니다."""
+    certificate_number = payload.certificate_number.strip()
+    if not certificate_number:
+        raise HTTPException(status_code=400, detail="수료증 번호를 입력해주세요.")
+
+    result = await CertificateService.verify_certificate_by_number(certificate_number)
+    return result
