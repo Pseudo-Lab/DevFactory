@@ -25,14 +25,24 @@ class TemplateContent:
             "builder": "빌더",
             "runner": "러너"
         }
-        role = role_mapping.get(role.lower(), role)
+        role_key = role.lower()
+        role_display = role_mapping.get(role_key, role)
         particle = _get_particle_eun_neun(name)
-        return f"""{name}{particle} 가짜연구소 {season}기 {role}로서 열정적인 참여와 뛰어난 성과를 보여주었으며,
-        성장이 멈추는 벽을 부수며 비선형적 성장을 이뤄내고, 우연한 혁명을 이뤄가는 한걸음을 함께 내딛었습니다.
-        본 수료증은 비영리 연구 공동체에서의 자발적 학습과 협력적 성장을 통해 얻은 
-        소중한 경험과 성취를 증명하며, 기술과 데이터 중심의 의사결정 능력을 기반으로 
-        인간 중심의 인공지능을 이끌어갈 글로벌 테크 리더로 성장할 잠재력을 보여주었습니다. 
-        이를 통해 사회적 가치 창출과 긍정적 임팩트를 만들어가며, 커뮤니티의 지속적인 발전에 기여한 것을 인정합니다."""
+        builder_text = (
+            "소중한 경험과 성취를 증명하며, 기술과 데이터 중심의 의사결정 능력을 바탕으로\n"
+            "인간 중심의 인공지능을 이끌어갈 글로벌 테크 리더로 성장할 잠재력을 보여주었습니다.\n"
+            "이를 통해 사회적 가치 창출과 긍정적 임팩트를 만들어가며, 커뮤니티의 지속적인 발전에 기여한 바를 인정합니다."
+        )
+        runner_text = (
+            "기술과 데이터에 대한 깊은 이해를 발전시킨 것을 확인하며, 인간 중심의 인공지능을 탐구하고\n"
+            "사회적 가치 창출에 기여할 수 있는 성장 잠재력을 보여주었습니다.\n"
+            "이에 본 과정의 수료를 공식적으로 증명합니다."
+        )
+        role_body = builder_text if role_key == "builder" else runner_text
+        return f"""{name}{particle} 가짜연구소 {season}기 {role_display}로서 열정적인 참여와 뛰어난 성과를 보여주었으며,
+        성장이 멈추는 벽을 부수고 비선형적 성장을 이뤄내며, 우연한 혁명을 이뤄가는 한걸음을 함께 내딛었습니다.
+        본 수료증은 비영리 연구 공동체에서의 자발적 학습과 협력적 성장을 통해 얻은
+        {role_body}"""
 
     @staticmethod
     def get_email_template(recipient_name: str, course_name: str, season: str, role: str) -> Tuple[str, str]:
