@@ -8,7 +8,7 @@ from schemas.challenge_schema import AssignedChallenge
 from models.challenges import UserChallengeStatus
 
 
-def assign_challenges_logic(my_id: str, members: list, team_id: int, db: Session) -> list:
+def assign_challenges_logic(my_id: int, members: list[int], team_id: int, db: Session) -> list:
     # 현재 사용자 retry_count 조회
     status = db.query(UserChallengeStatus).filter(UserChallengeStatus.user_id == my_id).first()
 
@@ -29,6 +29,10 @@ def assign_challenges_logic(my_id: str, members: list, team_id: int, db: Session
         team_service.dissolve_team_by_user(db, my_id, team_id)
         raise HTTPException(status_code=500, detail="over retry count")
     
+    # 팀원 리스트가 비어있는 경우
+    if not members:
+        raise ValueError("members 리스트가 비어 있습니다. 팀원 정보가 전달되지 않았습니다.")
+
     # 팀원들이 만든 문제 조회
     team_questions = db.query(ChallengeQuestion).filter(ChallengeQuestion.user_id.in_(members)).all()
     if not team_questions:
