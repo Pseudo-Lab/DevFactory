@@ -239,6 +239,9 @@ export default function Page4() {
               onClick={handleSuccessClick}
             />
             <p>DevFactory 부스에 방문하여 해당 화면을 보여주세요.<br />부스 방문 시 선물 드립니다!</p>
+            <div className="mt-4">
+              <a href="https://forms.gle/LYq7zko1VyWJhWsV8" target="_blank" rel="noopener noreferrer" className="text-emerald-400 text-xl hover:underline">설문 참여하기</a>
+            </div>
 
             {/* Display Team Members */}
             {teamData && teamData.members && teamData.members.length > 0 && (
@@ -273,7 +276,6 @@ export default function Page4() {
             <Button onClick={handleTryAgain} className="mt-4">다시 도전하기</Button>
           </>
         )}
-        <div className="mt-4"><a href="https://forms.gle/LYq7zko1VyWJhWsV8" target="_blank" rel="noopener noreferrer" className="text-emerald-400 text-xl hover:underline">설문 참여하기</a></div>
       </div>
       <Modal
         isOpen={isModalOpen}

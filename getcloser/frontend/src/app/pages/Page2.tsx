@@ -45,8 +45,8 @@ const WaitingView = ({ teamMembers, myId, teamId, setView }: { teamMembers: Team
           <div className="absolute h-1/3 w-1/3 rounded-full bg-primary"></div>
         </div>
         <div className="text-center mt-2">
-          <h1 className="text-[#111718] dark:text-white tracking-tight text-3xl font-bold leading-tight">팀원 기다리는 중...</h1>
-          <p className="text-zinc-600 dark:text-zinc-400 text-base font-normal leading-normal mt-2 px-4">모든 팀원이 준비되면 퀴즈가 시작됩니다.</p>
+          <h1 className="text-white tracking-tight text-3xl font-bold leading-tight">팀원 기다리는 중...</h1>
+          <p className="text-gray-400 dark:text-zinc-400 text-base font-normal leading-normal mt-2 px-4">모든 팀원이 준비되면 퀴즈가 시작됩니다.</p>
         </div>
         <div className="mt-2 space-y-3">
           {teamMembers.map(member => (
@@ -68,7 +68,7 @@ const WaitingView = ({ teamMembers, myId, teamId, setView }: { teamMembers: Team
           ))}
         </div>
         <div className="mt-4 text-center">
-          <button onClick={handleLeaveTeam} className="text-zinc-600 dark:text-zinc-400 text-sm font-medium leading-normal underline underline-offset-2">팀 나가기</button>
+          <button onClick={handleLeaveTeam} className="text-zinc-300 hover:text-white text-sm font-medium leading-normal underline underline-offset-2 transition-colors">팀 나가기</button>
         </div>
       </main>
     </div>

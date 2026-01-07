@@ -6,6 +6,7 @@ import './globals.css';
 import { Providers } from './providers';
 import Header from '@/components/Header';
 import { useNavigationStore } from '../store/navigationStore'; // Import the navigation store
+import Aurora from './Aurora';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,17 +39,27 @@ export default function RootLayout({
   const hideHeader = currentPage === 'page1'; // Determine if header should be hidden
 
   return (
-    <html lang="en" style={{ background: 'linear-gradient(to bottom, hsl(160 40% 10%) 0%, hsl(160 40% 15%) 40%, hsl(160 40% 20%) 100%)', height: '100%' }}>
+    <html lang="en" style={{ background: '#0f241d', height: '100%' }}>
       <head>
         <link rel="icon" href="/pseudolab.svg" type="image/svg+xml" sizes="any" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${dongle.variable} antialiased min-h-full`}
+        className={`${geistSans.variable} ${geistMono.variable} ${dongle.variable} antialiased flex flex-col min-h-screen bg-transparent`}
       >
+        <div className="fixed inset-0 -z-10 w-full h-full pointer-events-none">
+          <Aurora
+            colorStops={['#20604a', '#2d8668', '#39ac86']}
+            blend={0.5}
+            amplitude={0.5}
+            speed={0.5}
+          />
+        </div>
         {!hideHeader && <Header />} {/* Conditionally render the Header */}
-        <Providers>{children}</Providers>
+        <div className="flex-1 flex flex-col">
+          <Providers>{children}</Providers>
+        </div>
       </body>
     </html>
   );
