@@ -4,11 +4,17 @@ import requests
 import tarfile
 import tempfile
 import subprocess
+import cv2
+import numpy as np
+from PIL import Image
+from pypdf import PdfReader
+from imwatermark import WatermarkEncoder, WatermarkDecoder
 from io import BytesIO
 
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.utils import ImageReader
 
 from .template_content import TemplateContent
 
@@ -50,8 +56,8 @@ class PDFGenerator:
             "name": {"x": 299, "y": 1080 - 902 - 65, "font_size": 72, "char_space": -1.2},
         }
         self.metadata_positions = {
-            "certificate_number": {"x": 1050, "y": 140, "font_size": 18, "char_space": -0.2},
-            "issue_date": {"x": 1050, "y": 110, "font_size": 18, "char_space": -0.2},
+            "certificate_number": {"x": 1030, "y": 160, "font_size": 18, "char_space": -0.2},
+            "issue_date": {"x": 1030, "y": 130, "font_size": 18, "char_space": -0.2},
         }
         
         # 텍스트 설정
@@ -164,6 +170,112 @@ class PDFGenerator:
             width, height = self.default_width, self.default_height
         
         return width, height
+
+    def _apply_invisible_watermark(self, image_path: str, text: str) -> ImageReader:
+        """이미지에 보이지 않는 워터마크 적용 (ImageReader 반환)"""
+        try:
+            # 이미지 로드
+            bgr = cv2.imread(image_path)
+            if bgr is None:
+                logger.warning(f"이미지를 읽을 수 없어 워터마크를 건너뜁니다: {image_path}")
+                return ImageReader(image_path)
+
+            # 워터마크 인코더 초기화
+            encoder = WatermarkEncoder()
+            
+            # 텍스트를 바이트로 변환 (64바이트 고정)
+            wm_content = text.encode('utf-8')
+            if len(wm_content) > 64:
+                wm_content = wm_content[:64]
+            else:
+                wm_content = wm_content + b'\x00' * (64 - len(wm_content))
+                
+            encoder.set_watermark('bytes', wm_content)
+            
+            # 워터마크 삽입 (dwtDct 방식)
+            bgr_encoded = encoder.encode(bgr, 'dwtDct')
+            
+            # 메모리에서 처리 (OpenCV -> Bytes -> ImageReader)
+            success, encoded_img = cv2.imencode(".png", bgr_encoded)
+            if not success:
+                logger.error("이미지 인코딩 실패")
+                return ImageReader(image_path)
+                
+            image_buffer = BytesIO(encoded_img.tobytes())
+            logger.info("보이지 않는 워터마크 적용 완료 (메모리)", extra={"text": text})
+            
+            return ImageReader(image_buffer)
+            
+        except Exception:
+            logger.exception("워터마크 적용 중 오류 발생")
+            return ImageReader(image_path)
+
+    def extract_watermark_from_pdf(self, pdf_bytes: bytes) -> str | None:
+        """PDF에서 워터마크 추출 (이미지 추출 방식)"""
+        try:
+            # PDF 로드
+            reader = PdfReader(BytesIO(pdf_bytes))
+            if len(reader.pages) < 1:
+                logger.warning("PDF에 페이지가 없습니다.")
+                return None
+            
+            page = reader.pages[0]
+            
+            # 이미지 추출 (가장 큰 이미지가 배경일 확률 높음)
+            max_size = 0
+            background_image = None
+            
+            # pypdf이미지 추출
+            for image_file_object in page.images:
+                try:
+                    img_data = image_file_object.data
+                    pil_img = Image.open(BytesIO(img_data))
+                    
+                    width, height = pil_img.size
+                    size = width * height
+                    
+                    # 가장 큰 이미지 선택 (배경)
+                    if size > max_size:
+                        max_size = size
+                        background_image = pil_img
+                except Exception:
+                    continue
+            
+            if background_image is None:
+                logger.warning("PDF에서 이미지를 찾을 수 없습니다.")
+                return None
+                
+            # PIL(RGB) -> OpenCV(BGR) 변환
+            valid_image = np.array(background_image)
+            
+            # 채널 처리를 더 강건하게
+            if len(valid_image.shape) == 2: # Grayscale
+                 valid_image = cv2.cvtColor(valid_image, cv2.COLOR_GRAY2BGR)
+            elif valid_image.shape[2] == 4: # RGBA
+                valid_image = cv2.cvtColor(valid_image, cv2.COLOR_RGBA2BGR)
+            else: # RGB
+                valid_image = cv2.cvtColor(valid_image, cv2.COLOR_RGB2BGR)
+
+            # Decoding
+            # 텍스트 길이가 가변적이므로 넉넉하게 잡음 (64자 * 8비트 = 512)
+            decoder = WatermarkDecoder('bytes', 512) 
+            watermark = decoder.decode(valid_image, 'dwtDct')
+            
+            try:
+                decoded_text = watermark.decode('utf-8')
+                # Null 문자 및 쓰레기 값 제거 (유효한 문자열만 추출)
+                decoded_text = decoded_text.rstrip('\x00')
+                return decoded_text
+            except Exception:
+                logger.warning("워터마크 텍스트 디코딩 실패")
+                return None
+
+        except (PdfStreamError, Exception) as e:
+            if "pypdf" in str(type(e)):
+                logger.warning(f"유효하지 않은 PDF 형식 또는 손상된 파일: {str(e)}")
+            else:
+                logger.exception("PDF 워터마크 추출 중 예상치 못한 오류")
+            return None
 
     def _get_next_certificate_path(self):
         """다음 인증서 파일 경로 생성"""
@@ -304,10 +416,18 @@ class PDFGenerator:
         buffer = BytesIO()
         c = canvas.Canvas(buffer, pagesize=(width, height))
         
-        # 배경 이미지
+        # 배경 이미지 (워터마크 적용)
         if os.path.exists(template_path):
-            c.drawImage(template_path, 0, 0, width, height)
-            logger.info("템플릿 이미지 추가", extra={"template_path": template_path})
+            # 워터마크 텍스트 생성
+            watermark_text = "PSEUDOLAB"
+            if certificate_number:
+                watermark_text += f"_{certificate_number}"
+                
+            # 워터마크 적용된 이미지 객체 생성 (메모리)
+            bg_image = self._apply_invisible_watermark(template_path, watermark_text)
+            
+            c.drawImage(bg_image, 0, 0, width, height)
+            logger.info("템플릿 이미지 추가 (워터마크 포함)", extra={"template_path": template_path})
         else:
             raise ValueError(
                 f"템플릿 이미지를 찾을 수 없습니다: {template_path}. "
@@ -399,14 +519,14 @@ class PDFGenerator:
         
         self._draw_text(c, name, name_x, name_y, korean_font, name_font_size, name_char_space)
 
-        # 4. 발급번호/발급일 (우측 하단에 작게 표기)
+        # 4. 수료증 번호/발급일 (우측 하단에 작게 표기)
         metadata_number_config = self.metadata_positions["certificate_number"]
         metadata_date_config = self.metadata_positions["issue_date"]
 
         if certificate_number:
             self._draw_text(
                 c,
-                f"발급번호: {certificate_number}",
+                f"수료증 번호: {certificate_number}",
                 metadata_number_config["x"],
                 metadata_number_config["y"],
                 None,

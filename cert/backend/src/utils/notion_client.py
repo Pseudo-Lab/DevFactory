@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 import json
 import logging
 import os
@@ -131,7 +132,7 @@ class NotionClient:
                             completers = properties.get("수료자", {}).get("rich_text", [])
                             dropouts = properties.get("이탈자", {}).get("multi_select", [])
 
-                            code_prop = properties.get("코드", {}).get("rich_text", [])
+                            code_prop = properties.get("CODE", {}).get("rich_text", [])
                             project_code = code_prop[0].get("plain_text", "") if code_prop else ""
                             if not project_code:
                                 logger.warning(
@@ -684,6 +685,52 @@ class NotionClient:
             logger.exception("모든 프로젝트 조회 중 오류")
             return None
 
+    async def get_study_order_index(self, season: int, course_name: str) -> Optional[int]:
+        """기수 내 스터디 정렬 순서 기반 인덱스(1-based) 조회"""
+        all_projects = await self.get_all_projects()
+        if not all_projects:
+            return None
+
+        season_projects = [project for project in all_projects if project.season == season]
+        if not season_projects:
+            return None
+
+        def sort_key(name: str) -> tuple:
+            normalized = (name or "").strip()
+            if not normalized:
+                return (3, "")
+
+            first_char = normalized[0]
+            if first_char.isdigit():
+                match = re.match(r"^(\d+)", normalized)
+                number = int(match.group(1)) if match else 0
+                rest = normalized[match.end():] if match else normalized
+                return (0, number, rest)
+            if "A" <= first_char <= "Z" or "a" <= first_char <= "z":
+                return (1, normalized.casefold())
+            if "\uac00" <= first_char <= "\ud7a3":
+                return (2, normalized)
+            return (3, normalized)
+
+        sorted_projects = sorted(
+            season_projects,
+            key=lambda project: sort_key(project.name),
+        )
+
+        for index, project in enumerate(sorted_projects, start=1):
+            if project.name == course_name:
+                return index
+
+        for index, project in enumerate(sorted_projects, start=1):
+            if course_name and course_name in project.name:
+                return index
+
+        logger.warning(
+            "스터디 순서 조회 실패: 해당 코스명을 찾지 못했습니다.",
+            extra={"season": season, "course_name": course_name},
+        )
+        return None
+
     async def get_projects_by_season(self) -> Optional[ProjectsBySeasonResponse]:
         """기수별로 프로젝트 그룹화하여 조회"""
         try:
@@ -871,6 +918,50 @@ class NotionClient:
                         
         except Exception:
             logger.exception("기존 수료증 확인 중 오류")
+            return None
+
+    async def get_certificate_by_number(self, certificate_number: str) -> Optional[Dict[str, Any]]:
+        """수료증 번호로 수료증 정보 조회"""
+        db_id = self.databases.get("certificate_requests")
+        if not db_id:
+            logger.error("수료증 데이터베이스 ID가 설정되지 않았습니다.")
+            return None
+            
+        url = f"{self.base_url}/databases/{db_id}/query"
+        payload = {
+            "filter": {
+                "property": "Certificate Number",
+                "rich_text": {
+                    "equals": certificate_number
+                }
+            },
+            "sorts": [
+                {
+                    "property": "Issue Date",
+                    "direction": "descending"
+                },
+                {
+                    "timestamp": "created_time",
+                    "direction": "descending"
+                }
+            ]
+        }
+        
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(url, headers=self.headers, json=payload) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        results = data.get("results", [])
+                        if results:
+                            return results[0]
+                        return None
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Notion 수료증 조회 실패: {response.status}, {error_text}")
+                        return None
+        except Exception:
+            logger.exception("Notion 수료증 조회 중 예외 발생")
             return None
 
     async def get_database_structure(self, database_type: str = "project_history") -> Optional[Dict[str, Any]]:

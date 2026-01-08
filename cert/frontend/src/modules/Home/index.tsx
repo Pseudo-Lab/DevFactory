@@ -15,6 +15,8 @@ import {
   DialogContent,
   LinearProgress,
   Autocomplete,
+  Tabs,
+  Tab,
 } from '@mui/material';
 import { ButtonProps } from "@mui/material/Button";
 import { Search as SearchIcon } from '@mui/icons-material';
@@ -34,6 +36,17 @@ type IssueResponse = {
   returnCode: number; // 200, 404, 500 등
   message?: string; // 백엔드 응답 메시지
   status?: string; // 응답 상태
+};
+
+type VerifyResponse = {
+  valid: boolean;
+  message: string;
+  data?: {
+    name: string;
+    course: string;
+    season: string;
+    issue_date: string;
+  };
 };
 
 type ApiStudy = {
@@ -102,6 +115,34 @@ async function issueCertificate(payload: IssuePayload): Promise<IssueResponse> {
   };
 }
 
+async function verifyCertificateNumber(certificateNumber: string): Promise<VerifyResponse> {
+  const res = await fetch(`${API_BASE_URL}/certs/verify-by-number`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ certificate_number: certificateNumber }),
+  });
+
+  let json: any = {};
+  try {
+    json = await res.json();
+  } catch {
+    json = {};
+  }
+
+  if (!res.ok) {
+    return {
+      valid: false,
+      message: json?.detail ?? "수료증 번호 확인 중 오류가 발생했습니다.",
+    };
+  }
+
+  return {
+    valid: Boolean(json?.valid),
+    message: json?.message ?? "수료증 번호 확인 응답을 처리하지 못했습니다.",
+    data: json?.data,
+  };
+}
+
 const SuccessIcon: React.FC = () => {
   return (
     <Box
@@ -137,9 +178,9 @@ const StyledContainer = styled(Box)({
   minHeight: '100vh',
   background: 'rgb(24, 43, 77)',
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: '16px',
+  alignItems: 'flex-start',
+  justifyContent: 'flex-start',
+  padding: '48px 16px 16px',
 });
 
 const StyledPaper = styled(Paper)(() => ({
@@ -291,6 +332,12 @@ const ExportCertificateForm = () => {
   const [returnCode, setReturnCode] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const [activeTab, setActiveTab] = useState(0);
+  const [certificateNumber, setCertificateNumber] = useState('');
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [verifyResult, setVerifyResult] = useState<VerifyResponse | null>(null);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -441,6 +488,26 @@ const ExportCertificateForm = () => {
     setTags([]);
   };
 
+  const handleVerify = async () => {
+    const trimmed = certificateNumber.trim();
+    if (!trimmed) {
+      setVerifyError("수료증 번호를 입력해주세요.");
+      setVerifyResult(null);
+      return;
+    }
+
+    setVerifyLoading(true);
+    setVerifyError(null);
+    setVerifyResult(null);
+
+    const result = await verifyCertificateNumber(trimmed);
+    setVerifyResult(result);
+    if (!result.valid) {
+      setVerifyError(result.message);
+    }
+    setVerifyLoading(false);
+  };
+
   return (
     <StyledContainer>
       <Container maxWidth="sm">
@@ -455,148 +522,267 @@ const ExportCertificateForm = () => {
         </Box>
 
         <StyledPaper>
-          {/* 메타 로딩/에러 */}
-          {metaLoading ? (
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="body2" sx={{ color: '#1f2937', mb: 2 }}>옵션을 불러오는 중…</Typography>
-              <LinearProgress />
-            </Box>
-          ) : metaError ? (
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="body2" color="error" sx={{ mb: 1 }}>옵션을 불러오지 못했어요.</Typography>
-              <Typography variant="caption" color="text.secondary">{metaError}</Typography>
-            </Box>
-          ) : (
-            <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              {/* Name */}
-              <FieldRow label={<>이름<span style={{ color: '#ef4444' }}>*</span></>}>
-                <StyledTextField
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  fullWidth
-                  variant="outlined"
-                  placeholder="이름을 입력하세요"
-                  size="medium"
-                />
-              </FieldRow>
+          <Tabs
+            value={activeTab}
+            onChange={(_, value) => setActiveTab(value)}
+            variant="fullWidth"
+            TabIndicatorProps={{ style: { display: 'none' } }}
+            sx={{
+              mb: 4,
+              backgroundColor: '#f1f5f9',
+              borderRadius: '999px',
+              padding: '4px',
+              minHeight: '44px',
+              '& .MuiTab-root': {
+                textTransform: 'none',
+                fontWeight: 600,
+                borderRadius: '999px',
+                minHeight: '36px',
+                color: '#64748b',
+              },
+              '& .MuiTab-root.Mui-selected': {
+                backgroundColor: '#10b981',
+                color: 'white',
+              },
+            }}
+          >
+            <Tab label="수료증 발급" />
+            <Tab label="수료증 확인" />
+          </Tabs>
 
-              {/* Email */}
-              <FieldRow label={<>이메일<span style={{ color: '#ef4444' }}>*</span></>}>
-                <StyledTextField
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  fullWidth
-                  variant="outlined"
-                  placeholder="pseudoLab@naver.com"
-                  size="medium"
-                  error={!!formData.email && !isEmailValid}
-                />
-                <Typography variant="caption" sx={{ color: '#6b7280', display: 'block', mt: 1 }}>
-                  수료증이 전달될 이메일 주소를 적어주세요.
-                </Typography>
-              </FieldRow>
-
-              {/* Period */}
-              <FieldRow label={<>참여 기수<span style={{ color: '#ef4444' }}>*</span></>}>
-                <StyledFormControl fullWidth size="medium">
-                  <Select
-                    name="period"
-                    value={formData.period}
-                    onChange={handleInputChange}
-                    displayEmpty
-                    renderValue={(selected) =>
-                      !selected ? <span style={{ color: '#9ca3af' }}>참여 기수를 선택하세요</span> : (selected as string)
-                    }
-                  >
-                    {periods.map(p => (
-                      <MenuItem key={p} value={p}>{p}</MenuItem>
-                    ))}
-                  </Select>
-                </StyledFormControl>
-              </FieldRow>
-
-              {/* Study names (Autocomplete, multiple) */}
-              <FieldRow label={<>스터디명<span style={{ color: '#ef4444' }}>*</span></>}>
-                <Autocomplete
-                  multiple
-                  disableCloseOnSelect
-                  options={studyOptions}
-                  value={tags}
-                  onChange={(_, newValue) => setTags(Array.from(new Set(newValue)))}
-                  inputValue={formData.searchText}
-                  onInputChange={(_, newInputValue) => setFormData(prev => ({ ...prev, searchText: newInputValue }))}
-                  filterOptions={(options, { inputValue }) =>
-                    options.filter(o => o.toLowerCase().includes(inputValue.toLowerCase()))
-                  }
-                  popupIcon={null}
-                  renderTags={(value, getTagProps) =>
-                    value.map((option, index) => (
-                      <Chip
-                        {...getTagProps({ index })}
-                        key={option}
-                        label={option}
-                        sx={{
-                          backgroundColor: '#10b981',
-                          color: 'white',
-                          fontWeight: 500,
-                          '& .MuiChip-deleteIcon': { color: 'white' },
-                        }}
-                      />
-                    ))
-                  }
-                  renderInput={(params) => (
+          {activeTab === 0 && (
+            <>
+              {/* 메타 로딩/에러 */}
+              {metaLoading ? (
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography variant="body2" sx={{ color: '#1f2937', mb: 2 }}>옵션을 불러오는 중…</Typography>
+                  <LinearProgress />
+                </Box>
+              ) : metaError ? (
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography variant="body2" color="error" sx={{ mb: 1 }}>옵션을 불러오지 못했어요.</Typography>
+                  <Typography variant="caption" color="text.secondary">{metaError}</Typography>
+                </Box>
+              ) : (
+                <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {/* Name */}
+                  <FieldRow label={<>이름<span style={{ color: '#ef4444' }}>*</span></>}>
                     <StyledTextField
-                      {...params}
-                      placeholder={tags.length === 0 ? '스터디 이름을 입력하세요' : ''}
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      fullWidth
                       variant="outlined"
+                      placeholder="이름을 입력하세요"
                       size="medium"
-                      InputProps={{
-                        ...params.InputProps,
-                        startAdornment: (
-                          <>
-                            <InputAdornment position="start">
-                              <SearchIcon sx={{ ml: 1, color: '#9ca3af' }} />
-                            </InputAdornment>
-                            {params.InputProps.startAdornment}
-                          </>
-                        ),
-                      }}
                     />
-                  )}
+                  </FieldRow>
+
+                  {/* Email */}
+                  <FieldRow label={<>이메일<span style={{ color: '#ef4444' }}>*</span></>}>
+                    <StyledTextField
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      fullWidth
+                      variant="outlined"
+                      placeholder="pseudoLab@naver.com"
+                      size="medium"
+                      error={!!formData.email && !isEmailValid}
+                    />
+                    <Typography variant="caption" sx={{ color: '#6b7280', display: 'block', mt: 1 }}>
+                      수료증이 전달될 이메일 주소를 적어주세요.
+                    </Typography>
+                  </FieldRow>
+
+                  {/* Period */}
+                  <FieldRow label={<>참여 기수<span style={{ color: '#ef4444' }}>*</span></>}>
+                    <StyledFormControl fullWidth size="medium">
+                      <Select
+                        name="period"
+                        value={formData.period}
+                        onChange={handleInputChange}
+                        displayEmpty
+                        renderValue={(selected) =>
+                          !selected ? <span style={{ color: '#9ca3af' }}>참여 기수를 선택하세요</span> : (selected as string)
+                        }
+                      >
+                        {periods.map(p => (
+                          <MenuItem key={p} value={p}>{p}</MenuItem>
+                        ))}
+                      </Select>
+                    </StyledFormControl>
+                  </FieldRow>
+
+                  {/* Study names (Autocomplete, multiple) */}
+                  <FieldRow label={<>스터디명<span style={{ color: '#ef4444' }}>*</span></>}>
+                    <Autocomplete
+                      multiple
+                      disableCloseOnSelect
+                      options={studyOptions}
+                      value={tags}
+                      onChange={(_, newValue) => setTags(Array.from(new Set(newValue)))}
+                      inputValue={formData.searchText}
+                      onInputChange={(_, newInputValue) => setFormData(prev => ({ ...prev, searchText: newInputValue }))}
+                      filterOptions={(options, { inputValue }) =>
+                        options.filter(o => o.toLowerCase().includes(inputValue.toLowerCase()))
+                      }
+                      popupIcon={null}
+                      renderTags={(value, getTagProps) =>
+                        value.map((option, index) => (
+                          <Chip
+                            {...getTagProps({ index })}
+                            key={option}
+                            label={option}
+                            sx={{
+                              backgroundColor: '#10b981',
+                              color: 'white',
+                              fontWeight: 500,
+                              '& .MuiChip-deleteIcon': { color: 'white' },
+                            }}
+                          />
+                        ))
+                      }
+                      renderInput={(params) => (
+                        <StyledTextField
+                          {...params}
+                          placeholder={tags.length === 0 ? '스터디 이름을 입력하세요' : ''}
+                          variant="outlined"
+                          size="medium"
+                          InputProps={{
+                            ...params.InputProps,
+                            startAdornment: (
+                              <>
+                                <InputAdornment position="start">
+                                  <SearchIcon sx={{ ml: 1, color: '#9ca3af' }} />
+                                </InputAdornment>
+                                {params.InputProps.startAdornment}
+                              </>
+                            ),
+                          }}
+                        />
+                      )}
+                    />
+                  </FieldRow>
+
+                  {/* Buttons */}
+                  <Box sx={{ display: 'flex', gap: 3, mt: 2 }}>
+                    <StyledButton
+                      variant="contained"
+                      onClick={handleCancel}
+                      sx={{
+                        flex: 1,
+                        backgroundColor: '#9ca3af',
+                        color: 'white',
+                        '&:hover': { backgroundColor: '#6b7280' },
+                      }}
+                    >
+                      취소
+                    </StyledButton>
+                    <StyledButton
+                      variant="contained"
+                      onClick={handleSubmit}
+                      disabled={!isFormValid}
+                      sx={{
+                        flex: 1,
+                        backgroundColor: isFormValid ? '#10b981' : '#a7f3d0',
+                        color: 'white',
+                        '&:hover': { backgroundColor: isFormValid ? '#059669' : '#a7f3d0' },
+                      }}
+                    >
+                      발급하기
+                    </StyledButton>
+                  </Box>
+                </Box>
+              )}
+            </>
+          )}
+
+          {activeTab === 1 && (
+            <Box
+              component="form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleVerify();
+              }}
+              sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}
+            >
+              <FieldRow
+                label={(
+                  <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: '2px', whiteSpace: 'nowrap' }}>
+                    수료증 번호
+                    <span style={{ color: '#ef4444' }}>*</span>
+                  </Box>
+                )}
+              >
+                <StyledTextField
+                  name="certificateNumber"
+                  value={certificateNumber}
+                  onChange={(e) => {
+                    setCertificateNumber(e.target.value);
+                    if (verifyError) {
+                      setVerifyError(null);
+                    }
+                  }}
+                  fullWidth
+                  variant="outlined"
+                  placeholder="A2025S10_0156"
+                  size="medium"
                 />
+                {/* <Typography variant="caption" sx={{ color: '#6b7280', display: 'block', mt: 1 }}>
+                  수료증에 적힌 번호를 입력해주세요.
+                </Typography> */}
               </FieldRow>
 
-              {/* Buttons */}
-              <Box sx={{ display: 'flex', gap: 3, mt: 2 }}>
-                <StyledButton
-                  variant="contained"
-                  onClick={handleCancel}
-                  sx={{
-                    flex: 1,
-                    backgroundColor: '#9ca3af',
-                    color: 'white',
-                    '&:hover': { backgroundColor: '#6b7280' },
-                  }}
-                >
-                  취소
-                </StyledButton>
-                <StyledButton
-                  variant="contained"
-                  onClick={handleSubmit}
-                  disabled={!isFormValid}
-                  sx={{
-                    flex: 1,
-                    backgroundColor: isFormValid ? '#10b981' : '#a7f3d0',
-                    color: 'white',
-                    '&:hover': { backgroundColor: isFormValid ? '#059669' : '#a7f3d0' },
-                  }}
-                >
-                  발급하기
-                </StyledButton>
-              </Box>
+              <StyledButton
+                variant="contained"
+                type="submit"
+                disabled={verifyLoading}
+                sx={{
+                  backgroundColor: verifyLoading ? '#a7f3d0' : '#10b981',
+                  color: 'white',
+                  '&:hover': { backgroundColor: verifyLoading ? '#a7f3d0' : '#059669' },
+                }}
+              >
+                {verifyLoading ? "확인 중..." : "확인하기"}
+              </StyledButton>
+
+              {verifyLoading && <LinearProgress />}
+
+              {!verifyLoading && !verifyResult && !verifyError && (
+                <Typography variant="body2" sx={{ color: '#9ca3af', textAlign: 'center' }}>
+                  수료증 번호를 입력하면 검증 결과가 표시됩니다.
+                </Typography>
+              )}
+
+              {!verifyLoading && verifyError && (
+                <Box sx={{ backgroundColor: '#fee2e2', borderRadius: '12px', padding: '12px' }}>
+                  <Typography variant="body2" sx={{ color: '#b91c1c' }}>
+                    {verifyError}
+                  </Typography>
+                </Box>
+              )}
+
+              {!verifyLoading && verifyResult?.valid && verifyResult.data && (
+                <Box sx={{ backgroundColor: '#ecfdf5', borderRadius: '12px', padding: '16px' }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#065f46', mb: 1 }}>
+                    {verifyResult.message}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#065f46' }}>
+                    이름: {verifyResult.data.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#065f46' }}>
+                    스터디: {verifyResult.data.course}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#065f46' }}>
+                    기수: {verifyResult.data.season}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#065f46' }}>
+                    발급일: {verifyResult.data.issue_date}
+                  </Typography>
+                </Box>
+              )}
             </Box>
           )}
         </StyledPaper>

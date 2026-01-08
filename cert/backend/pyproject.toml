@@ -6,11 +6,16 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "aiohttp>=3.12.15",
-    "dotenv>=0.9.9",
+    "asyncpg>=0.30.0",
+    "aiosmtplib>=4.0.1",
     "fastapi>=0.109.1",
+    "gunicorn>=21.2.0",
+    "invisible-watermark>=0.2.0",
+    "opencv-python-headless>=4.11.0.86",
     "pillow>=10.1.0",
     "pydantic>=2.5.3",
     "pydantic-settings>=2.1.0",
+    "pypdf>=6.5.0",
     "python-dotenv>=1.0.1",
     "python-multipart>=0.0.6",
     "reportlab>=4.0.7",
@@ -20,5 +25,4 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "aiosmtplib>=4.0.1",
 ]

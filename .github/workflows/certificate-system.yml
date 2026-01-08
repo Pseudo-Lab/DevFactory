@@ -33,6 +33,11 @@ jobs:
           APP_HOST=${{ vars.APP_HOST }}
           ENVIRONMENT=${{ vars.ENVIRONMENT }}
           NODE_ENV=${{ vars.NODE_ENV }}
+          DB_HOST=${{ vars.DB_HOST }}
+          DB_PORT=${{ vars.DB_PORT }}
+          DB_NAME=${{ vars.DB_NAME }}
+          DB_USER=${{ vars.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           CERT_TEMPLATE_ARCHIVE_PASSWORD=${{ secrets.CERT_TEMPLATE_ARCHIVE_PASSWORD }}
           NOTION_API_KEY=${{ secrets.NOTION_API_KEY }}
           NOTION_CERT_DB_ID=${{ secrets.NOTION_CERT_DB_ID }}
@@ -41,6 +46,7 @@ jobs:
           SMTP_PORT=${{ vars.SMTP_PORT }}
           SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
+          ACCESS_LOGGING_IP_SALT=${{ secrets.ACCESS_LOGGING_IP_SALT }}
           CORS_ORIGINS=${{ vars.CORS_ORIGINS }}
           FRONTEND_EXTERNAL_API_URL=${{ vars.FRONTEND_EXTERNAL_API_URL }}
           EOF
@@ -70,6 +76,11 @@ jobs:
           APP_HOST=${{ vars.APP_HOST }}
           ENVIRONMENT=${{ vars.ENVIRONMENT }}
           NODE_ENV=${{ vars.NODE_ENV }}
+          DB_HOST=${{ vars.DB_HOST }}
+          DB_PORT=${{ vars.DB_PORT }}
+          DB_NAME=${{ vars.DB_NAME }}
+          DB_USER=${{ vars.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           CERT_TEMPLATE_ARCHIVE_PASSWORD=${{ secrets.CERT_TEMPLATE_ARCHIVE_PASSWORD }}
           NOTION_API_KEY=${{ secrets.NOTION_API_KEY }}
           NOTION_CERT_DB_ID=${{ secrets.NOTION_CERT_DB_ID }}
@@ -78,6 +89,7 @@ jobs:
           SMTP_PORT=${{ vars.SMTP_PORT }}
           SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
+          ACCESS_LOGGING_IP_SALT=${{ secrets.ACCESS_LOGGING_IP_SALT }}
           CORS_ORIGINS=${{ vars.CORS_ORIGINS }}
           FRONTEND_EXTERNAL_API_URL=${{ vars.FRONTEND_EXTERNAL_API_URL }}
           EOF

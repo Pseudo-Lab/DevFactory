@@ -28,7 +28,7 @@ class CertificateData(BaseModel):
     id: str = Field(..., example="2533a2a2-eed5-81fa-9921-c14d2cd117b7", description="수료증 신청 페이지 ID")
     name: str = Field(..., example="홍길동", description="신청자 이름")
     recipient_email: str = Field(..., example="hong@example.com", description="수료자 이메일")
-    certificate_number: str = Field(..., example="CERT-2024-001", description="수료증 번호")
+    certificate_number: str = Field(..., example="A2025S10_0156", description="수료증 번호")
     issue_date: str = Field(..., example="2024-01-15", description="신청 날짜")
     certificate_status: CertificateStatus = Field(..., example=CertificateStatus.PENDING, description="발급 여부")
     season: int = Field(..., example=10, description="참여 기수")
@@ -40,6 +40,26 @@ class CertificateResponse(BaseModel):
     status: str = Field(..., example="success", description="응답 상태")
     message: str = Field(..., example="수료증이 성공적으로 생성되었습니다.", description="응답 메시지")
     data: Optional[CertificateData] = Field(None, description="수료증 데이터")
+
+
+class CertificateVerifyRequest(BaseModel):
+    """수료증 번호 확인 요청 모델"""
+    certificate_number: str = Field(..., example="A2025S10_0156", description="수료증 번호")
+
+
+class CertificateVerifyData(BaseModel):
+    """수료증 번호 확인 데이터"""
+    name: str = Field(..., example="홍길동", description="신청자 이름")
+    course: str = Field(..., example="Wrapping Up Pseudolab", description="스터디명")
+    season: str = Field(..., example="10기", description="참여 기수")
+    issue_date: str = Field(..., example="2024-01-15", description="발급일")
+
+
+class CertificateVerifyResponse(BaseModel):
+    """수료증 번호 확인 응답"""
+    valid: bool = Field(..., example=True, description="확인 여부")
+    message: str = Field(..., example="수료증 확인에 성공했습니다.", description="결과 메시지")
+    data: Optional[CertificateVerifyData] = Field(None, description="수료증 정보")
 
 
 class ErrorResponse(BaseModel):

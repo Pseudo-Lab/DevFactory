@@ -71,7 +71,7 @@ URL : https://cert.pseudolab-devfactory/api/certs/create
   "message": "수료증이 성공적으로 발급되었습니다. 🚀\n메일함을 확인해보세요.",
   "data": {
     "id": 1,
-    "certificate_number": "CERT-001"
+    "certificate_number": "A2025S10_0156"
     ...
   }
 }
@@ -100,5 +100,62 @@ URL : https://cert.pseudolab-devfactory/api/certs/create
     "error_code": "CS0003",
     "message": "발급 처리 중 오류가 발생했습니다."
   }
+}
+```
+
+---
+
+## 수료증 번호 확인
+수료증 번호로 여부를 확인합니다.
+
+HTTP Method : POST  
+URL : https://cert.pseudolab-devfactory/api/certs/verify-by-number
+
+### Request
+#### Header
+| 이름 | 내용        | 필수 |
+|--------|----------------|:--:|
+| Content-Type | `application/json` | O |
+
+#### Body
+| 이름 | 타입 | 설명 | 필수 |
+|---|---|---|:--:|
+| certificate_number | String | 수료증 번호 | O |
+
+### Response
+#### 성공/실패 공통
+| 이름 | 타입 | 설명 |
+|---|---|---|
+| valid | Boolean | 수료 여부 |
+| message | String | 결과 메세지 |
+| data | Object | 수료증 상세 (valid=true일 때) |
+
+### Example
+#### Request
+```json
+{
+  "certificate_number": "A2025S10_0156"
+}
+```
+
+#### 성공 응답
+```json
+{
+  "valid": true,
+  "message": "수료증 확인에 성공했습니다.",
+  "data": {
+    "name": "홍길동",
+    "course": "Wrapping Up Pseudolab",
+    "season": "10기",
+    "issue_date": "2024-01-15"
+  }
+}
+```
+
+#### 실패 응답 (발급 기록 없음)
+```json
+{
+  "valid": false,
+  "message": "수료증 번호(A2025S10_0156)에 해당하는 발급 기록을 찾을 수 없습니다."
 }
 ```
