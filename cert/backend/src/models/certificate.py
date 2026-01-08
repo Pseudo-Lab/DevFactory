@@ -28,7 +28,7 @@ class CertificateData(BaseModel):
     id: str = Field(..., example="2533a2a2-eed5-81fa-9921-c14d2cd117b7", description="수료증 신청 페이지 ID")
     name: str = Field(..., example="홍길동", description="신청자 이름")
     recipient_email: str = Field(..., example="hong@example.com", description="수료자 이메일")
-    certificate_number: str = Field(..., example="CERT-2026DC", description="수료증 번호")
+    certificate_number: str = Field(..., example="A2025S10_0156", description="수료증 번호")
     issue_date: str = Field(..., example="2024-01-15", description="신청 날짜")
     certificate_status: CertificateStatus = Field(..., example=CertificateStatus.PENDING, description="발급 여부")
     season: int = Field(..., example=10, description="참여 기수")
@@ -44,7 +44,7 @@ class CertificateResponse(BaseModel):
 
 class CertificateVerifyRequest(BaseModel):
     """수료증 번호 확인 요청 모델"""
-    certificate_number: str = Field(..., example="CERT-2026DC", description="수료증 번호")
+    certificate_number: str = Field(..., example="A2025S10_0156", description="수료증 번호")
 
 
 class CertificateVerifyData(BaseModel):

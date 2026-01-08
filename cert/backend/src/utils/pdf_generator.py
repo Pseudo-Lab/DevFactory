@@ -56,8 +56,8 @@ class PDFGenerator:
             "name": {"x": 299, "y": 1080 - 902 - 65, "font_size": 72, "char_space": -1.2},
         }
         self.metadata_positions = {
-            "certificate_number": {"x": 1030, "y": 140, "font_size": 18, "char_space": -0.2},
-            "issue_date": {"x": 1030, "y": 110, "font_size": 18, "char_space": -0.2},
+            "certificate_number": {"x": 1030, "y": 160, "font_size": 18, "char_space": -0.2},
+            "issue_date": {"x": 1030, "y": 130, "font_size": 18, "char_space": -0.2},
         }
         
         # 텍스트 설정

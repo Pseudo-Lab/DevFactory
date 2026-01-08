@@ -71,7 +71,7 @@ URL : https://cert.pseudolab-devfactory/api/certs/create
   "message": "수료증이 성공적으로 발급되었습니다. 🚀\n메일함을 확인해보세요.",
   "data": {
     "id": 1,
-    "certificate_number": "CERT-001"
+    "certificate_number": "A2025S10_0156"
     ...
   }
 }
@@ -134,7 +134,7 @@ URL : https://cert.pseudolab-devfactory/api/certs/verify-by-number
 #### Request
 ```json
 {
-  "certificate_number": "CERT-202418"
+  "certificate_number": "A2025S10_0156"
 }
 ```
 
@@ -156,6 +156,6 @@ URL : https://cert.pseudolab-devfactory/api/certs/verify-by-number
 ```json
 {
   "valid": false,
-  "message": "수료증 번호(CERT-202618)에 해당하는 발급 기록을 찾을 수 없습니다."
+  "message": "수료증 번호(A2025S10_0156)에 해당하는 발급 기록을 찾을 수 없습니다."
 }
 ```
