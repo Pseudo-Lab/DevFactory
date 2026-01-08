@@ -6,6 +6,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routers import certificate
+from .routers.logging import logging_router
+from .utils.access_log import access_log_middleware, close_access_log, init_access_log
 
 
 def configure_logging() -> None:
@@ -35,6 +37,9 @@ app = FastAPI(
     openapi_url=None if hide_docs else "/openapi.json",
 )
 
+# Access log middleware
+app.middleware("http")(access_log_middleware)
+
 # CORS 미들웨어 설정
 origins = os.getenv("CORS_ORIGINS", "").split(",")
 app.add_middleware(
@@ -47,6 +52,7 @@ app.add_middleware(
 
 # 모든 환경에서 /api 프리픽스 사용 (개발/프로덕션 통일)
 app.include_router(certificate.certificate_router, prefix="/api")
+app.include_router(logging_router, prefix="/api")
 logger.info("FastAPI app initialized", extra={"environment": os.getenv("ENVIRONMENT")})
 
 
@@ -64,3 +70,13 @@ async def read_root():
 async def health_check():
     """헬스 체크 엔드포인트"""
     return {"status": "healthy"}
+
+
+@app.on_event("startup")
+async def setup_access_log():
+    await init_access_log(app)
+
+
+@app.on_event("shutdown")
+async def teardown_access_log():
+    await close_access_log(app)
