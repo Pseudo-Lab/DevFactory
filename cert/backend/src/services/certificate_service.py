@@ -1,5 +1,6 @@
 import logging
 import uuid
+import re
 from datetime import datetime
 from typing import Optional, List
 
@@ -35,6 +36,64 @@ class ProjectService:
     
 class CertificateService:
     """수료증 서비스"""    
+
+    @staticmethod
+    def _get_study_year(period: dict) -> int:
+        """스터디 기간에서 연도를 추출 (없으면 현재 연도 fallback)"""
+        for key in ("start", "end"):
+            raw_date = (period or {}).get(key)
+            if raw_date:
+                try:
+                    return datetime.fromisoformat(raw_date).year
+                except ValueError:
+                    # ISO 포맷이 아니면 연도만 파싱 시도
+                    year_part = raw_date.split("-", 1)[0]
+                    if year_part.isdigit():
+                        return int(year_part)
+        return datetime.now().year
+
+    @staticmethod
+    def _build_certificate_number(
+        study_year: int,
+        unique_identifier: str,
+        track_code: str,
+        season_code: str,
+        study_id: str,
+    ) -> str:
+        """수료증 번호 생성: {코드}{연도}{기수}-{스터디ID}{unique_id}"""
+        suffix = f"{study_id}{unique_identifier.upper()}"
+        return f"{track_code}{study_year}{season_code}-{suffix}"
+
+    @staticmethod
+    def _parse_project_code(project_code: str, season: int) -> tuple[str | None, str, str | None]:
+        """프로젝트 코드 파싱: CODE에서 트랙/기수/스터디ID 추출"""
+        track_code = None
+        season_code = f"S{season:02d}"
+        study_id = None
+
+        if not project_code:
+            return track_code, season_code, study_id
+
+        raw_code = project_code.strip()
+        if "-" in raw_code:
+            parts = raw_code.split("-", 1)
+        elif "_" in raw_code:
+            parts = raw_code.split("_", 1)
+        else:
+            parts = [raw_code]
+
+        if parts:
+            season_match = re.match(r"^S(\d+)$", parts[0], re.IGNORECASE)
+            if season_match:
+                season_code = f"S{int(season_match.group(1)):02d}"
+
+        target = parts[1] if len(parts) > 1 else raw_code
+        match = re.match(r"^([A-Za-z]+)(\d+)$", target)
+        if match:
+            track_code = match.group(1).upper()
+            study_id = match.group(2)
+
+        return track_code, season_code, study_id
     
     @staticmethod
     async def create_certificate(certificate_data: dict) -> CertificateResponse:
@@ -133,7 +192,7 @@ class CertificateService:
                     "debug_text": watermark_text
                 }
                 
-            # 수료증 번호 추출 (CERT-2026XX 포맷 기대)
+            # 수료증 번호 추출 (A2025S10-0156 포맷 기대)
             cert_number = ""
             if "_" in watermark_text:
                 cert_number = watermark_text.split("_")[1]
@@ -264,7 +323,38 @@ class CertificateService:
                             break
 
                 
-                existing_cert_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{unique_identifier.upper()}"
+                study_year = CertificateService._get_study_year(participation_info.get("period", {}))
+                track_code, season_code, study_id = CertificateService._parse_project_code(
+                    participation_info.get("project_code", ""),
+                    certificate_data["season"],
+                )
+                if not track_code:
+                    track_code = "N"
+                if not study_id:
+                    study_index = await notion_client.get_study_order_index(
+                        season=certificate_data["season"],
+                        course_name=certificate_data["course_name"],
+                    )
+                    if study_index is None:
+                        message = "스터디 순서를 확인할 수 없어 수료증을 발급할 수 없습니다."
+                        logger.error(
+                            message,
+                            extra={
+                                "season": certificate_data["season"],
+                                "course_name": certificate_data["course_name"],
+                            },
+                        )
+                        raise Exception(message)
+                    else:
+                        study_id = f"{study_index:02d}" if study_index < 100 else str(study_index)
+
+                existing_cert_number = CertificateService._build_certificate_number(
+                    study_year=study_year,
+                    unique_identifier=unique_identifier,
+                    track_code=track_code,
+                    season_code=season_code,
+                    study_id=study_id,
+                )
                 logger.info(
                     "새로운 수료증 번호 생성",
                     extra={"certificate_number": existing_cert_number},
@@ -398,7 +488,38 @@ class CertificateService:
                 # fallback: Page ID의 마지막 5자리
                 unique_identifier = request_id.replace("-", "")[-5:]
 
-            certificate_number = f"CERT-{datetime.now().year}{participation_info['project_code']}{unique_identifier.upper()}"
+            study_year = CertificateService._get_study_year(participation_info.get("period", {}))
+            track_code, season_code, study_id = CertificateService._parse_project_code(
+                participation_info.get("project_code", ""),
+                certificate_data["season"],
+            )
+            if not track_code:
+                track_code = "N"
+            if not study_id:
+                study_index = await notion_client.get_study_order_index(
+                    season=certificate_data["season"],
+                    course_name=certificate_data["course_name"],
+                )
+                if study_index is None:
+                    message = "스터디 순서를 확인할 수 없어 수료증을 발급할 수 없습니다."
+                    logger.error(
+                        message,
+                        extra={
+                            "season": certificate_data["season"],
+                            "course_name": certificate_data["course_name"],
+                        },
+                    )
+                    raise Exception(message)
+                else:
+                    study_id = f"{study_index:02d}" if study_index < 100 else str(study_index)
+
+            certificate_number = CertificateService._build_certificate_number(
+                study_year=study_year,
+                unique_identifier=unique_identifier,
+                track_code=track_code,
+                season_code=season_code,
+                study_id=study_id,
+            )
             issue_date = datetime.now().strftime("%Y-%m-%d")
 
             # PDF 수료증 생성

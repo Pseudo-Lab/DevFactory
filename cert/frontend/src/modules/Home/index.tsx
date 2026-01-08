@@ -727,7 +727,7 @@ const ExportCertificateForm = () => {
                   }}
                   fullWidth
                   variant="outlined"
-                  placeholder="CERT-XXXXXX"
+                  placeholder="A2025S10_0156"
                   size="medium"
                 />
                 {/* <Typography variant="caption" sx={{ color: '#6b7280', display: 'block', mt: 1 }}>
