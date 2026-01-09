@@ -24,6 +24,10 @@ export default function Page1() {
       });
 
       if (!authResponse.ok) {
+        if (authResponse.status === 404) {
+          alert('등록되지 않은 이메일 입니다.');
+          return;
+        }
         throw new Error(`HTTP error! status: ${authResponse.status}`);
       }
 
