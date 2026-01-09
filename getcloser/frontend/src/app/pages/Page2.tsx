@@ -107,7 +107,7 @@ const CreateTeamView = ({
     <div className="container mx-auto p-4">
       <Modal
         title="미션 소개"
-        content={('1. 참가자들의 코드를 모으세요!\n   코드는 위에 개인별 다른 코드가 있습니다.\n2. 5명이 함께 문제 풀기에 도전하세요!\n   (팁! 문제는 팀원들과 관련된 문제가 나옵니다.)\n3. 성공 시 부스 방문해주세요.\n   성공 선물을 드립니다.')}
+        content={(`1. 팀을 모으세요! 팀원 코드는 이름 옆에 있는 숫자 입니다.<br/>2. ${TEAM_SIZE}명이 함께 문제 풀기에 도전하세요! (팁! 문제는 팀원들과 관련된 문제가 나옵니다.)<br/>3. 성공 시 부스 방문해주세요. 기념품을 드립니다.`)}
         onConfirm={handleConfirm}
         onDoNotShowAgain={handleDoNotShowAgain}
         isOpen={showModal}
