@@ -1,7 +1,12 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
+from fastapi.openapi.utils import get_openapi
+from fastapi.responses import JSONResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from dotenv import load_dotenv
 import os
+import secrets
 
 from core.database import engine, Base
 from routers import test_db, admin
@@ -17,12 +22,14 @@ load_dotenv()
 Base.metadata.create_all(bind=engine)
 
 # FastAPI 앱 생성
+is_dev = os.getenv("ENV") == "development"
 app = FastAPI(
     title="Devfactory 친해지길바라",
     description="Devfactory 친해지길바라 API 서버",
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    docs_url="/docs" if is_dev else None,
+    redoc_url="/redoc" if is_dev else None,
+    openapi_url="/openapi.json" if is_dev else None,
 )
 
 
@@ -40,6 +47,58 @@ app.add_middleware(
 app.include_router(api_router, prefix="/api/v1")
 app.include_router(test_db.test_router, prefix="/api/v1")
 app.include_router(admin.admin_router, prefix="/api/v1")
+
+security = HTTPBasic(auto_error=False)
+
+def verify_docs_credentials(credentials: HTTPBasicCredentials | None = Depends(security)) -> None:
+    if is_dev:
+        return
+
+    expected_user = os.getenv("SWAGGER_USER")
+    expected_password = os.getenv("SWAGGER_PASSWORD")
+
+    # If credentials aren't configured, keep docs closed by default.
+    if not expected_user or not expected_password:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Swagger credentials are not configured.",
+        )
+
+    if credentials is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing credentials",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+
+    is_user_ok = secrets.compare_digest(credentials.username, expected_user)
+    is_password_ok = secrets.compare_digest(credentials.password, expected_password)
+    if not (is_user_ok and is_password_ok):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+
+if not is_dev:
+    @app.get("/docs", include_in_schema=False)
+    def get_swagger_docs(_: None = Depends(verify_docs_credentials)):
+        return get_swagger_ui_html(openapi_url="/openapi.json", title="API Docs")
+
+    @app.get("/redoc", include_in_schema=False)
+    def get_redoc_docs(_: None = Depends(verify_docs_credentials)):
+        return get_redoc_html(openapi_url="/openapi.json", title="API Docs")
+
+    @app.get("/openapi.json", include_in_schema=False)
+    def openapi_json(_: None = Depends(verify_docs_credentials)):
+        return JSONResponse(
+            get_openapi(
+                title=app.title,
+                version=app.version,
+                description=app.description,
+                routes=app.routes,
+            )
+        )
 
 
 @app.get("/")
