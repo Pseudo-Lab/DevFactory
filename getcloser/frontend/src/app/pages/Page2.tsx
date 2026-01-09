@@ -132,11 +132,6 @@ const CreateTeamView = ({
         ))}
         <Button onClick={handleCreateTeam} className="w-full">문제 풀기</Button>
       </div>
-      <nav className="flex justify-between mt-8">
-        <Button onClick={() => setCurrentPage('page1')} className="rounded-full" variant={'outline'}>
-          &lt;
-        </Button>
-      </nav>
     </div>
   );
 };
