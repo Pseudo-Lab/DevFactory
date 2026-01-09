@@ -191,13 +191,8 @@ export default function Page3() {
             ))}
           </div>
         )}
+        <p className="text-red-400 text-xl font-bold mt-8">기회는 두번 뿐! (틀리면 팀 새로 구성)</p>
       </main>
-
-      <nav className="flex justify-between mt-8">
-        <Button onClick={() => setCurrentPage('page2')} className="bg-background text-emerald-900 rounded-full">
-          &lt;
-        </Button>
-      </nav>
     </div>
   );
 }
