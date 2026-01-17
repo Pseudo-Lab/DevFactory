@@ -1,0 +1,899 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Docker 기본 명령어 실습 &#8212; PseudoLab Git Tutorial</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docker_tutorial/02.image_and_container';</script>
+    <link rel="shortcut icon" href="../_static/PseudoLab_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Docker Compose 개념 &amp; 실습" href="03.docker-compose.html" />
+    <link rel="prev" title="Docker의 개념과 필요성" href="01.what_is_docker.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/PseudoLab_logo.png" class="logo__image only-light" alt="PseudoLab Git Tutorial - Home"/>
+    <script>document.write(`<img src="../_static/PseudoLab_logo.png" class="logo__image only-dark" alt="PseudoLab Git Tutorial - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    PseudoLab Tutorial
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../docs/github_intro.html">Github 저장소 프로필 업데이트하기</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../docs/pull_request_guide.html">Github 파일 편집기로 작업하기</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docs/pr-guide.html">Github.dev 편집기로 작업하기</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docs/pr-ground.html">직접해보기</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="00.docker_intro.html">나만의 local ChatGPT 만들기: Docker 실습 튜토리얼</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00.pytorch_example.html">Pytorch example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01.what_is_docker.html">Docker란 무엇인가?</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Docker 기본 명령어 실습</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.docker-compose.html">Docker Compose 개념 &amp; 실습</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.ollama.html">Ollama로 로컬 LLM 실행</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.webui.html">Open-WebUI 실행</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.ollama_and_webui.html">Ollama + WebUI (Docker Compose)</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Pseudo-Lab/DevFactory" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Pseudo-Lab/DevFactory/issues/new?title=Issue%20on%20page%20%2Fdocker_tutorial/02.image_and_container.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/docker_tutorial/02.image_and_container.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Docker 기본 명령어 실습</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-py"><code class="docutils literal notranslate"><span class="pre">example.py</span></code> 준비</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dockerfile">Dockerfile 작성</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-build"><code class="docutils literal notranslate"><span class="pre">Docker</span> <span class="pre">build</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-pull"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">pull</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-images"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">images</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-run"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-ps"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">ps</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-stop"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">stop</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-start"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">start</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-exec"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">exec</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-rm"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">rm</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-logs"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">logs</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="docker">
+<h1>Docker 기본 명령어 실습<a class="headerlink" href="#docker" title="Permalink to this heading">#</a></h1>
+<p>이번 세션에서는 Dockerfile을 통해 <strong>이미지를 생성</strong>하고, Docker 컨테이너를 실행·확인·접근·로그 조회하는 <strong>기본 명령어를 실습</strong>합니다.</p>
+<p>이번 세션에서는 <strong>Dockerfile 작성</strong> → <strong>이미지 생성</strong> → <strong>컨테이너 실행</strong> 과정을 통해 Docker 이미지를 생성하고, 컨테이너를 실행·확인·접근·로그 조회하는 <strong>기본 명령어를 실습</strong>합니다.</p>
+<section id="example-py">
+<h2><code class="docutils literal notranslate"><span class="pre">example.py</span></code> 준비<a class="headerlink" href="#example-py" title="Permalink to this heading">#</a></h2>
+<p>먼저 Docker 이미지를 생성하기 전에 이미지에서 사용될 간단한 python 예제를 생성합니다.<br />
+앞선 단계에서 <code class="docutils literal notranslate"><span class="pre">example.py</span></code>를 생성했다면 해당 파일을 그대로 사용하면 됩니다.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="c1"># 무작위로 입력과 출력 데이터를 생성합니다</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># 무작위로 가중치를 초기화합니다</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">()</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">()</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">()</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">()</span>
+
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">1e-6</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2000</span><span class="p">):</span>
+    <span class="c1"># 순전파 단계: 예측값 y를 계산합니다</span>
+    <span class="c1"># y = a + b x + c x^2 + d x^3</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span>
+
+    <span class="c1"># 손실(loss)을 계산하고 출력합니다</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">y_pred</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">99</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">loss</span><span class="p">)</span>
+
+    <span class="c1"># 손실에 따른 a, b, c, d의 변화도(gradient)를 계산하고 역전파합니다.</span>
+    <span class="n">grad_y_pred</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">y_pred</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">grad_a</span> <span class="o">=</span> <span class="n">grad_y_pred</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">grad_b</span> <span class="o">=</span> <span class="p">(</span><span class="n">grad_y_pred</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">grad_c</span> <span class="o">=</span> <span class="p">(</span><span class="n">grad_y_pred</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">grad_d</span> <span class="o">=</span> <span class="p">(</span><span class="n">grad_y_pred</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="c1"># 가중치를 갱신합니다.</span>
+    <span class="n">a</span> <span class="o">-=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">grad_a</span>
+    <span class="n">b</span> <span class="o">-=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">grad_b</span>
+    <span class="n">c</span> <span class="o">-=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">grad_c</span>
+    <span class="n">d</span> <span class="o">-=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">grad_d</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Result: y = </span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s1"> + </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1"> x + </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1"> x^2 + </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1"> x^3&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="dockerfile">
+<h2>Dockerfile 작성<a class="headerlink" href="#dockerfile" title="Permalink to this heading">#</a></h2>
+<p>이제 위 example.py를 실행할 환경을 정의하는 Dockerfile을 준비합니다.</p>
+<div class="highlight-Dockerfile notranslate"><div class="highlight"><pre><span></span><span class="c"># 1. 베이스 이미지 설정</span>
+<span class="c">#    - Python 3.9 런타임을 제공하는 공식 이미지</span>
+<span class="c">#    - 불필요한 파일을 제거해 용량을 줄인 슬림(slim) 버전 사용</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">python:3.9-slim</span>
+
+<span class="c"># 2. 작업 디렉터리 생성 및 설정</span>
+<span class="c">#    - 컨테이너 내에서 이후 명령이 실행될 기본 디렉터리</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+
+<span class="c"># 3. 애플리케이션 코드와 의존성 파일 복사</span>
+<span class="c">#    - 로컬의 example.py 파일을 컨테이너의 /app 디렉터리로 복사</span>
+<span class="k">COPY</span><span class="w"> </span>example.py<span class="w"> </span>.
+
+<span class="c"># 4. 필수 라이브러리 설치</span>
+<span class="c">#    - example.py 실행에 필요한 numpy 패키지를 설치</span>
+<span class="c">#    - 캐시를 남기지 않는 옵션(--no-cache-dir)으로 이미지 크기 최적화</span>
+<span class="k">RUN</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span>numpy
+
+<span class="c"># 5. 컨테이너 시작 시 실행할 명령어 지정</span>
+<span class="c">#    - 컨테이너가 기동되면 자동으로 example.py 스크립트 실행</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;example.py&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="docker-build">
+<h2><code class="docutils literal notranslate"><span class="pre">Docker</span> <span class="pre">build</span></code><a class="headerlink" href="#docker-build" title="Permalink to this heading">#</a></h2>
+<ul>
+<li><p><strong>역할</strong></p>
+<ul class="simple">
+<li><p>현재 디렉터리(컨텍스트)에 있는 <code class="docutils literal notranslate"><span class="pre">Dockerfile</span></code>을 읽어 Docker 이미지를 생성합니다.</p></li>
+<li><p>이미지란 “실행 가능한 애플리케이션 환경의 스냅샷”으로, 이후 <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span></code>으로 컨테이너를 만들 때 사용됩니다.</p></li>
+</ul>
+</li>
+<li><p><strong>사용 예시</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 현재 경로의 Dockerfile을 읽어서 &#39;example:latest&#39;라는 이름의 이미지를 생성</span>
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>example:latest<span class="w"> </span>.
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">example:latest</span></code> : 생성될 이미지에 이름(example)과 태그(latest)를 지정, 태그 미지정 시 자동으로 latest 할당</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.</span></code> : Dockerfile과 필요한 파일들이 위치한 빌드 컨텍스트 경로</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="docker-pull">
+<h2><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">pull</span></code><a class="headerlink" href="#docker-pull" title="Permalink to this heading">#</a></h2>
+<ul>
+<li><p><strong>역할</strong></p>
+<ul class="simple">
+<li><p>Docker Hub(또는 설정된 레지스트리)에서 지정한 이미지를 로컬로 다운로드합니다.</p></li>
+<li><p>로컬에 이미지가 없으면 자동으로 가져오고, 이미 있으면 최신 상태인지 확인합니다.</p></li>
+</ul>
+</li>
+<li><p><strong>사용 예시</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># official nginx 이미지의 latest 태그를 가져옵니다.</span>
+docker<span class="w"> </span>pull<span class="w"> </span>nginx:latest
+
+<span class="c1"># 특정 버전(tag)을 지정해서 가져올 수도 있습니다.</span>
+docker<span class="w"> </span>pull<span class="w"> </span>python:3.9-slim
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="docker-images">
+<h2><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">images</span></code><a class="headerlink" href="#docker-images" title="Permalink to this heading">#</a></h2>
+<ul>
+<li><p><strong>역할</strong></p>
+<ul class="simple">
+<li><p>로컬에 저장된 Docker 이미지 목록을 조회합니다.</p></li>
+<li><p>각 이미지의 <strong>REPOSITORY</strong>, <strong>TAG</strong>, <strong>IMAGE ID</strong>, <strong>SIZE</strong> 등을 확인할 수 있습니다.</p></li>
+</ul>
+</li>
+<li><p><strong>사용 예시</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>images
+</pre></div>
+</div>
+</li>
+<li><p><strong>출력 예시</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>REPOSITORY<span class="w">      </span>TAG<span class="w">       </span>IMAGE<span class="w"> </span>ID<span class="w">       </span>CREATED<span class="w">         </span>SIZE
+example<span class="w">         </span>latest<span class="w">    </span>4d2eab5f5e3c<span class="w">   </span><span class="m">2</span><span class="w"> </span>minutes<span class="w"> </span>ago<span class="w">   </span>120MB
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="docker-run">
+<h2><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span></code><a class="headerlink" href="#docker-run" title="Permalink to this heading">#</a></h2>
+<ul>
+<li><p><strong>역할</strong></p>
+<ul class="simple">
+<li><p>이미지를 실행해 컨테이너 생성 및 시작</p></li>
+</ul>
+</li>
+<li><p><strong>주요 옵션</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-i</span></code>: 표준 입력(STDIN)을 열어 대화형 실행 가능</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-t</span></code>: 터미널(TTY) 할당</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-d</span></code>: 백그라운드(detached) 모드</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">&lt;호스트포트&gt;:&lt;컨테이너포트&gt;</span></code>: 포트 포워딩</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v</span> <span class="pre">&lt;호스트경로&gt;:&lt;컨테이너경로&gt;</span></code>: 호스트 디렉터리나 볼륨을 컨테이너에 마운트</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--name</span> <span class="pre">&lt;이름&gt;</span></code>: 컨테이너 이름 지정</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--rm</span></code>: 종료 시 컨테이너 자동 삭제</p></li>
+</ul>
+</li>
+<li><p><strong>명령(Command) vs 엔트리포인트(Entrypoint)</strong></p>
+<ul class="simple">
+<li><p><strong>CMD</strong>: Dockerfile에 지정된 기본 실행 명령</p></li>
+<li><p><strong>Entrypoint</strong>: 컨테이너가 시작될 때 항상 실행되는 프로그램</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">&lt;이미지&gt;</span> <span class="pre">&lt;명령&gt;</span></code> 형태로 <strong>CMD</strong>를 오버라이드할 수 있습니다.</p></li>
+<li><p>Entrypoint를 설정해 두면, CMD나 <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span></code> 뒤의 명령이 Entrypoint 프로그램의 인자로 전달됩니다.</p></li>
+</ul>
+</li>
+<li><p><strong>사용 예시</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 기본 이미지의 CMD 실행 후 자동 삭제</span>
+docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>--name<span class="w"> </span>python<span class="w"> </span>example:latest
+
+<span class="c1"># Bash 셸로 진입 (CMD 대신 bash 실행)</span>
+docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>--name<span class="w"> </span>python<span class="w"> </span>example:latest<span class="w"> </span>bash
+
+<span class="c1"># Entrypoint 예시</span>
+<span class="c1"># Dockerfile에 ENTRYPOINT [&quot;python&quot;] 가 정의된 상태에서</span>
+<span class="c1"># CMD [&quot;example.py&quot;] 라면, 아래는 python example.py 대신 python test.py 실행</span>
+docker<span class="w"> </span>run<span class="w"> </span>example:latest<span class="w"> </span>test.py
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="docker-ps">
+<h2><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">ps</span></code><a class="headerlink" href="#docker-ps" title="Permalink to this heading">#</a></h2>
+<ul>
+<li><p><strong>역할</strong></p>
+<ul class="simple">
+<li><p>실행 중인 컨테이너 목록 조회</p></li>
+</ul>
+</li>
+<li><p><strong>주요 옵션</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-a</span></code>: 중지된 컨테이너까지 모두 표시</p></li>
+</ul>
+</li>
+<li><p><strong>사용 예시</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># /bin/Bash로 example 컨테이너 백그라운드 실행</span>
+docker<span class="w"> </span>run<span class="w"> </span>-itd<span class="w"> </span>--name<span class="w"> </span>python<span class="w"> </span>example:latest<span class="w"> </span>bash<span class="w"> </span>
+
+<span class="c1"># 컨테이너 목록 조회</span>
+docker<span class="w"> </span>ps
+
+<span class="c1"># 컨테이너 실행 종료</span>
+docker<span class="w"> </span>stop<span class="w"> </span>python
+
+<span class="c1"># 컨테이너 목록 조회 (중지된 컨테이너 포함)</span>
+docker<span class="w"> </span>ps<span class="w"> </span>-a
+</pre></div>
+</div>
+</li>
+<li><p><strong>출력 예시</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CONTAINER</span> <span class="n">ID</span>   <span class="n">IMAGE</span>            <span class="n">COMMAND</span>                  <span class="n">CREATED</span>         <span class="n">STATUS</span>         <span class="n">PORTS</span>                  <span class="n">NAMES</span>
+<span class="mi">3485330</span><span class="n">bc129</span>   <span class="n">example</span><span class="p">:</span><span class="n">latest</span>   <span class="s2">&quot;bash&quot;</span>                   <span class="mi">3</span> <span class="n">seconds</span> <span class="n">ago</span>   <span class="n">Up</span> <span class="mi">3</span> <span class="n">seconds</span>                          <span class="n">python</span> 
+<span class="n">a1b2c3d4e5f6</span>   <span class="n">my</span><span class="o">-</span><span class="n">app</span><span class="p">:</span><span class="n">latest</span>    <span class="s2">&quot;python example.py&quot;</span>      <span class="mi">2</span> <span class="n">minutes</span> <span class="n">ago</span>   <span class="n">Up</span> <span class="mi">2</span> <span class="n">minutes</span>   <span class="mf">0.0.0.0</span><span class="p">:</span><span class="mi">8080</span><span class="o">-&gt;</span><span class="mi">80</span><span class="o">/</span><span class="n">tcp</span>   <span class="n">webapp</span>
+<span class="mi">9</span><span class="n">f8e7d6c5b4a</span>   <span class="n">redis</span><span class="p">:</span><span class="n">latest</span>     <span class="s2">&quot;docker-entrypoint.s…&quot;</span>   <span class="mi">10</span> <span class="n">minutes</span> <span class="n">ago</span>  <span class="n">Up</span> <span class="mi">10</span> <span class="n">minutes</span>  <span class="mi">6379</span><span class="o">/</span><span class="n">tcp</span>               <span class="n">redis</span><span class="o">-</span><span class="n">server</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="docker-stop">
+<h2><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">stop</span></code><a class="headerlink" href="#docker-stop" title="Permalink to this heading">#</a></h2>
+<ul>
+<li><p><strong>역할</strong></p>
+<ul class="simple">
+<li><p>실행 중인 컨테이너를 <strong>정상 종료(graceful shutdown)</strong> 합니다.</p></li>
+<li><p>컨테이너가 SIGTERM 신호를 받아 정리 작업을 수행한 뒤 종료됩니다.</p></li>
+</ul>
+</li>
+<li><p><strong>주요 옵션</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">&lt;초&gt;</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">--time</span> <span class="pre">&lt;초&gt;</span></code>:</p>
+<ul>
+<li><p>SIGKILL 신호를 보내기 전 대기할 시간을 지정합니다.</p></li>
+<li><p>기본값은 10초이며, 이 시간 내에 컨테이너가 종료되지 않으면 강제 종료(SIGKILL)됩니다.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>사용 예시</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 기본 대기 시간(10초) 후 컨테이너 종료</span>
+docker<span class="w"> </span>stop<span class="w"> </span>python
+
+<span class="c1"># 5초 대기 후 컨테이너 종료</span>
+docker<span class="w"> </span>stop<span class="w"> </span>-t<span class="w"> </span><span class="m">5</span><span class="w"> </span>python
+
+<span class="c1"># 여러 컨테이너를 동시에 종료</span>
+docker<span class="w"> </span>stop<span class="w"> </span>python<span class="w"> </span>redis-server<span class="w"> </span>db
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="docker-start">
+<h2><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">start</span></code><a class="headerlink" href="#docker-start" title="Permalink to this heading">#</a></h2>
+<ul>
+<li><p><strong>역할</strong></p>
+<ul class="simple">
+<li><p>중지된 컨테이너를 다시 시작(resume)합니다.</p></li>
+</ul>
+</li>
+<li><p><strong>주요 옵션</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-a</span></code>, <code class="docutils literal notranslate"><span class="pre">--attach</span></code> : 컨테이너의 stdout/stderr에 연결합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i</span></code>, <code class="docutils literal notranslate"><span class="pre">--interactive</span></code> : 표준 입력(STDIN)을 열어둡니다.</p></li>
+</ul>
+</li>
+<li><p><strong>사용 예시</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># python 컨테이너를 백그라운드로 시작</span>
+docker<span class="w"> </span>start<span class="w"> </span>python
+
+<span class="c1"># 대화형 모드로 시작(입력 가능)</span>
+docker<span class="w"> </span>start<span class="w"> </span>-ai<span class="w"> </span>python
+
+<span class="c1"># 여러 컨테이너를 한 번에 시작</span>
+docker<span class="w"> </span>start<span class="w"> </span>webapp<span class="w"> </span>redis-server<span class="w"> </span>db
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="docker-exec">
+<h2><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">exec</span></code><a class="headerlink" href="#docker-exec" title="Permalink to this heading">#</a></h2>
+<ul>
+<li><p><strong>역할</strong></p>
+<ul class="simple">
+<li><p>실행 중인 컨테이너 내부 명령 실행</p></li>
+</ul>
+</li>
+<li><p><strong>주요 옵션</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-it</span></code>: 터미널(interactive) 연결</p></li>
+</ul>
+</li>
+<li><p><strong>사용 예시</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># python 컨테이너를 백그라운드로 시작</span>
+docker<span class="w"> </span>start<span class="w"> </span>python
+
+<span class="c1"># 실행 중인 &#39;python&#39; 컨테이너 안에 Bash 셸로 진입</span>
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>python<span class="w"> </span>bash
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="docker-rm">
+<h2><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">rm</span></code><a class="headerlink" href="#docker-rm" title="Permalink to this heading">#</a></h2>
+<ul>
+<li><p><strong>역할</strong></p>
+<ul class="simple">
+<li><p>중지된 컨테이너를 삭제합니다. 삭제된 컨테이너의 데이터(쓰기 레이어 포함)는 복구할 수 없습니다.</p></li>
+</ul>
+</li>
+<li><p><strong>주요 옵션</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-f</span></code>, <code class="docutils literal notranslate"><span class="pre">--force</span></code> : 실행 중인 컨테이너를 강제 종료 후 삭제</p></li>
+<li><p>여러 컨테이너 이름/ID를 공백으로 구분해 한 번에 삭제 가능</p></li>
+</ul>
+</li>
+<li><p><strong>사용 예시</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 중지된 python 컨테이너 삭제</span>
+docker<span class="w"> </span>rm<span class="w"> </span>python
+
+<span class="c1"># 실행 중인 컨테이너를 강제로 종료하고 삭제</span>
+docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>python
+
+<span class="c1"># 여러 컨테이너를 동시에 삭제</span>
+docker<span class="w"> </span>rm<span class="w"> </span>python<span class="w"> </span>redis-server<span class="w"> </span>db
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="docker-logs">
+<h2><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">logs</span></code><a class="headerlink" href="#docker-logs" title="Permalink to this heading">#</a></h2>
+<ul>
+<li><p><strong>역할</strong></p>
+<ul class="simple">
+<li><p>컨테이너의 stdout/stderr 로그 출력</p></li>
+</ul>
+</li>
+<li><p><strong>주요 옵션</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-f</span></code>: 실시간(follow) 로그 스트리밍</p></li>
+</ul>
+</li>
+<li><p><strong>사용 예시</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 로그 관찰을 위한 컨테이너 실행</span>
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>log-demo<span class="w"> </span>busybox:stable<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;while true; do echo \&quot;[</span><span class="k">$(</span>date<span class="w"> </span><span class="s1">&#39;+%T&#39;</span><span class="k">)</span><span class="s2">] Hello from busybox\&quot;; sleep 1; done&quot;</span>
+
+docker<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>log-demo
+
+docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>log-demo
+</pre></div>
+</div>
+</li>
+</ul>
+<hr class="docutils" />
+<p>다음 챕터에서는 여러 컨테이너를 함께 정의·관리할 수 있는 <strong>Docker Compose</strong> 명령어를 배워봅시다.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./docker_tutorial"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="01.what_is_docker.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Docker의 개념과 필요성</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="03.docker-compose.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Docker Compose 개념 &amp; 실습</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-py"><code class="docutils literal notranslate"><span class="pre">example.py</span></code> 준비</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dockerfile">Dockerfile 작성</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-build"><code class="docutils literal notranslate"><span class="pre">Docker</span> <span class="pre">build</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-pull"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">pull</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-images"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">images</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-run"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-ps"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">ps</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-stop"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">stop</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-start"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">start</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-exec"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">exec</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-rm"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">rm</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-logs"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">logs</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By PseudoLab - DevFactory
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
