@@ -75,12 +75,6 @@ Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 통
 ## 🧑 팀원 소개
 
 <table align="center">
-  <tr height="0">
-    <th width="200"></th>
-    <th width="200"></th>
-    <th width="200"></th>
-    <th width="200"></th>
-  </tr>
   <tr>
     <td align="center" width="200" valign="top">
       <b>김수현</b><br>
