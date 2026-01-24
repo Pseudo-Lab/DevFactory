@@ -76,45 +76,83 @@ Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 통
 
 <table align="center">
   <tr>
-    <td align="center" width="200px">
+    <td align="center" width="200px" valign="top">
       <b>김수현</b><br>
       <img src="docs/imgs/members/soohyun.png" height="180px"><br>
-      <a href="https://github.com/soohyunme">@soohyunme</a>
+      <img src="https://img.shields.io/badge/-Builder-3776AB">
+      <img src="https://img.shields.io/badge/-TPM-94A3B8">
+      <img src="https://img.shields.io/badge/-INFRA-94A3B8">
+      <img src="https://img.shields.io/badge/-10th-DAA520">
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/soohyunme"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/soohyun-dev"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
     </td>
-    <td align="center" width="200px">
+    <td align="center" width="200px" valign="top">
       <b>김예신</b><br>
       <img src="docs/imgs/members/yesin.jpg" height="180px"><br>
-      <a href="https://github.com/yesinkim">@yesinkim</a>
+      <img src="https://img.shields.io/badge/-Builder-3776AB">
+      <img src="https://img.shields.io/badge/-BE-0891B2">
+      <img src="https://img.shields.io/badge/-10th-DAA520">
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/yesinkim"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/bailando/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
     </td>
-    <td align="center" width="200px">
+    <td align="center" width="200px" valign="top">
       <b>김승규</b><br>
       <img src="docs/imgs/members/seungkyu.jpg" height="180px"><br>
-      <a href="https://github.com/ed-kyu">@ed-kyu</a>
+      <img src="https://img.shields.io/badge/-Builder-3776AB">
+      <img src="https://img.shields.io/badge/-FE-60A5FA">
+      <img src="https://img.shields.io/badge/-10th-DAA520">
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/ed-kyu"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/seungkyu-kim-9088a21b1/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
     </td>
-    <td align="center" width="200px">
-      <!-- Empty Cell -->
+    <td align="center" width="200px" valign="top">
+      <b>황윤희</b><br>
+      <img src="https://github.com/yunhee1.png" height="180px"><br>
+      <img src="https://img.shields.io/badge/-Builder-3776AB">
+      <img src="https://img.shields.io/badge/-PO-818CF8">
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/yunhee1"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/uni-po/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
     </td>
   </tr>
   <tr>
-    <td align="center" width="200px">
+    <td align="center" width="200px" valign="top">
       <b>최유진</b><br>
       <img src="https://github.com/yujin37.png" height="180px"><br>
-      <a href="https://github.com/yujin37">@yujin37</a>
+      <img src="https://img.shields.io/badge/-Runner-10B981">
+      <img src="https://img.shields.io/badge/-PO-818CF8">
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/yujin37"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/yujin37/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
     </td>
-    <td align="center" width="200px">
-      <b>한나연</b><br>
-      <img src="https://github.com/HanNayeoniee.png" height="180px"><br>
-      <a href="https://github.com/HanNayeoniee">@HanNayeoniee</a>
-    </td>
-    <td align="center" width="200px">
+    <td align="center" width="200px" valign="top">
       <b>석종일</b><br>
       <img src="https://github.com/daclouds.png" height="180px"><br>
-      <a href="https://github.com/daclouds">@daclouds</a>
+      <img src="https://img.shields.io/badge/-Runner-10B981">
+      <img src="https://img.shields.io/badge/-FE-60A5FA">
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/daclouds"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/daclouds/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
     </td>
-    <td align="center" width="200px">
+    <td align="center" width="200px" valign="top">
       <b>정현준</b><br>
       <img src="https://github.com/hu6r1s.png" height="180px"><br>
-      <a href="https://github.com/hu6r1s">@hu6r1s</a>
+      <img src="https://img.shields.io/badge/-Runner-10B981">
+      <img src="https://img.shields.io/badge/-BE-0891B2">
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/hu6r1s"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/hu6r1s/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
+    </td>
+    <td align="center" width="200px" valign="top">
+      <b>한나연</b><br>
+      <img src="https://github.com/HanNayeoniee.png" height="180px"><br>
+      <img src="https://img.shields.io/badge/-Runner-10B981">
+      <img src="https://img.shields.io/badge/-BE-0891B2">
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/HanNayeoniee"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/nayeon-han/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
     </td>
   </tr>
 </table>
