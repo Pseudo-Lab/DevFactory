@@ -40,19 +40,19 @@ DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개�
 </a>
 <br>
 
-다양한 기술 튜토리얼을 기획·운영합니다.
+다양한 기술 튜토리얼을 기획·운영합니다.  
 Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 통해 함께 배우고 성장합니다.
 
 <br>
 
 ### 🎮 네트워킹 이벤트 (BINGO)
 
-<a href="https://github.com/Pseudo-Lab/event-bingo">
+<a href="https://bingo.pseudolab-devfactory.com/">
   <img src="docs/imgs/bingo.png" width="400px"/>
 </a>
 <br>
 
-누구나 자유롭게 사용할 수 있도록 오픈소스로 공개한 네트워킹 빙고 웹 애플리케이션입니다.
+누구나 자유롭게 사용할 수 있도록 오픈소스로 공개한 네트워킹 빙고 웹 애플리케이션입니다.  
 키워드 기반의 빙고 게임을 통해 가벼운 대화를 유도하고 네트워킹을 돕습니다.
 
 <br>
@@ -74,45 +74,47 @@ Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 통
 
 ## 🧑 팀원 소개
 
-<table>
+<table align="center">
   <tr>
-    <td align="center" width="300px">
-      <img src="docs/imgs/members/soohyun.png" height="200px"><br><br>
+    <td align="center" width="200px">
       <b>김수현</b><br>
-      <b>PM / Infra</b><br>
-      <b>주요경력</b>: HDC 랩스, AI Engineer<br>
-      <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white"> 
-      <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=flat&logo=pytorch&logoColor=white"> 
-      <img src="https://img.shields.io/badge/Linux-FCC624?style=flat&logo=linux&logoColor=black"/>
-      <img src="https://img.shields.io/badge/CI%2FCD-00A86B?style=flat">
-      <img src="https://img.shields.io/badge/kubernetes-326CE5?style=flat&logo=kubernetes&logoColor=white"><br>
-      🔗 <a href="https://github.com/soohyunme">Github</a> | 
-      <a href="https://velog.io/@kimsoohyun/posts">Blog</a> | 
-      <a href="https://www.linkedin.com/in/soohyun-dev">LinkedIn</a> | 
-      <a href="https://search.shopping.naver.com/book/catalog/49530069623">Book</a>
+      <img src="docs/imgs/members/soohyun.png" width="150px"><br>
+      <a href="https://github.com/soohyunme">@soohyunme</a>
     </td>
-    <td align="center" width="300px">
-      <img src="docs/imgs/members/yesin.jpg" height="200px"><br><br>
+    <td align="center" width="200px">
       <b>김예신</b><br>
-      <b>Backend / DB</b><br>
-      <b>주요경력</b>: 에이아이톡, NLP Engineer<br>
-      <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white"> 
-      <img src="https://img.shields.io/badge/LangChain-2bbc8a?style=flat&logo=langchain&logoColor=white">       
-      <img src="https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white"><br>
-      🔗 <a href="https://github.com/yesinkim">Github</a> |
-      <a href="https://velog.io/@bailando/posts">Blog</a> | 
-      <a href="https://www.linkedin.com/in/bailando">LinkedIn</a>
+      <img src="docs/imgs/members/yesin.jpg" width="150px"><br>
+      <a href="https://github.com/yesinkim">@yesinkim</a>
     </td>
-    <td align="center" width="300px">
-      <img src="docs/imgs/members/seungkyu.jpg" height="200px"><br><br>
+    <td align="center" width="200px">
       <b>김승규</b><br>
-      <b>Frontend</b><br>
-      <b>주요경력</b>: 이마고웍스, Data Engineer<br>
-      <img src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=white">
-      <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white"> 
-      <img src="https://img.shields.io/badge/BigQuery-4285F4?style=flat&logo=googlecloud&logoColor=white"><br>
-      🔗 <a href="https://github.com/ed-kyu">Github</a> |
-      <a href="https://www.linkedin.com/in/seungkyu-kim-9088a21b1/">LinkedIn</a>
+      <img src="docs/imgs/members/seungkyu.jpg" width="150px"><br>
+      <a href="https://github.com/ed-kyu">@ed-kyu</a>
+    </td>
+    <td align="center" width="200px">
+      <!-- Empty Cell -->
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="200px">
+      <b>최유진</b><br>
+      <img src="https://github.com/yujin37.png" width="150px" height="150px"><br>
+      <a href="https://github.com/yujin37">@yujin37</a>
+    </td>
+    <td align="center" width="200px">
+      <b>한나연</b><br>
+      <img src="https://github.com/HanNayeoniee.png" width="150px" height="150px"><br>
+      <a href="https://github.com/HanNayeoniee">@HanNayeoniee</a>
+    </td>
+    <td align="center" width="200px">
+      <b>석종일</b><br>
+      <img src="https://github.com/daclouds.png" width="150px" height="150px"><br>
+      <a href="https://github.com/daclouds">@daclouds</a>
+    </td>
+    <td align="center" width="200px">
+      <b>정현준</b><br>
+      <img src="https://github.com/hu6r1s.png" width="150px" height="150px"><br>
+      <a href="https://github.com/hu6r1s">@hu6r1s</a>
     </td>
   </tr>
 </table>
