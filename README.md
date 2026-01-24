@@ -30,47 +30,29 @@
   - **E-mail**: soohyun.dev@gmail.com — Builder: 김수현
 </details>
 
-## 🌟 프로젝트  
-DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개발 생태계를 만들어가는 중입니다 🤗
+## 🌟 프로젝트
+DevFactory의 주요 활동 내역입니다 🤗
+*   **🐳 기술 튜토리얼 (Tutorials)**
+    *   Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 운영합니다.
+    *   [🔗 튜토리얼 보기](https://pseudo-lab.github.io/DevFactory/intro.html)
 
-### 🐳 Tutorial
+*   **🎮 네트워킹 프로그램 (BINGO)**
+    *   키워드 기반의 빙고 게임을 통해 자연스러운 대화를 유도하는 웹 애플리케이션입니다.
+    *   [🔗 웹사이트 확인](https://bingo.pseudolab-devfactory.com/)
 
-<a href="https://pseudo-lab.github.io/DevFactory/intro.html">
-  <img src="docs/imgs/docker-git-tutorial.png" width="400px"/>
-</a>
-<br>
+*   **🎮 네트워킹 프로그램 (친해지길바라)**
+    *   간단한 퀴즈를 통해 서로를 알아가는 웹 애플리케이션입니다.
+    *   [🔗 웹사이트 확인](https://getcloser.pseudolab-devfactory.com/)
 
-다양한 기술 튜토리얼을 기획·운영합니다.  
-Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 통해 함께 배우고 성장합니다.
-
-<br>
-
-### 🎮 네트워킹 이벤트 (BINGO)
-
-<a href="https://bingo.pseudolab-devfactory.com/">
-  <img src="docs/imgs/bingo.png" width="400px"/>
-</a>
-<br>
-
-누구나 자유롭게 사용할 수 있도록 오픈소스로 공개한 네트워킹 빙고 웹 애플리케이션입니다.  
-키워드 기반의 빙고 게임을 통해 가벼운 대화를 유도하고 네트워킹을 돕습니다.
-
-<br>
-
-### 📜 수료증 발급 시스템
-
-<a href="https://cert.pseudo-lab.com/">
-  <img src="docs/imgs/cert-system.png" width="400px"/>
-</a>
-<br>
-
-가짜연구소 <strong>수료증 발급 시스템</strong>입니다.<br>
-가짜연구소 활동에 대한 수료증을 발급받을 수 있는 웹 서비스입니다.
-
+*   **📜 수료증 발급 시스템**
+    *   가짜연구소의 성장을 기록하는 서비스로, 활동 수료증을 발급하고 관리합니다.
+    *   [🔗 웹사이트 확인](https://cert.pseudo-lab.com/)
+*   **🤖 JobPT**
+    *   AI 기반 개인화 취업 지원 솔루션입니다. 이력서 분석부터 면접 피드백까지 개발자의 커리어 성장을 돕는 도구입니다.
+    *   [🔗 서비스 바로가기](http://jobpt.pseudolab-devfactory.com/)
 
 ### 🔎 기수별 활동
-
-- [DevFactory 10기 활동 페이지](docs/10th_plan.md)
+*   [DevFactory 10기 활동 페이지](docs/10th_plan.md)
 
 ## 🧑 팀원 소개
 

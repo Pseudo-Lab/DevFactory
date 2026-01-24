@@ -30,43 +30,30 @@
   - **E-mail**: soohyun.dev@gmail.com — Builder: Soohyun Kim
 </details>
 
-## 🌟 Projects  
-At DevFactory, we are shaping Pseudo-Lab’s unique developer ecosystem through the following activities 🤗
+## 🌟 Projects
+Highlight activities of DevFactory 🤗
 
-### 🐳 Tutorial
+*   **🐳 Technical Tutorials (Tutorials)**
+    *   Hands-on content and offline workshops covering Docker, Git, LLM, etc.
+    *   [🔗 View Tutorials](https://pseudo-lab.github.io/DevFactory/intro.html)
 
-<a href="https://pseudo-lab.github.io/DevFactory/intro.html">
-  <img src="docs/imgs/docker-git-tutorial.png" width="400px"/>
-</a>
-<br>
+*   **🎮 Networking Event (BINGO)**
+    *   A web application where keyword-based bingo games facilitate natural networking.
+    *   [🔗 Visit Site](https://bingo.pseudolab-devfactory.com/)
 
-We design and run a variety of technical tutorials.  
-From Docker and Git to LLMs, we offer hands-on content and offline workshops where everyone can learn and grow together.
+*   **🎮 Networking Event (Get Closer)**
+    *   A web application to get to know each other through simple quizzes.
+    *   [🔗 Visit Site](https://getcloser.pseudolab-devfactory.com/)
 
-<br>
+*   **📜 Certificate Issuance System**
+    *   A service that tracks Pseudo-Lab's growth, issuing and managing certificates for activities.
+    *   [🔗 Visit Site](https://cert.pseudo-lab.com/)
 
-### 🎮 Networking Event (BINGO)
-
-<a href="https://bingo.pseudolab-devfactory.com/">
-  <img src="docs/imgs/bingo.png" width="400px"/>
-</a>
-<br>
-
-An open-source networking bingo web application, freely available for anyone to use.  
-It encourages casual conversations through light, keyword-based bingo games.
+*   **🤖 JobPT**
+    *   AI-powered personalized career support solution. A tool that helps developer career growth through resume analysis and interview feedback.
+    *   [🔗 Visit Site](http://jobpt.pseudolab-devfactory.com/)
 
 <br>
-
-### 📜 Certificate Issuance System
-
-<a href="https://cert.pseudo-lab.com/">
-  <img src="docs/imgs/cert-system.png" width="400px"/>
-</a>
-<br>
-
-Pseudo-Lab **Certificate Issuance System**.  
-A web service where you can issue certificates for your activities at Pseudo-Lab.
-
 
 ### 🔎 Activities by Batch
 
