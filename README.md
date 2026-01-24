@@ -78,17 +78,17 @@ Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 통
   <tr>
     <td align="center" width="200px">
       <b>김수현</b><br>
-      <img src="docs/imgs/members/soohyun.png" width="150px"><br>
+      <img src="docs/imgs/members/soohyun.png" height="180px"><br>
       <a href="https://github.com/soohyunme">@soohyunme</a>
     </td>
     <td align="center" width="200px">
       <b>김예신</b><br>
-      <img src="docs/imgs/members/yesin.jpg" width="150px"><br>
+      <img src="docs/imgs/members/yesin.jpg" height="180px"><br>
       <a href="https://github.com/yesinkim">@yesinkim</a>
     </td>
     <td align="center" width="200px">
       <b>김승규</b><br>
-      <img src="docs/imgs/members/seungkyu.jpg" width="150px"><br>
+      <img src="docs/imgs/members/seungkyu.jpg" height="180px"><br>
       <a href="https://github.com/ed-kyu">@ed-kyu</a>
     </td>
     <td align="center" width="200px">
@@ -98,22 +98,22 @@ Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 통
   <tr>
     <td align="center" width="200px">
       <b>최유진</b><br>
-      <img src="https://github.com/yujin37.png" width="150px" height="150px"><br>
+      <img src="https://github.com/yujin37.png" height="180px"><br>
       <a href="https://github.com/yujin37">@yujin37</a>
     </td>
     <td align="center" width="200px">
       <b>한나연</b><br>
-      <img src="https://github.com/HanNayeoniee.png" width="150px" height="150px"><br>
+      <img src="https://github.com/HanNayeoniee.png" height="180px"><br>
       <a href="https://github.com/HanNayeoniee">@HanNayeoniee</a>
     </td>
     <td align="center" width="200px">
       <b>석종일</b><br>
-      <img src="https://github.com/daclouds.png" width="150px" height="150px"><br>
+      <img src="https://github.com/daclouds.png" height="180px"><br>
       <a href="https://github.com/daclouds">@daclouds</a>
     </td>
     <td align="center" width="200px">
       <b>정현준</b><br>
-      <img src="https://github.com/hu6r1s.png" width="150px" height="150px"><br>
+      <img src="https://github.com/hu6r1s.png" height="180px"><br>
       <a href="https://github.com/hu6r1s">@hu6r1s</a>
     </td>
   </tr>
