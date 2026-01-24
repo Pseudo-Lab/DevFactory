@@ -6,6 +6,7 @@
 
 <div align="center">
 <a href="https://pseudo-lab.com"><img src="https://img.shields.io/badge/PseudoLab-S10-3776AB" alt="PseudoLab"/></a>
+<a href="https://pseudo-lab.com"><img src="https://img.shields.io/badge/PseudoLab-S11-3776AB" alt="PseudoLab"/></a>
 <a href="https://discord.gg/EPurkHVtp2"><img src="https://img.shields.io/badge/Discord-BF40BF" alt="Discord Community"/></a>
 <a href="https://github.com/Pseudo-Lab/DevFactory/stargazers"><img src="https://img.shields.io/github/stars/Pseudo-Lab/DevFactory" alt="Stars Badge"/></a>
 <a href="https://github.com/Pseudo-Lab/DevFactory/network/members"><img src="https://img.shields.io/github/forks/Pseudo-Lab/DevFactory" alt="Forks Badge"/></a>
@@ -32,48 +33,39 @@
 ## 🌟 프로젝트  
 DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개발 생태계를 만들어가는 중입니다 🤗
 
-<table>
-  <tr>
-    <th align="center">🐳 Tutorial</th>
-    <th align="center">🎮 네트워킹 이벤트 (BINGO)</th>
-    <th align="center">📦 PseudoLab TOOLBOX</th>
-  </tr>
-  <tr>
-    <td align="center" width="33%">
-      다양한 기술 튜토리얼을 기획·운영합니다.<br>
-      Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 통해 함께 배우고 성장합니다.
-    </td>
-    <td align="center" width="33%">
-      누구나 자유롭게 사용할 수 있도록 오픈소스로 공개한 네트워킹 빙고 웹 애플리케이션입니다.<br>
-      키워드 기반의 빙고 게임을 통해 가벼운 대화를 유도하고 네트워킹을 돕습니다.
-    </td>
-    <td align="center" width="33%">
-      가짜연구소 참여·운영을 위한 <strong>지원 플랫폼</strong>입니다.<br>
-      스터디 신청, 수료증 발급 등을 처리할 수 있는 웹 서비스입니다.<br>
-      <em>(개발 중)</em>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <a href="https://pseudo-lab.github.io/DevFactory/intro.html">
-        <img src="docs/imgs/docker-git-tutorial.png" height="160"/><br>
-        <sub>튜토리얼 보기</sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/Pseudo-Lab/event-bingo">
-        <img src="docs/imgs/bingo.png" height="160"/><br>
-        <sub>GitHub 저장소 열기</sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://www.pseudolab-devfactory.com/">
-        <img src="docs/imgs/Toolbox.png" height="160"/><br>
-        <sub>웹사이트 열기</sub>
-      </a>
-    </td>
-  </tr>
-</table>
+### 🐳 Tutorial
+
+<a href="https://pseudo-lab.github.io/DevFactory/intro.html">
+  <img src="docs/imgs/docker-git-tutorial.png" width="400px"/>
+</a>
+<br>
+
+다양한 기술 튜토리얼을 기획·운영합니다.
+Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 통해 함께 배우고 성장합니다.
+
+<br>
+
+### 🎮 네트워킹 이벤트 (BINGO)
+
+<a href="https://github.com/Pseudo-Lab/event-bingo">
+  <img src="docs/imgs/bingo.png" width="400px"/>
+</a>
+<br>
+
+누구나 자유롭게 사용할 수 있도록 오픈소스로 공개한 네트워킹 빙고 웹 애플리케이션입니다.
+키워드 기반의 빙고 게임을 통해 가벼운 대화를 유도하고 네트워킹을 돕습니다.
+
+<br>
+
+### 📜 수료증 발급 시스템
+
+<a href="https://cert.pseudo-lab.com/">
+  <img src="docs/imgs/cert-system.png" width="400px"/>
+</a>
+<br>
+
+가짜연구소 <strong>수료증 발급 시스템</strong>입니다.<br>
+가짜연구소 활동에 대한 수료증을 발급받을 수 있는 웹 서비스입니다.
 
 
 ### 🔎 기수별 활동
@@ -85,40 +77,40 @@ DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개�
 <table>
   <tr>
     <td align="center" width="300px">
-      <img src="docs/imgs/members/soohyun.png" width="100%"><br><br>
+      <img src="docs/imgs/members/soohyun.png" height="200px"><br><br>
       <b>김수현</b><br>
       <b>PM / Infra</b><br>
       <b>주요경력</b>: HDC 랩스, AI Engineer<br>
-      <img src="https://img.shields.io/badge/Python-3776AB"> 
-      <img src="https://img.shields.io/badge/PyTorch-EE4C2C"> 
-      <img src="https://img.shields.io/badge/Linux-FCC624?&logoColor=black"/>
-      <img src="https://img.shields.io/badge/-CI%2FCD-00A86B">
-      <img src="https://img.shields.io/badge/kubernetes-326CE5"><br>
+      <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white"> 
+      <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=flat&logo=pytorch&logoColor=white"> 
+      <img src="https://img.shields.io/badge/Linux-FCC624?style=flat&logo=linux&logoColor=black"/>
+      <img src="https://img.shields.io/badge/CI%2FCD-00A86B?style=flat">
+      <img src="https://img.shields.io/badge/kubernetes-326CE5?style=flat&logo=kubernetes&logoColor=white"><br>
       🔗 <a href="https://github.com/soohyunme">Github</a> | 
       <a href="https://velog.io/@kimsoohyun/posts">Blog</a> | 
       <a href="https://www.linkedin.com/in/soohyun-dev">LinkedIn</a> | 
-      <a href="https://search.shopping.naver.com/book/catalog/49530069623?query=%EB%94%B0%EB%9D%BC%ED%95%98%EB%A9%B0%20%EB%B0%B0%EC%9A%B0%EB%8A%94%20mlops%20dev&NaPm=ct%3Dmar57pjk%7Cci%3D07926149f717a4c875317607826c173195ccd48a%7Ctr%3Dboksl%7Csn%3D95694%7Chk%3D6e7ef43a91e627efa7a5800b657df37b8ce0db4d">Book</a>
+      <a href="https://search.shopping.naver.com/book/catalog/49530069623">Book</a>
     </td>
     <td align="center" width="300px">
-      <img src="docs/imgs/members/yesin.jpg" width="100%"><br><br>
+      <img src="docs/imgs/members/yesin.jpg" height="200px"><br><br>
       <b>김예신</b><br>
       <b>Backend / DB</b><br>
       <b>주요경력</b>: 에이아이톡, NLP Engineer<br>
-      <img src="https://img.shields.io/badge/Python-3776AB"> 
-      <img src="https://img.shields.io/badge/LangChain-informational?style=flat&logoColor=white&color=2bbc8a">       
-      <img src="https://img.shields.io/badge/Django-092E20"><br>
+      <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white"> 
+      <img src="https://img.shields.io/badge/LangChain-2bbc8a?style=flat&logo=langchain&logoColor=white">       
+      <img src="https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white"><br>
       🔗 <a href="https://github.com/yesinkim">Github</a> |
       <a href="https://velog.io/@bailando/posts">Blog</a> | 
       <a href="https://www.linkedin.com/in/bailando">LinkedIn</a>
     </td>
     <td align="center" width="300px">
-      <img src="docs/imgs/members/seungkyu.jpg" width="100%"><br><br>
+      <img src="docs/imgs/members/seungkyu.jpg" height="200px"><br><br>
       <b>김승규</b><br>
       <b>Frontend</b><br>
       <b>주요경력</b>: 이마고웍스, Data Engineer<br>
-      <img src="https://img.shields.io/badge/React-61DAFB?logoColor=white">
-      <img src="https://img.shields.io/badge/Python-3776AB"> 
-      <img src="https://img.shields.io/badge/BigQuery-blue"><br>
+      <img src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=white">
+      <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white"> 
+      <img src="https://img.shields.io/badge/BigQuery-4285F4?style=flat&logo=googlecloud&logoColor=white"><br>
       🔗 <a href="https://github.com/ed-kyu">Github</a> |
       <a href="https://www.linkedin.com/in/seungkyu-kim-9088a21b1/">LinkedIn</a>
     </td>
