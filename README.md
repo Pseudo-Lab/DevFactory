@@ -6,6 +6,7 @@
 
 <div align="center">
 <a href="https://pseudo-lab.com"><img src="https://img.shields.io/badge/PseudoLab-S10-3776AB" alt="PseudoLab"/></a>
+<a href="https://pseudo-lab.com"><img src="https://img.shields.io/badge/PseudoLab-S11-3776AB" alt="PseudoLab"/></a>
 <a href="https://discord.gg/EPurkHVtp2"><img src="https://img.shields.io/badge/Discord-BF40BF" alt="Discord Community"/></a>
 <a href="https://github.com/Pseudo-Lab/DevFactory/stargazers"><img src="https://img.shields.io/github/stars/Pseudo-Lab/DevFactory" alt="Stars Badge"/></a>
 <a href="https://github.com/Pseudo-Lab/DevFactory/network/members"><img src="https://img.shields.io/github/forks/Pseudo-Lab/DevFactory" alt="Forks Badge"/></a>
@@ -29,98 +30,111 @@
   - **E-mail**: soohyun.dev@gmail.com — Builder: 김수현
 </details>
 
-## 🌟 프로젝트  
-DevFactory에서는 아래와 같은 활동을 통해 가짜연구소만의 개발 생태계를 만들어가는 중입니다 🤗
+## 🌟 프로젝트
+DevFactory의 주요 활동 내역입니다 🤗
+*   **🐳 기술 튜토리얼 (Tutorials)**
+    *   Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 운영합니다.
+    *   [🔗 튜토리얼 보기](https://pseudo-lab.github.io/DevFactory/intro.html)
 
-<table>
-  <tr>
-    <th align="center">🐳 Tutorial</th>
-    <th align="center">🎮 네트워킹 이벤트 (BINGO)</th>
-    <th align="center">📦 PseudoLab TOOLBOX</th>
-  </tr>
-  <tr>
-    <td align="center" width="33%">
-      다양한 기술 튜토리얼을 기획·운영합니다.<br>
-      Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 통해 함께 배우고 성장합니다.
-    </td>
-    <td align="center" width="33%">
-      누구나 자유롭게 사용할 수 있도록 오픈소스로 공개한 네트워킹 빙고 웹 애플리케이션입니다.<br>
-      키워드 기반의 빙고 게임을 통해 가벼운 대화를 유도하고 네트워킹을 돕습니다.
-    </td>
-    <td align="center" width="33%">
-      가짜연구소 참여·운영을 위한 <strong>지원 플랫폼</strong>입니다.<br>
-      스터디 신청, 수료증 발급 등을 처리할 수 있는 웹 서비스입니다.<br>
-      <em>(개발 중)</em>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <a href="https://pseudo-lab.github.io/DevFactory/intro.html">
-        <img src="docs/imgs/docker-git-tutorial.png" height="160"/><br>
-        <sub>튜토리얼 보기</sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/Pseudo-Lab/event-bingo">
-        <img src="docs/imgs/bingo.png" height="160"/><br>
-        <sub>GitHub 저장소 열기</sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://www.pseudolab-devfactory.com/">
-        <img src="docs/imgs/Toolbox.png" height="160"/><br>
-        <sub>웹사이트 열기</sub>
-      </a>
-    </td>
-  </tr>
-</table>
+*   **🎮 네트워킹 프로그램 (BINGO)**
+    *   키워드 기반의 빙고 게임을 통해 자연스러운 대화를 유도하는 웹 애플리케이션입니다.
+    *   [🔗 웹사이트 확인](https://bingo.pseudolab-devfactory.com/)
 
+*   **🎮 네트워킹 프로그램 (친해지길바라)**
+    *   간단한 퀴즈를 통해 서로를 알아가는 웹 애플리케이션입니다.
+    *   [🔗 웹사이트 확인](https://getcloser.pseudolab-devfactory.com/)
+
+*   **📜 수료증 발급 시스템**
+    *   가짜연구소의 성장을 기록하는 서비스로, 활동 수료증을 발급하고 관리합니다.
+    *   [🔗 웹사이트 확인](https://cert.pseudo-lab.com/)
+*   **🤖 JobPT**
+    *   AI 기반 개인화 취업 지원 솔루션입니다. 이력서 분석부터 면접 피드백까지 개발자의 커리어 성장을 돕는 도구입니다.
+    *   [🔗 서비스 바로가기](http://jobpt.pseudolab-devfactory.com/)
 
 ### 🔎 기수별 활동
-
-- [DevFactory 10기 활동 페이지](docs/10th_plan.md)
+*   [DevFactory 10기 활동 페이지](docs/10th_plan.md)
 
 ## 🧑 팀원 소개
 
-<table>
+<table align="center">
   <tr>
-    <td align="center" width="300px">
-      <img src="docs/imgs/members/soohyun.png" width="100%"><br><br>
+    <td align="center" width="200" valign="top">
       <b>김수현</b><br>
-      <b>PM / Infra</b><br>
-      <b>주요경력</b>: HDC 랩스, AI Engineer<br>
-      <img src="https://img.shields.io/badge/Python-3776AB"> 
-      <img src="https://img.shields.io/badge/PyTorch-EE4C2C"> 
-      <img src="https://img.shields.io/badge/Linux-FCC624?&logoColor=black"/>
-      <img src="https://img.shields.io/badge/-CI%2FCD-00A86B">
-      <img src="https://img.shields.io/badge/kubernetes-326CE5"><br>
-      🔗 <a href="https://github.com/soohyunme">Github</a> | 
-      <a href="https://velog.io/@kimsoohyun/posts">Blog</a> | 
-      <a href="https://www.linkedin.com/in/soohyun-dev">LinkedIn</a> | 
-      <a href="https://search.shopping.naver.com/book/catalog/49530069623?query=%EB%94%B0%EB%9D%BC%ED%95%98%EB%A9%B0%20%EB%B0%B0%EC%9A%B0%EB%8A%94%20mlops%20dev&NaPm=ct%3Dmar57pjk%7Cci%3D07926149f717a4c875317607826c173195ccd48a%7Ctr%3Dboksl%7Csn%3D95694%7Chk%3D6e7ef43a91e627efa7a5800b657df37b8ce0db4d">Book</a>
+      <img src="docs/imgs/members/soohyun.png" height="180px"><br>
+      <img src="https://img.shields.io/badge/-Builder-3776AB">
+      <img src="https://img.shields.io/badge/-TPM-94A3B8">
+      <img src="https://img.shields.io/badge/-INFRA-94A3B8"><br>
+      <img src="https://img.shields.io/badge/-10th-DAA520">
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/soohyunme"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/soohyun-dev"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
     </td>
-    <td align="center" width="300px">
-      <img src="docs/imgs/members/yesin.jpg" width="100%"><br><br>
+    <td align="center" width="200" valign="top">
       <b>김예신</b><br>
-      <b>Backend / DB</b><br>
-      <b>주요경력</b>: 에이아이톡, NLP Engineer<br>
-      <img src="https://img.shields.io/badge/Python-3776AB"> 
-      <img src="https://img.shields.io/badge/LangChain-informational?style=flat&logoColor=white&color=2bbc8a">       
-      <img src="https://img.shields.io/badge/Django-092E20"><br>
-      🔗 <a href="https://github.com/yesinkim">Github</a> |
-      <a href="https://velog.io/@bailando/posts">Blog</a> | 
-      <a href="https://www.linkedin.com/in/bailando">LinkedIn</a>
+      <img src="docs/imgs/members/yesin.jpg" height="180px"><br>
+      <img src="https://img.shields.io/badge/-Builder-3776AB">
+      <img src="https://img.shields.io/badge/-BE-0891B2"><br>
+      <img src="https://img.shields.io/badge/-10th-DAA520">
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/yesinkim"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/bailando/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
     </td>
-    <td align="center" width="300px">
-      <img src="docs/imgs/members/seungkyu.jpg" width="100%"><br><br>
+    <td align="center" width="200" valign="top">
       <b>김승규</b><br>
-      <b>Frontend</b><br>
-      <b>주요경력</b>: 이마고웍스, Data Engineer<br>
-      <img src="https://img.shields.io/badge/React-61DAFB?logoColor=white">
-      <img src="https://img.shields.io/badge/Python-3776AB"> 
-      <img src="https://img.shields.io/badge/BigQuery-blue"><br>
-      🔗 <a href="https://github.com/ed-kyu">Github</a> |
-      <a href="https://www.linkedin.com/in/seungkyu-kim-9088a21b1/">LinkedIn</a>
+      <img src="docs/imgs/members/seungkyu.jpg" height="180px"><br>
+      <img src="https://img.shields.io/badge/-Builder-3776AB">
+      <img src="https://img.shields.io/badge/-FE-60A5FA"><br>
+      <img src="https://img.shields.io/badge/-10th-DAA520">
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/ed-kyu"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/seungkyu-kim-9088a21b1/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
+    </td>
+    <td align="center" width="200" valign="top">
+      <b>황윤희</b><br>
+      <img src="https://github.com/yunhee1.png" height="180px"><br>
+      <img src="https://img.shields.io/badge/-Builder-3776AB">
+      <img src="https://img.shields.io/badge/-PO-818CF8"><br>
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/yunhee1"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/uni-po/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="200" valign="top">
+      <b>최유진</b><br>
+      <img src="https://github.com/yujin37.png" height="180px"><br>
+      <img src="https://img.shields.io/badge/-Runner-10B981">
+      <img src="https://img.shields.io/badge/-PO-818CF8"><br>
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/yujin37"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/yujin37/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
+    </td>
+    <td align="center" width="200" valign="top">
+      <b>석종일</b><br>
+      <img src="https://github.com/daclouds.png" height="180px"><br>
+      <img src="https://img.shields.io/badge/-Runner-10B981">
+      <img src="https://img.shields.io/badge/-FE-60A5FA"><br>
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/daclouds"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/daclouds/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
+    </td>
+    <td align="center" width="200" valign="top">
+      <b>정현준</b><br>
+      <img src="https://github.com/hu6r1s.png" height="180px"><br>
+      <img src="https://img.shields.io/badge/-Runner-10B981">
+      <img src="https://img.shields.io/badge/-BE-0891B2"><br>
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/hu6r1s"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/hu6r1s/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
+    </td>
+    <td align="center" width="200" valign="top">
+      <b>한나연</b><br>
+      <img src="https://github.com/HanNayeoniee.png" height="180px"><br>
+      <img src="https://img.shields.io/badge/-Runner-10B981">
+      <img src="https://img.shields.io/badge/-BE-0891B2"><br>
+      <img src="https://img.shields.io/badge/-11th-C67117"><br>
+      <a href="https://github.com/HanNayeoniee"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="20" height="20"></a>
+      <a href="https://www.linkedin.com/in/nayeon-han/"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" width="20" height="20"></a>
     </td>
   </tr>
 </table>
