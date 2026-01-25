@@ -1,0 +1,43 @@
+name: 🚀 DevFactory Homepage Deploy
+run-name: 🚀 Deploying to Production by @${{ github.actor }}
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'platform/**'
+      - '.github/workflows/devfactory-homepage.yml'
+  workflow_dispatch:
+
+# 같은 브랜치 동시 실행 시 이전 잡 취소(경쟁 배포 방지)
+concurrency:
+  group: DevFactory-homepage-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-prod:
+    if: github.ref_name == 'main'
+    name: 🚀 Deploy DF-platform (Production)
+    runs-on: oracle
+    environment: platform
+    defaults:
+      run:
+        working-directory: ./platform
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write .env (prod)
+        run: |
+          cat > .env <<'EOF'
+          APP_HOST=${{ vars.APP_HOST }}
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          EOF
+
+      - name: Build & up (prod)
+        run: |
+          set -euxo pipefail
+          docker compose -p df-platform-main config -q
+          docker compose -p df-platform-main down --remove-orphans
+          docker compose -p df-platform-main up -d --build --remove-orphans
+          docker image prune -f --filter "label=org.pseudolab.project=devfactory-platform"

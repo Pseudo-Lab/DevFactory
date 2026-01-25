@@ -33,7 +33,7 @@
 ## 🌟 프로젝트
 DevFactory의 주요 활동 내역입니다 🤗
 *   **🐳 기술 튜토리얼 (Tutorials)**
-    *   Docker, Git, LLM 등 실습 중심의 콘텐츠와 오프라인 워크숍을 운영합니다.
+    *   Docker, Git, LLM 등 실습 중심의 온라인 콘텐츠와 오프라인 워크숍을 운영합니다.
     *   [🔗 튜토리얼 보기](https://pseudo-lab.github.io/DevFactory/intro.html)
 
 *   **🎮 네트워킹 프로그램 (BINGO)**
@@ -60,7 +60,7 @@ DevFactory의 주요 활동 내역입니다 🤗
   <tr>
     <td align="center" width="200" valign="top">
       <b>김수현</b><br>
-      <img src="docs/imgs/members/soohyun.png" height="180px"><br>
+      <img src="platform/frontend/public/members/soohyun.png" height="180px"><br>
       <img src="https://img.shields.io/badge/-Builder-3776AB">
       <img src="https://img.shields.io/badge/-TPM-94A3B8">
       <img src="https://img.shields.io/badge/-INFRA-94A3B8"><br>
@@ -71,7 +71,7 @@ DevFactory의 주요 활동 내역입니다 🤗
     </td>
     <td align="center" width="200" valign="top">
       <b>김예신</b><br>
-      <img src="docs/imgs/members/yesin.jpg" height="180px"><br>
+      <img src="platform/frontend/public/members/yesin.jpg" height="180px"><br>
       <img src="https://img.shields.io/badge/-Builder-3776AB">
       <img src="https://img.shields.io/badge/-BE-0891B2"><br>
       <img src="https://img.shields.io/badge/-10th-DAA520">
@@ -81,7 +81,7 @@ DevFactory의 주요 활동 내역입니다 🤗
     </td>
     <td align="center" width="200" valign="top">
       <b>김승규</b><br>
-      <img src="docs/imgs/members/seungkyu.jpg" height="180px"><br>
+      <img src="platform/frontend/public/members/seungkyu.jpg" height="180px"><br>
       <img src="https://img.shields.io/badge/-Builder-3776AB">
       <img src="https://img.shields.io/badge/-FE-60A5FA"><br>
       <img src="https://img.shields.io/badge/-10th-DAA520">
