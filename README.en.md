@@ -107,7 +107,7 @@ Highlight activities of DevFactory 🤗
   <tr>
     <td align="center" width="200" valign="top">
       <b>Yujin Choi</b><br>
-      <img src="https://github.com/yujin37.png" height="180px"><br>
+      <img src="platform/frontend/public/member/yujin.jpg" height="180px"><br>
       <img src="https://img.shields.io/badge/-Runner-10B981">
       <img src="https://img.shields.io/badge/-PO-818CF8"><br>
       <img src="https://img.shields.io/badge/-11th-C67117"><br>
