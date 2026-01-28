@@ -19,6 +19,7 @@
             <nav class="header-nav">
                 <a href="#intro" class="nav-link">Vision</a>
                 <a href="#projects" class="nav-link">Projects</a>
+                <a href="#activities" class="nav-link">Activities</a>
                 <a href="#team" class="nav-link">Team</a>
             </nav>
             <button class="menu-toggle" id="menu-toggle" aria-label="Open Menu">
@@ -35,6 +36,7 @@
         <nav class="mobile-nav-links">
             <a href="#intro" class="mobile-nav-link">Vision</a>
             <a href="#projects" class="mobile-nav-link">Projects</a>
+            <a href="#activities" class="mobile-nav-link">Activities</a>
             <a href="#team" class="mobile-nav-link">Team</a>
         </nav>
     </div>
@@ -45,10 +47,21 @@
     <div id="app">
         <!-- Section 1: DevFactory Vision/Intro -->
         <section id="intro" class="full-section">
+            <!-- Floating Discord Button -->
+            <a href="https://discord.gg/EPurkHVtp2" target="_blank" class="btn-floating-discord">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    style="margin-right: 8px;">
+                    <path
+                        d="M20.317 4.3698C18.798 3.6698 17.18 3.1498 15.5 3.0198C15.41 3.1698 15.22 3.5198 15.08 3.8498C13.29 3.5798 11.51 3.5798 9.73002 3.8498C9.59002 3.5198 9.40002 3.1698 9.31002 3.0198C7.62002 3.1498 6.00002 3.6698 4.47002 4.3698C1.39002 8.9598 2.23002 13.4498 2.65002 17.8098C4.68002 19.3098 6.63002 20.2198 8.52002 20.8098C9.00002 20.1498 9.43002 19.4398 9.79002 18.6798C9.07002 18.4098 8.38002 18.0698 7.73002 17.6698C7.90002 17.5398 8.07002 17.4098 8.23002 17.2698C12.11 19.0498 16.32 19.0498 20.15 17.2698C20.31 17.4098 20.48 17.5398 20.65 17.6698C20.0 18.0698 19.31 18.4098 18.59 18.6798C18.96 19.4398 19.39 20.1498 19.87 20.8098C21.76 20.2198 23.71 19.3098 25.74 17.8098C26.25 12.8398 25.04 8.4298 22.317 4.3698H20.317ZM8.52002 14.8898C7.36002 14.8898 6.40002 13.8198 6.40002 12.5098C6.40002 11.1998 7.34002 10.1298 8.52002 10.1298C9.71002 10.1298 10.66 11.1998 10.64 12.5098C10.64 13.8198 9.71002 14.8898 8.52002 14.8898ZM15.49 14.8898C14.33 14.8898 13.37 13.8198 13.37 12.5098C13.37 11.1998 14.31 10.1298 15.49 10.1298C16.68 10.1298 17.64 11.1998 17.64 12.5098C17.64 13.8198 16.68 14.8898 15.49 14.8898Z"
+                        fill="currentColor" />
+                </svg>
+                가짜연구소 커뮤니티
+            </a>
+
             <div class="intro-content">
-                <h1 class="intro-title">Bridging AI Research<br>through Engineering</h1>
+                <h1 class="intro-title">Bridging AI Research <br>through Engineering</h1>
                 <p class="intro-desc">
-                    가짜연구소의 다양한 AI 연구를 우리가 가진 개발 역량을 바탕으로<br>
+                    가짜연구소의 다양한 AI 연구를 우리가 가진 개발 역량을 바탕으로 <br>
                     세상과 연결하는 역할을 수행합니다.
                 </p>
                 <div class="intro-cta">
@@ -78,30 +91,155 @@
                 </div>
                 <div class="project-card">
                     <div class="project-icon">🎮</div>
-                    <h3 class="project-name">BINGO</h3>
-                    <p class="project-desc">키워드 기반의 빙고 게임을 통한 네트워킹 웹 애플리케이션</p>
-                    <a href="https://bingo.pseudolab-devfactory.com/" target="_blank" class="project-link">웹사이트 확인 →</a>
+                    <h3 class="project-name">BINGO (Platform)</h3>
+                    <p class="project-desc">행사 주최자가 직접 이벤트를 개설하고 운영할 수 있는 범용 네트워킹 플랫폼 (개발 중)</p>
+                    <a href="https://bingo.pseudolab-devfactory.com/" target="_blank" class="project-link">이전 버전 데모
+                        →</a>
                 </div>
                 <div class="project-card">
                     <div class="project-icon">🎮</div>
                     <h3 class="project-name">친해지길바라</h3>
-                    <p class="project-desc">간단한 퀴즈를 통해 서로를 알아가는 웹 애플리케이션</p>
-                    <a href="https://getcloser.pseudolab-devfactory.com/" target="_blank" class="project-link">웹사이트 확인
+                    <p class="project-desc">참여자 간의 아이스브레이킹을 돕는 퀴즈 기반 네트워킹 프로그램</p>
+                    <a href="https://getcloser.pseudolab-devfactory.com/" target="_blank" class="project-link">서비스 바로가기
                         →</a>
                 </div>
                 <div class="project-card">
                     <div class="project-icon">📜</div>
                     <h3 class="project-name">수료증 발급 시스템</h3>
-                    <p class="project-desc">가짜연구소의 성장을 기록하는 활동 수료증 관리 서비스</p>
-                    <a href="https://cert.pseudo-lab.com/" target="_blank" class="project-link">웹사이트 확인 →</a>
+                    <p class="project-desc">가짜연구소의 모든 교육 및 활동 이력을 증명하는 핵심 인프라 서비스</p>
+                    <a href="https://cert.pseudo-lab.com/" target="_blank" class="project-link">서비스 바로가기 →</a>
                 </div>
                 <div class="project-card">
                     <div class="project-icon">🤖</div>
-                    <h3 class="project-name">JobPT</h3>
-                    <p class="project-desc">AI 기반 개인화 취업 지원 솔루션 - 이력서 분석부터 면접 피드백까지</p>
+                    <h3 class="project-name">JobPT (Collaboration)</h3>
+                    <p class="project-desc">AI 기반 이력서 분석 및 피드백 솔루션</p>
                     <a href="http://jobpt.pseudolab-devfactory.com/" target="_blank" class="project-link">서비스 바로가기 →</a>
                 </div>
             </div>
+            <div class="scroll-indicator">
+                <div class="scroll-arrow">↓</div>
+                <span>Activities</span>
+            </div>
+        </section>
+
+        <!-- Section 2.5: Activities & Journey -->
+        <section id="activities" class="full-section">
+            <div class="section-header">
+                <h2 class="section-title">Activities</h2>
+                <p class="section-subtitle">DevFactory의 다양한 활동 모습입니다</p>
+            </div>
+
+            <div class="activities-grid">
+                <!-- Item 1 -->
+                <div class="activity-card">
+                    <div class="activity-image-wrapper">
+                        <img src="/Activities/networking_program_1.webp" alt="Networking Program Operation"
+                            class="activity-img">
+                        <div class="activity-overlay">
+                            <span class="activity-date">2023 ~ 2024</span>
+                            <h3 class="activity-label">Networking Booth</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="activity-card">
+                    <div class="activity-image-wrapper">
+                        <img src="/Activities/networking_program_2.webp" alt="Networking Program Operation 2"
+                            class="activity-img">
+                        <div class="activity-overlay">
+                            <span class="activity-date">2023 ~ 2024</span>
+                            <h3 class="activity-label">Networking Program(Bingo)</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="activity-card">
+                    <div class="activity-image-wrapper">
+                        <img src="/Activities/devfactory_booth.webp" alt="DevFactory Booth" class="activity-img">
+                        <div class="activity-overlay">
+                            <span class="activity-date">2025 / 05</span>
+                            <h3 class="activity-label">DevFactory Booth</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="activity-card">
+                    <div class="activity-image-wrapper">
+                        <img src="/Activities/symposium_introduce.webp" alt="Symposium Presentation"
+                            class="activity-img">
+                        <div class="activity-overlay">
+                            <span class="activity-date">2025 / 07</span>
+                            <h3 class="activity-label">Moderated Networking Session</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="activity-card">
+                    <div class="activity-image-wrapper">
+                        <img src="/Activities/symposium_bingo.webp" alt="Symposium Networking" class="activity-img">
+                        <div class="activity-overlay">
+                            <span class="activity-date">2025 / 07</span>
+                            <h3 class="activity-label">Moderated Networking Session(Bingo)</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="activity-card">
+                    <div class="activity-image-wrapper">
+                        <img src="/Activities/docker_tutorial.webp" alt="Docker Tutorial" class="activity-img">
+                        <div class="activity-overlay">
+                            <span class="activity-date">2024</span>
+                            <h3 class="activity-label">Offline Workshop</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="journey-teaser">
+                <div class="journey-header">
+                    <h3 class="journey-title">Our Journey</h3>
+                    <p class="journey-desc">우리가 걸어온 길의 주요 마일스톤입니다</p>
+                </div>
+                <div class="milestones-teaser">
+                    <div class="milestone-item">
+                        <div class="milestone-dot"></div>
+                        <div class="milestone-info">
+                            <div class="milestone-year">2023 / 05</div>
+                            <div class="milestone-text">Networking Session (Start)</div>
+                        </div>
+                    </div>
+                    <div class="milestone-item">
+                        <div class="milestone-dot"></div>
+                        <div class="milestone-info">
+                            <div class="milestone-year">2024 / 01</div>
+                            <div class="milestone-text">DevSquad (Roots)</div>
+                        </div>
+                    </div>
+                    <div class="milestone-item">
+                        <div class="milestone-dot"></div>
+                        <div class="milestone-info">
+                            <div class="milestone-year">2025 / 03</div>
+                            <div class="milestone-text">Evolution to DevFactory</div>
+                        </div>
+                    </div>
+                    <div class="milestone-item">
+                        <div class="milestone-dot"></div>
+                        <div class="milestone-info">
+                            <div class="milestone-year">Present</div>
+                            <div class="milestone-text">Preparing for Next Step</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="journey-cta">
+                    <a href="/history/" class="btn-secondary">전체 히스토리 보기 →</a>
+                </div>
+            </div>
+
             <div class="scroll-indicator">
                 <div class="scroll-arrow">↓</div>
                 <span>Team Members</span>
