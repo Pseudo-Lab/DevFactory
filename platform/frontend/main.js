@@ -263,6 +263,18 @@ updateDisplay(0);
 setInterval(updateTime, 1000);
 updateTime();
 
+// Section Reveal Animation (Intersection Observer)
+const sections = document.querySelectorAll('.full-section');
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.15 });
+
+sections.forEach(section => revealObserver.observe(section));
+
 // Visitor Tracking
 async function logVisit() {
     try {
