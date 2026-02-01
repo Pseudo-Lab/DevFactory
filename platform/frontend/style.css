@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap');
 
+html {
+    scroll-behavior: smooth;
+}
+
 :root {
     --bg-dark: #050b15;
     --bg-card: rgba(10, 20, 35, 0.8);
@@ -230,17 +234,43 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    padding: 2rem;
+    padding: 6rem 2rem 4rem 2rem;
     position: relative;
     overflow: hidden;
+    background-color: var(--bg-dark);
+    scroll-margin-top: 80px;
+    /* Account for fixed header height */
+    /* Section reveal animation */
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.full-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* First section visible by default */
+#intro {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Section 1: Intro/Vision */
 #intro {
     text-align: center;
 }
+
+/* Specific Override for Team Section */
+#team {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+    min-height: auto;
+}
+
 
 .intro-content {
     max-width: 850px;
@@ -278,7 +308,10 @@ body {
     font-size: 1.1rem;
     color: var(--text-dim);
     line-height: 1.8;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 5;
+    /* Ensure header stays above floating elements */
 }
 
 .intro-cta {
@@ -288,7 +321,9 @@ body {
 }
 
 .btn-primary,
-.btn-secondary {
+.btn-secondary,
+.btn-discord,
+.btn-star {
     padding: 1rem 2.5rem;
     font-size: 1rem;
     font-weight: 600;
@@ -319,6 +354,83 @@ body {
 .btn-secondary:hover {
     background: rgba(255, 0, 255, 0.1);
     transform: translateY(-3px);
+}
+
+.btn-star {
+    border: 2px solid #FFD700;
+    color: #FFD700;
+    background: transparent;
+}
+
+.btn-star:hover {
+    background: rgba(255, 215, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+.btn-discord {
+    background: #5865F2;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
+}
+
+.btn-discord:hover {
+    background: #4752c4;
+    transform: translateY(-3px);
+    box-shadow: 0 0 25px rgba(88, 101, 242, 0.6);
+}
+
+.btn-header-discord {
+    display: none;
+    /* Removed for now, or keep if needed later */
+}
+
+/* Floating Discord Button */
+.btn-floating-discord {
+    position: absolute;
+    top: 80px;
+    /* Below fixed header */
+    right: 5%;
+    background: rgba(88, 101, 242, 0.45);
+    /* Further Increased visibility */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(88, 101, 242, 0.9);
+    /* Stronger border */
+    color: #fff;
+    padding: 0.6rem 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: var(--transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 0 25px rgba(88, 101, 242, 0.6);
+    /* Stronger Resting glow */
+    z-index: 10;
+    white-space: nowrap;
+    letter-spacing: 0.02rem;
+}
+
+.btn-floating-discord svg {
+    fill: #5865F2;
+    /* Official Discord Blurple */
+    transition: transform 0.3s ease;
+}
+
+.btn-floating-discord:hover {
+    background: rgba(88, 101, 242, 0.15);
+    border-color: #5865F2;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.4);
+}
+
+.btn-floating-discord:hover svg {
+    transform: scale(1.1) rotate(-5deg);
+    filter: drop-shadow(0 0 5px rgba(88, 101, 242, 0.8));
 }
 
 /* Section 2: Projects */
@@ -406,7 +518,8 @@ body {
 }
 
 .btn-primary,
-.btn-secondary {
+.btn-secondary,
+.btn-discord {
     white-space: nowrap;
     /* Prevent team-member break */
 }
@@ -420,26 +533,27 @@ body {
 /* Giant Background Name */
 .member-bg-name-container {
     position: absolute;
-    bottom: 20%;
-    left: 0;
+    top: 50px;
+    left: 45px;
+    /* Pushed further for more staggered look */
     width: 100%;
+    z-index: -1;
     display: flex;
-    justify-content: center;
-    z-index: 1;
+    justify-content: flex-start;
     pointer-events: none;
+    opacity: 0.6;
 }
 
 .member-bg-name {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 10vw;
-    /* Reduced from 12vw */
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.02);
-    /* Made slightly subtler */
-    -webkit-text-stroke: 1px rgba(0, 242, 255, 0.08);
+    font-size: 3.5rem;
+    /* Consistently sized for professional look */
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.05);
+    -webkit-text-stroke: 1px rgba(0, 242, 255, 0.2);
     white-space: nowrap;
     text-transform: uppercase;
-    letter-spacing: 0.5rem;
+    letter-spacing: 0.1rem;
 }
 
 .team-navigation {
@@ -526,11 +640,11 @@ body {
 /* Info Panel (Left) */
 .hero-info {
     max-width: 380px;
-    /* Reduced from 450px */
     text-align: left;
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
+    position: relative;
 }
 
 .role-tag {
@@ -664,7 +778,9 @@ body {
     grid-template-columns: repeat(4, 1fr);
     /* Default 2 rows for 8 people */
     gap: 1.2rem;
-    margin-top: 3rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    /* Added space below grid */
     width: fit-content;
     max-width: 1000px;
     margin-left: auto;
@@ -771,6 +887,17 @@ body {
     animation: bounce 2s infinite;
 }
 
+#team .scroll-indicator {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    margin-top: 0;
+    animation: bounce 2s infinite;
+    z-index: 20;
+}
+
 .scroll-arrow {
     font-size: 2rem;
 }
@@ -784,6 +911,18 @@ body {
 
     50% {
         transform: translateX(-50%) translateY(-10px);
+    }
+}
+
+@keyframes bounce-rel {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
     }
 }
 
@@ -828,12 +967,10 @@ body {
 .site-footer {
     background: #000;
     padding: 3rem 3rem 1.5rem;
-    /* Reduced from 6rem 4rem 2rem */
     border-top: 1px solid rgba(0, 242, 255, 0.1);
     position: relative;
     z-index: 100;
-    margin-top: 8rem;
-    /* Add spacing between content and footer */
+    margin-top: 2rem;
 }
 
 .footer-container {
@@ -1102,6 +1239,27 @@ body {
 
     .member-name {
         font-size: 2rem;
+        position: relative;
+        z-index: 10;
+    }
+
+    .member-bg-name-container {
+        top: 25px;
+        /* Vertical centering for mobile font size */
+        left: 15px;
+        /* Shifted slightly right as requested */
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        /* Center watermark on mobile */
+    }
+
+    .member-bg-name {
+        font-size: 2.2rem;
+        /* Significantly smaller for mobile */
+        letter-spacing: 0.05rem;
+        opacity: 0.8;
+        /* Slightly more visible at small size */
     }
 
     .stat-value {
@@ -1177,6 +1335,13 @@ body {
     .intro-title br {
         display: none;
         /* Hide line break on mobile for better flow */
+    }
+
+    .btn-floating-discord {
+        position: static;
+        margin-bottom: 2rem;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.8rem;
     }
 
     .intro-desc {
@@ -1269,5 +1434,368 @@ body {
 
     .nav-link {
         font-size: 0.75rem;
+    }
+}
+
+/* Activities Section */
+#activities {
+    padding-bottom: 4rem;
+    /* Reduced since it's the last section before footer */
+}
+
+.activities-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-width: 1200px;
+    width: 100%;
+    margin-bottom: 5rem;
+}
+
+.activity-card {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: var(--transition-smooth);
+}
+
+.activity-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--neon-shadow);
+}
+
+.activity-image-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.activity-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.activity-card:hover .activity-img {
+    transform: scale(1.1);
+}
+
+.activity-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1.5rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 10%, rgba(0, 0, 0, 0.7) 50%, transparent);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: var(--transition-smooth);
+}
+
+.activity-card:hover .activity-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.activity-date {
+    font-size: 0.8rem;
+    color: var(--accent-cyan);
+    font-family: 'Space Grotesk', sans-serif;
+    margin-bottom: 0.3rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.activity-label {
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 700;
+}
+
+/* Journey Teaser */
+.journey-teaser {
+    width: 100%;
+    max-width: 1000px;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    padding: 3rem;
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.journey-teaser::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
+}
+
+.journey-header {
+    display: none;
+    /* Replaced by global section-header on homepage */
+    margin-bottom: 2.5rem;
+}
+
+.journey-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.journey-desc {
+    color: var(--text-dim);
+}
+
+.milestones-teaser {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.milestones-teaser::after {
+    content: '';
+    position: absolute;
+    top: 9px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 0;
+}
+
+.milestone-item {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.milestone-dot {
+    width: 20px;
+    height: 20px;
+    background: var(--bg-dark);
+    border: 3px solid var(--accent-cyan);
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    transition: var(--transition-smooth);
+}
+
+.milestone-item:hover .milestone-dot {
+    background: var(--accent-cyan);
+    box-shadow: 0 0 15px var(--accent-cyan);
+}
+
+.milestone-info {
+    text-align: center;
+}
+
+.milestone-year {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #fff;
+    margin-bottom: 0.2rem;
+}
+
+.milestone-text {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+}
+
+.journey-cta {
+    margin-top: 2rem;
+}
+
+/* History Page Styles */
+.history-container {
+    padding-top: 100px;
+    max-width: 800px;
+    margin: 0 auto;
+    padding-bottom: 5rem;
+}
+
+.history-intro {
+    text-align: center;
+    margin-bottom: 5rem;
+}
+
+.history-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 3.5rem;
+    background: linear-gradient(to right, #fff, var(--accent-dim));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+    border-left: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 4rem;
+    padding-left: 2rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2.6rem;
+    top: 0.5rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    background: var(--bg-dark);
+    border: 3px solid var(--accent-magenta);
+    border-radius: 50%;
+}
+
+.timeline-year {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2rem;
+    color: var(--accent-cyan);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.timeline-date {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent-magenta);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1rem;
+}
+
+.timeline-content {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+}
+
+.timeline-content h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.timeline-content p {
+    color: var(--text-dim);
+    line-height: 1.6;
+}
+
+.activities-history-section {
+    max-width: 1200px;
+    margin: 0 auto 5rem auto;
+    padding: 0 2rem;
+}
+
+.activities-history-section .section-title {
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .activities-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .milestones-teaser {
+        flex-direction: column;
+        gap: 2rem;
+        align-items: flex-start;
+        padding-left: 1rem;
+    }
+
+    .milestones-teaser::after {
+        top: 0;
+        bottom: 0;
+        left: 19px;
+        width: 2px;
+        height: auto;
+    }
+
+    .milestone-item {
+        flex-direction: row;
+        gap: 1.5rem;
+    }
+
+    .milestone-dot {
+        margin-bottom: 0;
+    }
+
+    .milestone-info {
+        text-align: left;
+    }
+
+    /* History Page Mobile Adjustments */
+    .history-container {
+        padding-top: 60px;
+        padding-bottom: 3rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+
+    .history-title {
+        font-size: 2.2rem;
+    }
+
+    .activities-history-section {
+        padding: 0 1.2rem !important;
+        margin-bottom: 3rem !important;
+    }
+
+    .activities-history-section .section-title {
+        font-size: 1.8rem !important;
+    }
+
+    .timeline {
+        padding-left: 1.5rem;
+    }
+
+    .timeline-item {
+        padding-left: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .timeline-item::before {
+        left: -2.1rem;
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .timeline-year {
+        font-size: 1.5rem;
+    }
+
+    .timeline-content {
+        padding: 1.5rem;
+    }
+
+    .timeline-content h3 {
+        font-size: 1.2rem;
+    }
+
+    #activities {
+        padding-bottom: 8rem;
     }
 }
