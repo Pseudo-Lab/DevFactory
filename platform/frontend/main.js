@@ -84,7 +84,7 @@ const teamMembers = [
         contribution: "Runner",
         gen: "11th",
         desc: "11기 러너로서 프로덕트 오너 역할을 수행하며 새로운 아이디어를 구체화합니다.",
-        image: "https://github.com/yujin37.png",
+        image: "/members/yujin.jpg",
         github: "https://github.com/yujin37",
         linkedin: "https://www.linkedin.com/in/yujin37/"
     },
