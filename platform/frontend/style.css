@@ -68,10 +68,6 @@ body {
     text-decoration: none;
 }
 
-.brand-logo.mobile-logo {
-    display: none;
-    /* Hidden on desktop */
-}
 
 .brand-logo {
     height: 40px;
@@ -277,17 +273,6 @@ body {
     /* Slightly wider for longer words */
 }
 
-.intro-badge {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--accent-cyan);
-    color: var(--accent-cyan);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2rem;
-    margin-bottom: 2rem;
-    background: rgba(0, 242, 255, 0.05);
-}
 
 .intro-title {
     font-family: 'Space Grotesk', sans-serif;
@@ -300,6 +285,7 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    margin-top: 2rem;
     margin-bottom: 2rem;
     text-shadow: 0 0 40px rgba(0, 242, 255, 0.3);
 }
@@ -380,11 +366,6 @@ body {
     box-shadow: 0 0 25px rgba(88, 101, 242, 0.6);
 }
 
-.btn-header-discord {
-    display: none;
-    /* Removed for now, or keep if needed later */
-}
-
 /* Floating Discord Button */
 .btn-floating-discord {
     position: absolute;
@@ -435,7 +416,7 @@ body {
 
 /* Section 2: Projects */
 #projects {
-    padding: 1rem 2rem 10rem 2rem;
+    padding: 4rem 2rem 10rem 2rem;
     /* Reduced top (from 3rem), increased bottom (from 8rem) */
 }
 
@@ -526,7 +507,7 @@ body {
 
 /* Section 3: Team Members - Centralized & Gathered */
 #team {
-    padding: 6rem 2rem;
+    padding: 2rem 3rem 7rem;
     /* Increased top padding from 4rem */
 }
 
@@ -681,6 +662,7 @@ body {
 .member-desc {
     font-size: 0.95rem;
     /* Reduced from 1.1rem */
+    margin: 0 1rem;
     color: var(--text-dim);
     line-height: 1.7;
 }
@@ -876,7 +858,7 @@ body {
 /* Scroll Indicator */
 .scroll-indicator {
     position: absolute;
-    bottom: 2rem;
+    bottom: 0.5rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -970,7 +952,6 @@ body {
     border-top: 1px solid rgba(0, 242, 255, 0.1);
     position: relative;
     z-index: 100;
-    margin-top: 2rem;
 }
 
 .footer-container {
@@ -1141,12 +1122,42 @@ body {
     color: #fff;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .brand-header {
         padding: 0.8rem 1.5rem;
         /* Reduced from 4rem */
     }
 
+    .brand-logo.standard-logo {
+        display: block;
+        /* Show full logo again */
+        height: 22px;
+        /* Adjusted size to fit menu button */
+    }
+
+    .team-label {
+        display: block !important;
+        /* Restore 'DevFactory' text */
+        font-size: 1.1rem;
+        /* Smaller for mobile header */
+    }
+
+    .header-nav {
+        display: none;
+        /* Hide direct links on mobile */
+    }
+
+    .menu-toggle {
+        display: flex;
+        /* Show menu button */
+    }
+
+    .nav-link {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
     .full-section {
         padding: 3rem 1.2rem;
         /* Reduced horizontal padding for better flow */
@@ -1169,12 +1180,12 @@ body {
     #team {
         min-height: 100vh;
         height: auto;
-        padding: 6rem 1.2rem 4rem 1.2rem;
+        padding: 4rem 1.2rem 6rem 1.2rem;
         display: flex;
         flex-direction: column;
         justify-content: center;
         /* Better tall screen centering */
-        gap: 2rem;
+        gap: 1rem;
     }
 
     .team-navigation {
@@ -1244,9 +1255,9 @@ body {
     }
 
     .member-bg-name-container {
-        top: 25px;
+        top: 15px;
         /* Vertical centering for mobile font size */
-        left: 15px;
+        left: 0px;
         /* Shifted slightly right as requested */
         width: 100%;
         display: flex;
@@ -1329,6 +1340,7 @@ body {
 
     .intro-title {
         font-size: 2.4rem;
+        margin-top: 0;
         margin-bottom: 1.5rem;
     }
 
@@ -1340,6 +1352,8 @@ body {
     .btn-floating-discord {
         position: static;
         margin-bottom: 2rem;
+        margin-top: 2rem;
+        /* Push down to clear fixed header */
         padding: 0.6rem 1.2rem;
         font-size: 0.8rem;
     }
@@ -1403,42 +1417,11 @@ body {
     .logo-container {
         gap: 0.8rem;
     }
-
-    .brand-logo.standard-logo {
-        display: block;
-        /* Show full logo again */
-        height: 22px;
-        /* Adjusted size to fit menu button */
-    }
-
-    .brand-logo.mobile-logo {
-        display: none;
-    }
-
-    .team-label {
-        display: block !important;
-        /* Restore 'DevFactory' text */
-        font-size: 1.1rem;
-        /* Smaller for mobile header */
-    }
-
-    .header-nav {
-        display: none;
-        /* Hide direct links on mobile */
-    }
-
-    .menu-toggle {
-        display: flex;
-        /* Show menu button */
-    }
-
-    .nav-link {
-        font-size: 0.75rem;
-    }
 }
 
 /* Activities Section */
 #activities {
+    padding-top: 2rem;
     padding-bottom: 4rem;
     /* Reduced since it's the last section before footer */
 }
@@ -1449,7 +1432,6 @@ body {
     gap: 1.5rem;
     max-width: 1200px;
     width: 100%;
-    margin-bottom: 5rem;
 }
 
 .activity-card {
@@ -1556,6 +1538,11 @@ body {
 
 .journey-desc {
     color: var(--text-dim);
+}
+
+/* History(Journey) 섹션의 하단 여백을 늘려 스크롤 인디케이터와 겹침 방지 */
+#journey-teaser-section {
+    padding-bottom: 6rem;
 }
 
 .milestones-teaser {
