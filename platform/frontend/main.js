@@ -31,7 +31,7 @@ const teamMembers = [
         status: "Active",
         contribution: "Builder",
         gen: "10th, 11th",
-        desc: "DevFactory의 빌더로서 클라우드 인프라와 프로젝트 관리를 총괄합니다. 가짜연구소의 개발 문화를 설계하고 운영합니다.",
+        desc: "가짜연구소의 개발 문화를 설계하고 운영합니다. DevFactory의 빌더로서 클라우드 인프라와 프로젝트 관리를 총괄합니다.",
         image: "/members/soohyun.png",
         github: "https://github.com/soohyunme",
         linkedin: "https://www.linkedin.com/in/soohyun-dev"
