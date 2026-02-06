@@ -6,7 +6,7 @@ import os
 import aiohttp
 from typing import Optional, Dict, Any, List
 
-from ..constants.error_codes import NotEligibleError, ResponseStatus
+from ..constants.error_codes import NotEligibleError, ResponseStatus, ErrorMessages
 from ..models.certificate import CertificateStatus
 from ..models.project import Project, SeasonGroup, ProjectsBySeasonResponse
 
@@ -156,14 +156,17 @@ class NotionClient:
                                 user_role = "BUILDER"
                             elif user_name in runner_names:
                                 user_role = "RUNNER"
+                            # '수료자' 필드에 이름이 포함되어 있는지 확인
+                            elif any(user_name in c for c in completer_names):
+                                user_role = "RUNNER"
                             
                             # 2. 사용자가 이탈자에 있는지 확인
                             if user_name in dropout_names:
-                                raise NotEligibleError(f"수료 명단에 존재하지 않습니다. 🥲\n디스코드를 통해 질문게시판에 문의해주세요.")
+                                raise NotEligibleError(ErrorMessages.USER_DROPPED_OUT)
                             
                             # 3. 사용자가 참여자 목록에 있는지 확인
                             if user_role is None:
-                                raise NotEligibleError(f"수료 명단에 존재하지 않습니다. 🥲\n디스코드를 통해 질문게시판에 문의해주세요.")
+                                raise NotEligibleError(ErrorMessages.NO_HISTORY.format(name=user_name))
                             
                             study_status = properties.get("단계", {}).get("select", {})
                             period_raw = project.get("properties", {}).get("기간", {}).get("date", {}) or {}
@@ -174,9 +177,7 @@ class NotionClient:
                                 )
 
                             if study_status.get("name") != "완료":
-                                raise NotEligibleError(
-                                    "수료증은 스터디가 완료된 이후 발급 가능합니다.\n디스코드를 통해 질문게시판에 문의해주세요."
-                                )
+                                raise NotEligibleError(ErrorMessages.STUDY_NOT_COMPLETED)
 
                             fallback_period = self.default_periods.get(str(season), {})
                             raw_start = period_raw.get("start")
@@ -273,7 +274,7 @@ class NotionClient:
                                     "course_name": course_name,
                                 },
                             )
-                            raise Exception("해당 프로젝트가 검색되지 않습니다. \n디스코드를 통해 질문게시판에 문의해주세요.")
+                            raise NotEligibleError(ErrorMessages.PROJECT_NOT_FOUND)
         except Exception as e:
             raise e
     
