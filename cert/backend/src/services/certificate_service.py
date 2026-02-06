@@ -589,6 +589,15 @@ class CertificateService:
                 )
             )
             
+        except NotEligibleError as e:
+            # 수료 대상 아님 (명단에 없거나 이탈자 등)
+            logger.warning(f"수료 대상 아님: {str(e)}")
+            if request_id:
+                await notion_client.update_certificate_status(
+                    page_id=request_id,
+                    status=CertificateStatus.NOT_ELIGIBLE
+                )
+            raise e
         except Exception as e:
             # 시스템 오류
             logger.exception("신규 수료증 발급 중 시스템 오류")

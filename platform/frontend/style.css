@@ -1422,8 +1422,7 @@ body {
 /* Activities Section */
 #activities {
     padding-top: 2rem;
-    padding-bottom: 4rem;
-    /* Reduced since it's the last section before footer */
+    padding-bottom: 6rem;
 }
 
 .activities-grid {
@@ -1783,6 +1782,6 @@ body {
     }
 
     #activities {
-        padding-bottom: 8rem;
+        padding-bottom: 6rem;
     }
 }
