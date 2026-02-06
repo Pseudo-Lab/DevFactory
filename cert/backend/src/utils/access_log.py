@@ -93,6 +93,26 @@ async def close_access_log(app: FastAPI) -> None:
         await pool.close()
 
 
+def _get_client_ip(request: Request) -> Optional[str]:
+    """Extracts the client IP address from request headers or client info."""
+    # Check X-Forwarded-For header (common for reverse proxies)
+    forwarded_for = request.headers.get("X-Forwarded-For")
+    if forwarded_for:
+        # X-Forwarded-For can be a comma-separated list; the first one is the original client
+        return forwarded_for.split(",")[0].strip()
+
+    # Check X-Real-IP header
+    real_ip = request.headers.get("X-Real-IP")
+    if real_ip:
+        return real_ip
+
+    # Fallback to request.client.host
+    if request.client:
+        return request.client.host
+
+    return None
+
+
 async def log_request(
     request: Request,
     response: Optional[Response],
@@ -108,7 +128,8 @@ async def log_request(
     if request.url.path in config.exclude_paths:
         return
 
-    ip_hash = _hash_ip(getattr(request.client, "host", None), config.ip_salt)
+    client_ip = _get_client_ip(request)
+    ip_hash = _hash_ip(client_ip, config.ip_salt)
     user_agent = request.headers.get("user-agent")
     referrer = request.headers.get("referer") or request.headers.get("referrer")
 
@@ -141,7 +162,8 @@ async def log_page_view(request: Request, page_path: str) -> None:
     if not config or not pool:
         return
 
-    ip_hash = _hash_ip(getattr(request.client, "host", None), config.ip_salt)
+    client_ip = _get_client_ip(request)
+    ip_hash = _hash_ip(client_ip, config.ip_salt)
     user_agent = request.headers.get("user-agent")
     referrer = request.headers.get("referer") or request.headers.get("referrer")
 
