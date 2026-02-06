@@ -53,6 +53,7 @@ DevFactory의 주요 활동 내역입니다 🤗
 
 ### 🔎 기수별 활동
 *   [DevFactory 10기 활동 페이지](docs/10th_plan.md)
+*   [DevFactory 11기 활동 페이지](docs/11th_plan.md)
 
 ## 🧑 팀원 소개
 

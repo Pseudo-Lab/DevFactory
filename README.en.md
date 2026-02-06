@@ -58,6 +58,7 @@ Highlight activities of DevFactory 🤗
 ### 🔎 Activities by Batch
 
 - [DevFactory 10th Gen Activity Page](docs/10th_plan.md)
+- [DevFactory 11th Gen Activity Page](docs/11th_plan.md)
 
 ## 🧑 Meet the Team
 
