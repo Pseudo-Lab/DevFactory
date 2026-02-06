@@ -176,24 +176,45 @@ def get_team_status(db: Session, team_id: int, user_id: int):
         "members_ready": [m.user_id for m in team.members if m.confirmed]
     }
 
-def dissolve_team_by_user(db: Session, user_id: int):
+def dissolve_team_by_user(db: Session, user_id: int, team_id: int):
   team_entry = (
-        db.query(Team)
-        .join(TeamMember)
+        db.query(TeamMember)
         .filter(
             TeamMember.user_id == user_id, 
-            Team.status == TeamStatus.ACTIVE
+            TeamMember.team_id  == team_id
         ).first()
     )
 
   if not team_entry:
-      raise HTTPException(status_code=400, detail="User is not in an active team")
+      raise HTTPException(status_code=404, detail="User is not in a team")
 
-  team_entry.status = TeamStatus.FAILED
+  db.delete(team_entry)
+
+  status = (
+        db.query(UserChallengeStatus)
+        .filter(UserChallengeStatus.user_id == user_id)
+        .first()
+  )
   
+  if status:
+        status.retry_count = 0
+        status.is_correct = False
+        status.is_redeemed = False
+        db.add(status)
+
   db.commit()
-  
-  return {"message": f"Team {team_entry.id} dissolved due to quiz failure.", "team_id": team_entry.id}
+
+  remaining = (
+        db.query(TeamMember)
+        .filter(TeamMember.team_id == team_id)
+        .count()
+  )
+
+  if remaining == 0:
+        team = db.query(Team).get(team_id)
+        team.status = TeamStatus.CANCELLED
+        db.commit()
+
 
 def get_team_info(db: Session, user_id: int):
   team_member = (
@@ -266,18 +287,20 @@ def get_team_member_challenge(
   record = (
       db.query(UserChallengeStatus)
       .join(ChallengeQuestion, ChallengeQuestion.id == UserChallengeStatus.challenge_id)
-      .filter(UserChallengeStatus.user_id == user_id)
-      .order_by(UserChallengeStatus.created_at.desc())
+      .filter(
+        UserChallengeStatus.user_id == requester_id,
+        ChallengeQuestion.user_id == user_id
+      )
+      .order_by(UserChallengeStatus.id.desc())
       .first()
   )
 
   if not record:
-      return {"status": "NO_CHALLENGE"}
+      raise HTTPException(status_code=404, detail="NO_CHALLENGE")
 
   return MemberChallengeResponse(
       user_id=user_id,
-      question=record.challenge.question,
-      user_answer=record.answer,
+      question=record.challenge.category,
       correct_answer=record.challenge.answer,
       is_correct=record.is_correct
   )

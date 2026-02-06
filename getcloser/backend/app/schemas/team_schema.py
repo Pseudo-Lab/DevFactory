@@ -30,6 +30,5 @@ class TeamInfoResponse(BaseModel):
 class MemberChallengeResponse(BaseModel):
     user_id: int
     question: str
-    user_answer: str
     correct_answer: str
     is_correct: bool

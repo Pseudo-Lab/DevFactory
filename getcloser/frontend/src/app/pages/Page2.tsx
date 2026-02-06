@@ -11,7 +11,7 @@ import { authenticatedFetch } from '../../lib/api';
 import { useFormStore } from '../../store/formStore';
 import { useNavigationStore } from '../../store/navigationStore';
 
-type View = 'loading' | 'create' | 'waiting';
+type View = 'create' | 'waiting';
 type TeamMember = {
   user_id: number;
   is_ready: boolean;
@@ -45,8 +45,8 @@ const WaitingView = ({ teamMembers, myId, teamId, setView }: { teamMembers: Team
           <div className="absolute h-1/3 w-1/3 rounded-full bg-primary"></div>
         </div>
         <div className="text-center mt-2">
-          <h1 className="text-[#111718] dark:text-white tracking-tight text-3xl font-bold leading-tight">팀원 기다리는 중...</h1>
-          <p className="text-zinc-600 dark:text-zinc-400 text-base font-normal leading-normal mt-2 px-4">모든 팀원이 준비되면 퀴즈가 시작됩니다.</p>
+          <h1 className="text-white tracking-tight text-3xl font-bold leading-tight">팀원 기다리는 중...</h1>
+          <p className="text-gray-400 dark:text-zinc-400 text-base font-normal leading-normal mt-2 px-4">모든 팀원이 준비되면 퀴즈가 시작됩니다.</p>
         </div>
         <div className="mt-2 space-y-3">
           {teamMembers.map(member => (
@@ -68,7 +68,7 @@ const WaitingView = ({ teamMembers, myId, teamId, setView }: { teamMembers: Team
           ))}
         </div>
         <div className="mt-4 text-center">
-          <button onClick={handleLeaveTeam} className="text-zinc-600 dark:text-zinc-400 text-sm font-medium leading-normal underline underline-offset-2">팀 나가기</button>
+          <button onClick={handleLeaveTeam} className="text-zinc-300 hover:text-white text-sm font-medium leading-normal underline underline-offset-2 transition-colors">팀 나가기</button>
         </div>
       </main>
     </div>
@@ -107,7 +107,7 @@ const CreateTeamView = ({
     <div className="container mx-auto p-4">
       <Modal
         title="미션 소개"
-        content={('1. 참가자들의 코드를 모으세요!\n   코드는 위에 개인별 다른 코드가 있습니다.\n2. 5명이 함께 문제 풀기에 도전하세요!\n   (팁! 문제는 팀원들과 관련된 문제가 나옵니다.)\n3. 성공 시 부스 방문해주세요.\n   성공 선물을 드립니다.')}
+        content={(`1. 팀을 모으세요! 팀원 코드는 이름 옆에 있는 숫자 입니다.<br/>2. ${TEAM_SIZE}명이 함께 문제 풀기에 도전하세요! (팁! 문제는 팀원들과 관련된 문제가 나옵니다.)<br/>3. 성공 시 부스 방문해주세요. 기념품을 드립니다.`)}
         onConfirm={handleConfirm}
         onDoNotShowAgain={handleDoNotShowAgain}
         isOpen={showModal}
@@ -132,11 +132,6 @@ const CreateTeamView = ({
         ))}
         <Button onClick={handleCreateTeam} className="w-full">문제 풀기</Button>
       </div>
-      <nav className="flex justify-between mt-8">
-        <Button onClick={() => setCurrentPage('page1')} className="rounded-full" variant={'outline'}>
-          &lt;
-        </Button>
-      </nav>
     </div>
   );
 };
@@ -145,7 +140,7 @@ export default function Page2() {
   const { id: myId, teamId, setTeamId, setMemberIds, progressStatus } = useFormStore();
   const { setCurrentPage } = useNavigationStore();
 
-  const [view, setView] = useState<View>('loading');
+  const [view, setView] = useState<View>('create');
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [inputs, setInputs] = useState<InputState[]>(() => Array(TEAM_SIZE).fill({ id: '', displayName: '' }));
 
@@ -224,9 +219,27 @@ export default function Page2() {
     const interval = setInterval(async () => {
       try {
         const response = await authenticatedFetch(`/api/v1/teams/${String(teamId)}/status`);
-        if (!response.ok) throw new Error('Failed to fetch team status');
+
+        if (!response.ok) {
+          if (response.status === 404 || response.status === 403) {
+            console.error('Team not found or user not authorized. Returning to create view.');
+            setView('create');
+            clearInterval(interval);
+            return;
+          }
+          throw new Error(`Failed to fetch team status: ${response.status}`);
+        }
+
         const memberStatuses: { team_id: number, status: string, members_ready: number[] } = await response.json();
         const readyMemberIds = new Set(memberStatuses.members_ready);
+
+        // Per user request, if our ID is not in the list from the server, return to create view.
+        if (myId && !readyMemberIds.has(Number(myId))) {
+          console.log('User ID not in members_ready list. Returning to create view.', myId, readyMemberIds);
+          setView('create');
+          clearInterval(interval);
+          return;
+        }
 
         setTeamMembers(prevTeamMembers =>
           prevTeamMembers.map(member => ({
@@ -236,11 +249,13 @@ export default function Page2() {
         );
       } catch (error) {
         console.error('Error polling team status:', error);
+        setView('create');
+        clearInterval(interval);
       }
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [view, teamId]);
+  }, [view, teamId, myId, setView]);
 
   useEffect(() => {
     if (view === 'waiting' && teamMembers.length > 0 && teamMembers.every(m => m.is_ready)) {
@@ -294,14 +309,6 @@ export default function Page2() {
       alert(`팀 생성에 실패했습니다: ${error}`);
     }
   };
-
-  if (view === 'loading') {
-    return (
-      <div className="container mx-auto p-4 flex justify-center items-center h-screen">
-        <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-primary"></div>
-      </div>
-    );
-  }
 
   if (view === 'waiting') {
     return <WaitingView teamMembers={teamMembers} myId={myId as number} teamId={teamId as number} setView={setView} />;

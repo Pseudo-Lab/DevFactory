@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevFactory | Pseudo-Lab</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="brand-header">
+        <div class="header-content">
+            <a href="/" class="logo-container">
+                <img src="/brand_logo.png" alt="Pseudo-Lab DevFactory" class="brand-logo standard-logo">
+                <span class="team-label">DevFactory</span>
+            </a>
+            <nav class="header-nav">
+                <a href="#intro" class="nav-link">Vision</a>
+                <a href="#projects" class="nav-link">Projects</a>
+                <a href="#team" class="nav-link">Team</a>
+                <a href="#journey-teaser-section" class="nav-link">History</a>
+                <a href="#activities" class="nav-link">Activities</a>
+            </nav>
+            <button class="menu-toggle" id="menu-toggle" aria-label="Open Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+        <button class="close-menu" id="close-menu">&times;</button>
+        <nav class="mobile-nav-links">
+            <a href="#intro" class="mobile-nav-link">Vision</a>
+            <a href="#projects" class="mobile-nav-link">Projects</a>
+            <a href="#team" class="mobile-nav-link">Team</a>
+            <a href="#journey-teaser-section" class="mobile-nav-link">History</a>
+            <a href="#activities" class="mobile-nav-link">Activities</a>
+        </nav>
+    </div>
+
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+
+    <div id="app">
+        <!-- Section 1: DevFactory Vision/Intro -->
+        <section id="intro" class="full-section">
+            <!-- Floating Discord Button -->
+            <a href="https://discord.gg/EPurkHVtp2" target="_blank" class="btn-floating-discord">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    style="margin-right: 8px;">
+                    <path
+                        d="M20.317 4.3698C18.798 3.6698 17.18 3.1498 15.5 3.0198C15.41 3.1698 15.22 3.5198 15.08 3.8498C13.29 3.5798 11.51 3.5798 9.73002 3.8498C9.59002 3.5198 9.40002 3.1698 9.31002 3.0198C7.62002 3.1498 6.00002 3.6698 4.47002 4.3698C1.39002 8.9598 2.23002 13.4498 2.65002 17.8098C4.68002 19.3098 6.63002 20.2198 8.52002 20.8098C9.00002 20.1498 9.43002 19.4398 9.79002 18.6798C9.07002 18.4098 8.38002 18.0698 7.73002 17.6698C7.90002 17.5398 8.07002 17.4098 8.23002 17.2698C12.11 19.0498 16.32 19.0498 20.15 17.2698C20.31 17.4098 20.48 17.5398 20.65 17.6698C20.0 18.0698 19.31 18.4098 18.59 18.6798C18.96 19.4398 19.39 20.1498 19.87 20.8098C21.76 20.2198 23.71 19.3098 25.74 17.8098C26.25 12.8398 25.04 8.4298 22.317 4.3698H20.317ZM8.52002 14.8898C7.36002 14.8898 6.40002 13.8198 6.40002 12.5098C6.40002 11.1998 7.34002 10.1298 8.52002 10.1298C9.71002 10.1298 10.66 11.1998 10.64 12.5098C10.64 13.8198 9.71002 14.8898 8.52002 14.8898ZM15.49 14.8898C14.33 14.8898 13.37 13.8198 13.37 12.5098C13.37 11.1998 14.31 10.1298 15.49 10.1298C16.68 10.1298 17.64 11.1998 17.64 12.5098C17.64 13.8198 16.68 14.8898 15.49 14.8898Z"
+                        fill="currentColor" />
+                </svg>
+                가짜연구소 커뮤니티
+            </a>
+
+            <div class="intro-content">
+                <h1 class="intro-title">Bridging AI Research <br>through Engineering</h1>
+                <p class="intro-desc">
+                    가짜연구소의 다양한 AI 연구를 우리가 가진 개발 역량을 바탕으로 세상과 연결하는 역할을 수행합니다.
+                </p>
+                <div class="intro-cta">
+                    <a href="#projects" class="btn-primary">프로젝트 보기</a>
+                    <a href="#team" class="btn-secondary">팀원 소개</a>
+                </div>
+                <div class="intro-cta" style="margin-top: 1.5rem;">
+                    <a href="https://github.com/Pseudo-Lab/DevFactory" target="_blank" class="btn-star">✨ GitHub Star로
+                        응원하기</a>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <div class="scroll-arrow">↓</div>
+                <span>Scroll Down</span>
+            </div>
+        </section>
+
+        <!-- Section 2: Projects Showcase -->
+        <section id="projects" class="full-section">
+            <div class="section-header">
+                <h2 class="section-title">Projects</h2>
+                <p class="section-subtitle">DevFactory의 주요 활동 내역입니다</p>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-icon">🐳</div>
+                    <h3 class="project-name">기술 튜토리얼</h3>
+                    <p class="project-desc">Docker, Git, LLM 등 실습 중심의 온라인 콘텐츠와 오프라인 워크숍</p>
+                    <a href="https://pseudo-lab.github.io/DevFactory/intro.html" target="_blank"
+                        class="project-link">튜토리얼 보기 →</a>
+                </div>
+                <div class="project-card">
+                    <div class="project-icon">🎮</div>
+                    <h3 class="project-name">BINGO (Platform)</h3>
+                    <p class="project-desc">행사 주최자가 직접 이벤트를 개설하고 운영할 수 있는 범용 네트워킹 플랫폼 (개발 중)</p>
+                    <a href="https://bingo.pseudolab-devfactory.com/" target="_blank" class="project-link">이전 버전 데모
+                        →</a>
+                </div>
+                <div class="project-card">
+                    <div class="project-icon">🎮</div>
+                    <h3 class="project-name">친해지길바라</h3>
+                    <p class="project-desc">참여자 간의 아이스브레이킹을 돕는 퀴즈 기반 네트워킹 프로그램</p>
+                    <a href="https://getcloser.pseudolab-devfactory.com/" target="_blank" class="project-link">서비스 바로가기
+                        →</a>
+                </div>
+                <div class="project-card">
+                    <div class="project-icon">📜</div>
+                    <h3 class="project-name">수료증 발급 시스템</h3>
+                    <p class="project-desc">가짜연구소의 모든 교육 및 활동 이력을 증명하는 핵심 인프라 서비스</p>
+                    <a href="https://cert.pseudo-lab.com/" target="_blank" class="project-link">서비스 바로가기 →</a>
+                </div>
+                <div class="project-card">
+                    <div class="project-icon">🤖</div>
+                    <h3 class="project-name">JobPT (Collaboration)</h3>
+                    <p class="project-desc">AI 기반 이력서 분석 및 피드백 솔루션</p>
+                    <a href="http://jobpt.pseudolab-devfactory.com/" target="_blank" class="project-link">서비스 바로가기 →</a>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <div class="scroll-arrow">↓</div>
+                <span>Team Members</span>
+            </div>
+        </section>
+
+        <!-- Section 3: Team Members -->
+        <section id="team" class="full-section">
+
+
+            <div class="section-header">
+                <h2 class="section-title">Team Members</h2>
+                <p class="section-subtitle">DevFactory를 함께 만들어가는 팀원들을 소개합니다</p>
+            </div>
+
+
+            <div class="team-navigation">
+                <!-- Navigation Arrows (Wide edge for PC, Side-placed for Mobile) -->
+                <div class="arrows-wrapper">
+                    <button class="nav-arrow nav-prev" id="prev-member" aria-label="Previous Member">
+                        <span>←</span>
+                        <span class="nav-label">PREV</span>
+                    </button>
+                    <button class="nav-arrow nav-next" id="next-member" aria-label="Next Member">
+                        <span class="nav-label">NEXT</span>
+                        <span>→</span>
+                    </button>
+                </div>
+
+                <div class="team-container">
+                    <!-- Left: Profile Info -->
+                    <div class="hero-info" id="info-panel">
+                        <div class="role-tag" id="role-tag">BUILDER</div>
+                        <h2 class="member-name" id="member-name">NAME</h2>
+
+                        <div class="member-bg-name-container">
+                            <div class="member-bg-name" id="member-bg-name">DEVFACTORY</div>
+                        </div>
+
+                        <p class="member-desc" id="member-desc">
+                            DevFactory를 이끌어가는 핵심 멤버의 소개가 이곳에 표시됩니다.
+                        </p>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Position</div>
+                                <div class="stat-value" id="stat-position">-</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Contribution</div>
+                                <div class="stat-value" id="stat-contribution">-</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Generation</div>
+                                <div class="stat-value" id="stat-gen">-</div>
+                            </div>
+                        </div>
+                        <div class="member-social-links" id="member-social">
+                            <!-- Social icons will be injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Center/Right: Visual -->
+                    <div class="hero-visual">
+                        <div class="visual-orbit"></div>
+                        <img src="" alt="Member Visual" class="member-image" id="member-visual">
+                    </div>
+                </div>
+            </div>
+
+
+
+            <footer class="nav-footer" id="thumb-grid">
+                <!-- Thumbnails will be injected here -->
+            </footer>
+
+            <div class="scroll-indicator">
+                <div class="scroll-arrow">↓</div>
+                <span>History</span>
+            </div>
+
+        </section>
+
+
+
+        <!-- Section 4: History Teaser -->
+        <section id="journey-teaser-section" class="full-section">
+            <div class="section-header">
+                <h2 class="section-title">History</h2>
+                <p class="section-subtitle">DevFactory가 걸어온 길의 주요 마일스톤입니다</p>
+            </div>
+
+            <div class="journey-teaser">
+                <div class="milestones-teaser">
+                    <div class="milestone-item">
+                        <div class="milestone-dot"></div>
+                        <div class="milestone-info">
+                            <div class="milestone-year">2023 / 05</div>
+                            <div class="milestone-text">Networking Session (Start)</div>
+                        </div>
+                    </div>
+                    <div class="milestone-item">
+                        <div class="milestone-dot"></div>
+                        <div class="milestone-info">
+                            <div class="milestone-year">2024 / 01</div>
+                            <div class="milestone-text">DevSquad (Roots)</div>
+                        </div>
+                    </div>
+                    <div class="milestone-item">
+                        <div class="milestone-dot"></div>
+                        <div class="milestone-info">
+                            <div class="milestone-year">2025 / 03</div>
+                            <div class="milestone-text">Evolution to DevFactory</div>
+                        </div>
+                    </div>
+                    <div class="milestone-item">
+                        <div class="milestone-dot"></div>
+                        <div class="milestone-info">
+                            <div class="milestone-year">2026 / Present</div>
+                            <div class="milestone-text">Preparing for Next Step</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="journey-cta">
+                    <a href="/history/" class="btn-secondary">전체 히스토리 보기 →</a>
+                </div>
+            </div>
+
+            <div class="scroll-indicator">
+                <div class="scroll-arrow">↓</div>
+                <span>Activities</span>
+            </div>
+        </section>
+
+        <!-- Section 5: Activities Gallery -->
+        <section id="activities" class="full-section">
+            <div class="section-header">
+                <h2 class="section-title">Activities</h2>
+                <p class="section-subtitle">DevFactory의 다양한 활동 모습입니다</p>
+            </div>
+
+            <div class="activities-grid">
+                <div class="activity-card">
+                    <div class="activity-image-wrapper">
+                        <img src="/Activities/networking_program_1.webp" alt="Networking Booth" class="activity-img">
+                        <div class="activity-overlay">
+                            <span class="activity-date">2023 ~ 2024</span>
+                            <h3 class="activity-label">Networking Booth</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-image-wrapper">
+                        <img src="/Activities/networking_program_2.webp" alt="Networking Bingo" class="activity-img">
+                        <div class="activity-overlay">
+                            <span class="activity-date">2023 ~ 2024</span>
+                            <h3 class="activity-label">Networking Program(Bingo)</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-image-wrapper">
+                        <img src="/Activities/devfactory_booth.webp" alt="DevFactory Booth" class="activity-img">
+                        <div class="activity-overlay">
+                            <span class="activity-date">2025 / 05</span>
+                            <h3 class="activity-label">DevFactory Booth</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-image-wrapper">
+                        <img src="/Activities/symposium_introduce.webp" alt="Symposium Session" class="activity-img">
+                        <div class="activity-overlay">
+                            <span class="activity-date">2025 / 07</span>
+                            <h3 class="activity-label">Moderated Networking Session</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-image-wrapper">
+                        <img src="/Activities/symposium_bingo.webp" alt="Symposium Bingo" class="activity-img">
+                        <div class="activity-overlay">
+                            <span class="activity-date">2025 / 07</span>
+                            <h3 class="activity-label">Moderated Networking Session(Bingo)</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-image-wrapper">
+                        <img src="/Activities/docker_tutorial.webp" alt="Docker Workshop" class="activity-img">
+                        <div class="activity-overlay">
+                            <span class="activity-date">2024</span>
+                            <h3 class="activity-label">Offline Workshop</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Site Footer -->
+        <footer class="site-footer">
+            <div class="footer-container">
+                <div class="footer-left">
+                    <div class="footer-social-wrapper">
+                        <div class="footer-social">
+                            <span class="social-label">DEVFACTORY</span>
+                            <a href="https://github.com/Pseudo-Lab/DevFactory" target="_blank" class="social-link"
+                                title="GitHub Repo">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                    <path
+                                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.042-1.416-4.042-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                </svg>
+                            </a>
+                        </div>
+                        <div class="footer-social">
+                            <span class="social-label">PSEUDO-LAB</span>
+                            <a href="https://github.com/Pseudo-Lab" target="_blank" class="social-link"
+                                title="Pseudo-Lab GitHub">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                    <path
+                                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.042-1.416-4.042-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                </svg>
+                            </a>
+                            <a href="https://discord.gg/RvJnyDvBkK" target="_blank" class="social-link"
+                                title="Pseudo-Lab Discord">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                    <path
+                                        d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.069.069 0 0 0-.032.027C.533 9.048-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+                                </svg>
+                            </a>
+                            <a href="https://www.linkedin.com/company/pseudolab/" target="_blank" class="social-link"
+                                title="LinkedIn">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                    <path
+                                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                                </svg>
+                            </a>
+                            <a href="https://pseudo-lab.com/" target="_blank" class="social-link" title="Official site">
+                                <img src="/pl_symbol_white.png" alt="Pseudo-Lab" style="width: 18px; height: auto;">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2025 Pseudo-Lab DevFactory. All rights reserved.</p>
+                <div class="footer-meta-links">
+                    <a href="https://github.com/Pseudo-Lab" target="_blank">Organization</a>
+                    <a href="mailto:soohyun.dev@gmail.com">Builder Contact</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>

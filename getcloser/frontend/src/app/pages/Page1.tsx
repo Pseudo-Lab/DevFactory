@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useFormStore } from '../../store/formStore';
+import SplitText from './SplitText';
 
 export default function Page1() {
   const { email, setEmail, setId, setAccessToken, setTeamId, setChallengeId, setProgressStatus } = useFormStore();
@@ -23,6 +24,10 @@ export default function Page1() {
       });
 
       if (!authResponse.ok) {
+        if (authResponse.status === 404) {
+          alert('등록되지 않은 이메일 입니다.');
+          return;
+        }
         throw new Error(`HTTP error! status: ${authResponse.status}`);
       }
 
@@ -70,7 +75,21 @@ export default function Page1() {
   return (
     <div className="container mx-auto p-4 min-h-screen flex items-center justify-center">
       <main className="max-w-md mx-auto bg-card text-card-foreground p-6 rounded-lg shadow-md">
-        <h1 className="text-5xl font-bold">친해지길바라</h1>
+        <div className="flex justify-center">
+          <SplitText
+            text='친해지길바라'
+            className='text-2xl font-semibold text-center'
+            delay={100}
+            duration={0.6}
+            ease='power3.out'
+            splitType='chars'
+            from={{ opacity: 0, y: 40 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.1}
+            rootMargin='-100px'
+            textAlign='center'
+          />
+        </div>
         <Image src="/logo.png" alt="Fail" width={52} height={58} style={{ marginTop: 36, marginBottom: 36 }} className="mx-auto block" />
         <div className="items-center text-center" style={{ marginBottom: 36 }}>
           <p className="text-md mt-1">Pseudo Lab</p>
@@ -90,7 +109,6 @@ export default function Page1() {
             />
           </div>
           <Button type="submit" className="w-full">정보 제출</Button>
-          
         </form>
       </main>
     </div>

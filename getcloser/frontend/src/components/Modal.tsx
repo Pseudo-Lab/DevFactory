@@ -8,9 +8,10 @@ interface ModalProps {
   onConfirm: () => void;
   onDoNotShowAgain: () => void;
   isOpen: boolean;
+  showDoNotShowAgain?: boolean;
 }
 
-const Modal: React.FC<ModalProps> = ({ title, content, onConfirm, onDoNotShowAgain, isOpen }) => {
+const Modal: React.FC<ModalProps> = ({ title, content, onConfirm, onDoNotShowAgain, isOpen, showDoNotShowAgain = true }) => {
   if (!isOpen) return null;
 
   return (
@@ -19,12 +20,14 @@ const Modal: React.FC<ModalProps> = ({ title, content, onConfirm, onDoNotShowAga
         <h2 className="text-xl font-bold mb-4">{title}</h2>
         <p className="mb-6" dangerouslySetInnerHTML={{ __html: content }}></p>
         <div className="flex justify-end space-x-4">
-          <button
-            onClick={onDoNotShowAgain}
-            className="px-4 py-2 rounded hover:bg-secondary/80"
-          >
-            다시 보지 않기
-          </button>
+          {showDoNotShowAgain && (
+            <button
+              onClick={onDoNotShowAgain}
+              className="px-4 py-2 rounded hover:bg-secondary/80"
+            >
+              다시 보지 않기
+            </button>
+          )}
           <button
             onClick={onConfirm}
             className="px-4 py-2 rounded hover:bg-primary/80"

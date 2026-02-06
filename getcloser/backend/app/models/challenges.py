@@ -6,8 +6,9 @@ from core.database import Base
 class UserChallengeStatus(Base):
     __tablename__ = "user_challenge_status"
 
-    user_id = Column(Integer, primary_key=True, index=True)
-    challenge_id = Column(Integer, ForeignKey("challenge_questions.id"), index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, index=True)
+    challenge_id = Column(Integer, ForeignKey("challenge_questions.id"), nullable=True)
 
     is_correct = Column(Boolean, default=False)
     submitted_at = Column(DateTime(timezone=True))
