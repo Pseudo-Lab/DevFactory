@@ -47,6 +47,8 @@ jobs:
           echo "TEAM_SIZE=${{ vars.TEAM_SIZE}}" >> .env
           echo "PENDING_TIMEOUT_MINUTES=${{ vars.PENDING_TIMEOUT_MINUTES}}" >> .env
           echo "DATA_DIR_HOST=${{ vars.DATA_DIR_HOST }}" >> .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          echo "ENVIRONMENT=prod" >> .env
 
       - name: 🚀 Deploy to PROD
         run: |
