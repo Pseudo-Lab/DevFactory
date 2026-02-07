@@ -40,11 +40,23 @@ app = FastAPI(
 # Access log middleware
 app.middleware("http")(access_log_middleware)
 
-# CORS 미들웨어 설정
-origins = os.getenv("CORS_ORIGINS", "").split(",")
+# CORS configuration
+# Load allowed origins from CORS_ORIGINS environment variable (comma-separated)
+cors_origins_str = os.getenv("CORS_ORIGINS", "")
+if cors_origins_str:
+    origins = [origin.strip() for origin in cors_origins_str.split(",") if origin.strip()]
+else:
+    # Default origins for local development and known production/dev domains
+    origins = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://cert.pseudo-lab.com",
+        "https://dev-cert.pseudolab-devfactory.com",
+    ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
