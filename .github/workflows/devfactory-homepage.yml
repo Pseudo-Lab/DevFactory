@@ -32,6 +32,7 @@ jobs:
           cat > .env <<'EOF'
           APP_HOST=${{ vars.APP_HOST }}
           DATABASE_URL=${{ secrets.DATABASE_URL }}
+          ACCESS_LOGGING_IP_SALT=${{ secrets.ACCESS_LOGGING_IP_SALT }}
           EOF
 
       - name: Build & up (prod)

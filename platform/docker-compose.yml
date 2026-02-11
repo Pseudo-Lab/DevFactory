@@ -35,6 +35,7 @@ services:
     restart: unless-stopped
     environment:
       - DATABASE_URL=${DATABASE_URL}
+      - ACCESS_LOGGING_IP_SALT=${ACCESS_LOGGING_IP_SALT}
       - PORT=3000
     networks:
       - traefik
