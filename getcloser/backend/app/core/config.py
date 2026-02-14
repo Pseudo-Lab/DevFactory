@@ -1,4 +1,5 @@
 import os
+from typing import ClassVar
 from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
@@ -10,7 +11,7 @@ class Settings(BaseSettings):
     JWT 안쓸 것 같아 일단 주석 처리하고 추후 확정 시 삭제
     """
     # Secret key for JWT signing. Must be overridden in production using environment variables.
-    DEFAULT_SECRET_KEY = "default-secret-key-change-it"
+    DEFAULT_SECRET_KEY: ClassVar[str] = "default-secret-key-change-it"
     SECRET_KEY: str = os.getenv("SECRET_KEY", DEFAULT_SECRET_KEY)
     
     @field_validator("SECRET_KEY")
