@@ -1,0 +1,87 @@
+name: CI - Homepage (K8s)
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'platform/**'
+      - '.github/workflows/k8s/ci-homepage.yml'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME_PREFIX: pseudo-lab/devfactory
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - component: homepage-frontend
+            context: ./platform/frontend
+            image: homepage-frontend
+          - component: homepage-backend
+            context: ./platform/server
+            image: homepage-backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PREFIX }}-${{ matrix.image }}
+          tags: |
+            type=sha,prefix=sha-,format=short
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy-handoff:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Ops Repository
+        uses: actions/checkout@v4
+        with:
+          repository: Pseudo-Lab/DevFactory-Ops
+          token: ${{ secrets.OPS_REPO_TOKEN }}
+          path: ops-repo
+
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v2
+
+      - name: Update Image Tags in Ops Repo
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          cd ops-repo/services/homepage/overlays/prod
+          kustomize edit set image ghcr.io/pseudo-lab/devfactory-homepage-backend=ghcr.io/pseudo-lab/devfactory-homepage-backend:sha-$SHORT_SHA
+          kustomize edit set image ghcr.io/pseudo-lab/devfactory-homepage-frontend=ghcr.io/pseudo-lab/devfactory-homepage-frontend:sha-$SHORT_SHA
+          
+      - name: Commit and Push to Ops Repo
+        run: |
+          cd ops-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore(deploy): update homepage images to sha-${{ github.sha }}" || echo "No changes to commit"
+          git push

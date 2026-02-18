@@ -2,12 +2,12 @@ name: 🚀 DevFactory Homepage Deploy
 run-name: 🚀 Deploying to Production by @${{ github.actor }}
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'platform/**'
-      - '.github/workflows/devfactory-homepage.yml'
+  #  push:
+  #    branches:
+  #      - main
+  #    paths:
+  #      - 'platform/**'
+  #      - '.github/workflows/devfactory-homepage.yml'
   workflow_dispatch:
 
 # 같은 브랜치 동시 실행 시 이전 잡 취소(경쟁 배포 방지)
