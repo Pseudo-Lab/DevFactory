@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'platform/**'
-      - '.github/workflows/k8s/ci-homepage.yml'
+      - '.github/workflows/ci-k8s-homepage.yml'
   workflow_dispatch:
 
 env:
