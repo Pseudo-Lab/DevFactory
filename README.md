@@ -61,7 +61,7 @@ DevFactory의 주요 활동 내역입니다 🤗
   <tr>
     <td align="center" width="200" valign="top">
       <b>김수현</b><br>
-      <img src="platform/frontend/public/members/soohyun.png" height="180px"><br>
+      <img src="platform/frontend/public/members/soohyun.webp" height="180px"><br>
       <img src="https://img.shields.io/badge/-Builder-3776AB">
       <img src="https://img.shields.io/badge/-TPM-94A3B8">
       <img src="https://img.shields.io/badge/-INFRA-94A3B8"><br>
@@ -72,7 +72,7 @@ DevFactory의 주요 활동 내역입니다 🤗
     </td>
     <td align="center" width="200" valign="top">
       <b>김예신</b><br>
-      <img src="platform/frontend/public/members/yesin.jpg" height="180px"><br>
+      <img src="platform/frontend/public/members/yesin.webp" height="180px"><br>
       <img src="https://img.shields.io/badge/-Builder-3776AB">
       <img src="https://img.shields.io/badge/-BE-0891B2"><br>
       <img src="https://img.shields.io/badge/-10th-DAA520">
@@ -82,7 +82,7 @@ DevFactory의 주요 활동 내역입니다 🤗
     </td>
     <td align="center" width="200" valign="top">
       <b>김승규</b><br>
-      <img src="platform/frontend/public/members/seungkyu.jpg" height="180px"><br>
+      <img src="platform/frontend/public/members/seungkyu.webp" height="180px"><br>
       <img src="https://img.shields.io/badge/-Builder-3776AB">
       <img src="https://img.shields.io/badge/-FE-60A5FA"><br>
       <img src="https://img.shields.io/badge/-10th-DAA520">
@@ -103,7 +103,7 @@ DevFactory의 주요 활동 내역입니다 🤗
   <tr>
     <td align="center" width="200" valign="top">
       <b>최유진</b><br>
-      <img src="platform/frontend/public/members/yujin.jpg" height="180px"><br>
+      <img src="platform/frontend/public/members/yujin.webp" height="180px"><br>
       <img src="https://img.shields.io/badge/-Runner-10B981">
       <img src="https://img.shields.io/badge/-PO-818CF8"><br>
       <img src="https://img.shields.io/badge/-11th-C67117"><br>
