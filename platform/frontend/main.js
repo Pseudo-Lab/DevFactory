@@ -368,14 +368,17 @@ document.addEventListener('keydown', (e) => {
 const themeToggle = document.getElementById('theme-toggle');
 const body = document.body;
 const brandLogo = document.querySelector('.brand-logo');
+const footerPlLogo = document.querySelector('.footer-social .social-link[title="Official site"] img');
 
 function applyTheme(isLight) {
     if (isLight) {
         body.classList.add('light-mode');
         if (brandLogo) brandLogo.src = '/logo_symbol_dark.webp';
+        if (footerPlLogo) footerPlLogo.src = '/pl_symbol.webp';
     } else {
         body.classList.remove('light-mode');
         if (brandLogo) brandLogo.src = '/logo_symbol_light.webp';
+        if (footerPlLogo) footerPlLogo.src = '/pl_symbol_white.webp';
     }
 }
 
@@ -394,10 +397,14 @@ if (themeToggle) {
         body.classList.toggle('light-mode');
         const isLight = body.classList.contains('light-mode');
         localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        
-        // Update Logo
-        if (brandLogo) {
-            brandLogo.src = isLight ? '/logo_symbol_dark.webp' : '/logo_symbol_light.webp';
+
+        // Update Logos
+        if (isLight) {
+            if (brandLogo) brandLogo.src = '/logo_symbol_dark.webp';
+            if (footerPlLogo) footerPlLogo.src = '/pl_symbol.webp';
+        } else {
+            if (brandLogo) brandLogo.src = '/logo_symbol_light.webp';
+            if (footerPlLogo) footerPlLogo.src = '/pl_symbol_white.webp';
         }
     });
 } else {
