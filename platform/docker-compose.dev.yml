@@ -1,43 +1,20 @@
 services:
-  # Development Overrides with Traefik Support
+  # Development mode (Hot-Reloading)
   frontend:
     build:
       context: ./frontend
       target: build-stage
-    image: devfactory-frontend:dev
-    command: npm run dev -- --host 0.0.0.0
+    command: npm run dev -- --host 0.0.0.0 --port 80
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik
-      - traefik.http.routers.df-platform-web.rule=Host(`${APP_HOST}`)
-      - traefik.http.routers.df-platform-web.entrypoints=websecure
-      - traefik.http.routers.df-platform-web.tls=true
-      - traefik.http.routers.df-platform-web.tls.certresolver=le
-      - traefik.http.services.df-platform-web.loadbalancer.server.port=5173
-      # HTTP → HTTPS redirect (re-adding to ensure full functionality)
-      - traefik.http.routers.df-platform-web-http.rule=Host(`${APP_HOST}`)
-      - traefik.http.routers.df-platform-web-http.entrypoints=web
-      - traefik.http.routers.df-platform-web-http.middlewares=redirect-to-https@file
-      - traefik.http.routers.df-platform-web-http.service=df-platform-web
+    ports:
+      - "8081:80"
 
   server:
     command: npm run dev
     volumes:
       - ./server:/app
       - /app/node_modules
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik
-      - traefik.http.routers.df-platform-api.rule=Host(`${APP_HOST}`) && PathPrefix(`/api`)
-      - traefik.http.routers.df-platform-api.entrypoints=websecure
-      - traefik.http.routers.df-platform-api.tls=true
-      - traefik.http.routers.df-platform-api.tls.certresolver=le
-      - traefik.http.services.df-platform-api.loadbalancer.server.port=3000
-      # HTTP → HTTPS redirect
-      - traefik.http.routers.df-platform-api-http.rule=Host(`${APP_HOST}`) && PathPrefix(`/api`)
-      - traefik.http.routers.df-platform-api-http.entrypoints=web
-      - traefik.http.routers.df-platform-api-http.middlewares=redirect-to-https@file
-      - traefik.http.routers.df-platform-api-http.service=df-platform-api
+    ports:
+      - "3000:3000"

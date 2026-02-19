@@ -11,7 +11,8 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// PostgreSQL Connection
+// PostgreSQL Connection (Disabled for now)
+/*
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
 });
@@ -24,6 +25,7 @@ pool.query('SELECT NOW()', (err, res) => {
         console.log('Connected to PostgreSQL successfully');
     }
 });
+*/
 
 // API Routes
 
@@ -69,11 +71,14 @@ app.post('/api/stats/visit', async (req, res) => {
         const clientIp = getClientIp(req);
         const ipHash = hashIp(clientIp, process.env.ACCESS_LOGGING_IP_SALT || '');
 
+        /* DB Logging disabled
         await pool.query(
             'INSERT INTO logging.access_log (path, method, status, ip_hash, user_agent, referrer, ts) VALUES ($1, $2, $3, $4, $5, $6, NOW())',
             [path || '/', 'PAGEVIEW', 200, ipHash, userAgent, referrer]
         );
-        res.status(201).json({ message: 'Visit logged successfully' });
+        */
+        console.log(`[Mock Log] Visit: ${path} | IP: ${clientIp}`);
+        res.status(201).json({ message: 'Visit logged successfully (Mock)' });
     } catch (err) {
         console.error('Error logging visit:', err);
         res.status(500).json({ error: 'Internal server error' });
@@ -84,6 +89,7 @@ app.post('/api/stats/visit', async (req, res) => {
 app.get('/api/stats/count', async (req, res) => {
     try {
         const { site } = req.query;
+        /* DB Query disabled
         let query = 'SELECT COUNT(*) FROM logging.access_log';
         let params = [];
 
@@ -94,6 +100,8 @@ app.get('/api/stats/count', async (req, res) => {
 
         const result = await pool.query(query, params);
         res.json({ count: parseInt(result.rows[0].count) });
+        */
+        res.json({ count: 0, message: 'DB disconnected' });
     } catch (err) {
         console.error('Error fetching count:', err);
         res.status(500).json({ error: 'Internal server error' });

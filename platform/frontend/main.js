@@ -5,12 +5,12 @@ const menuOverlay = document.getElementById('mobile-menu-overlay');
 const mobileLinks = document.querySelectorAll('.mobile-nav-link');
 
 function openMenu() {
-    menuOverlay.classList.add('active');
+    if (menuOverlay) menuOverlay.classList.add('active');
     document.body.style.overflow = 'hidden'; // Prevent scroll
 }
 
 function closeMenu() {
-    menuOverlay.classList.remove('active');
+    if (menuOverlay) menuOverlay.classList.remove('active');
     document.body.style.overflow = ''; // Restore scroll
 }
 
@@ -32,7 +32,7 @@ const teamMembers = [
         contribution: "Builder",
         gen: "10th, 11th",
         desc: "가짜연구소의 개발 문화를 설계하고 운영합니다. DevFactory의 빌더로서 클라우드 인프라와 프로젝트 관리를 총괄합니다.",
-        image: "/members/soohyun.png",
+        image: "/members/soohyun.webp",
         github: "https://github.com/soohyunme",
         linkedin: "https://www.linkedin.com/in/soohyun-dev"
     },
@@ -45,7 +45,7 @@ const teamMembers = [
         contribution: "Builder",
         gen: "10th, 11th",
         desc: "백엔드 개발을 담당하며 견고한 시스템 아키텍처를 설계합니다. 10기와 11기 빌더로서 활동하고 있습니다.",
-        image: "/members/yesin.jpg",
+        image: "/members/yesin.webp",
         github: "https://github.com/yesinkim",
         linkedin: "https://www.linkedin.com/in/bailando/"
     },
@@ -58,7 +58,7 @@ const teamMembers = [
         contribution: "Builder",
         gen: "10th, 11th",
         desc: "사용자 중심의 프론트엔드 환경을 구축합니다. DevFactory의 다양한 웹 서비스를 매력적으로 시각화합니다.",
-        image: "/members/seungkyu.jpg",
+        image: "/members/seungkyu.webp",
         github: "https://github.com/ed-kyu",
         linkedin: "https://www.linkedin.com/in/seungkyu-kim-9088a21b1/"
     },
@@ -84,7 +84,7 @@ const teamMembers = [
         contribution: "Runner",
         gen: "11th",
         desc: "11기 러너로서 프로덕트 오너 역할을 수행하며 새로운 아이디어를 구체화합니다.",
-        image: "/members/yujin.jpg",
+        image: "/members/yujin.webp",
         github: "https://github.com/yujin37",
         linkedin: "https://www.linkedin.com/in/yujin37/"
     },
@@ -258,10 +258,13 @@ function prevMember() {
 }
 
 // Initialize
-initThumbnails();
-updateDisplay(0);
-setInterval(updateTime, 1000);
-updateTime();
+const thumbGrid = document.getElementById('thumb-grid');
+if (thumbGrid) {
+    initThumbnails();
+    updateDisplay(0);
+    setInterval(updateTime, 1000);
+    updateTime();
+}
 
 // Section Reveal Animation (Intersection Observer)
 const sections = document.querySelectorAll('.full-section');
@@ -294,8 +297,10 @@ async function logVisit() {
 logVisit();
 
 // Prev/Next Navigation
-document.getElementById('prev-member').addEventListener('click', prevMember);
-document.getElementById('next-member').addEventListener('click', nextMember);
+const prevBtn = document.getElementById('prev-member');
+const nextBtn = document.getElementById('next-member');
+if (prevBtn) prevBtn.addEventListener('click', prevMember);
+if (nextBtn) nextBtn.addEventListener('click', nextMember);
 
 // Cross-Platform Swipe Navigation (Touch & Mouse)
 let startX = 0;
@@ -303,32 +308,34 @@ let isDragging = false;
 
 const teamSect = document.getElementById('team');
 
-// Touch Events
-teamSect.addEventListener('touchstart', e => {
-    startX = e.changedTouches[0].screenX;
-}, { passive: true });
+if (teamSect) {
+    // Touch Events
+    teamSect.addEventListener('touchstart', e => {
+        startX = e.changedTouches[0].screenX;
+    }, { passive: true });
 
-teamSect.addEventListener('touchend', e => {
-    const endX = e.changedTouches[0].screenX;
-    handleSwipe(startX, endX);
-}, { passive: true });
+    teamSect.addEventListener('touchend', e => {
+        const endX = e.changedTouches[0].screenX;
+        handleSwipe(startX, endX);
+    }, { passive: true });
 
-// Mouse Events for PC
-teamSect.addEventListener('mousedown', e => {
-    startX = e.screenX;
-    isDragging = true;
-});
+    // Mouse Events for PC
+    teamSect.addEventListener('mousedown', e => {
+        startX = e.screenX;
+        isDragging = true;
+    });
 
-teamSect.addEventListener('mouseup', e => {
-    if (!isDragging) return;
-    const endX = e.screenX;
-    handleSwipe(startX, endX);
-    isDragging = false;
-});
+    teamSect.addEventListener('mouseup', e => {
+        if (!isDragging) return;
+        const endX = e.screenX;
+        handleSwipe(startX, endX);
+        isDragging = false;
+    });
 
-teamSect.addEventListener('mouseleave', () => {
-    isDragging = false;
-});
+    teamSect.addEventListener('mouseleave', () => {
+        isDragging = false;
+    });
+}
 
 function handleSwipe(sX, eX) {
     const swipeThreshold = 50;
@@ -352,8 +359,50 @@ function animateArrowFeedback(buttonId) {
 // Global Keyboard Navigation
 document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') {
-        prevMember();
+        if (typeof prevMember === 'function' && document.getElementById('team')) prevMember();
     } else if (e.key === 'ArrowRight') {
-        nextMember();
+        if (typeof nextMember === 'function' && document.getElementById('team')) nextMember();
     }
 });
+
+const themeToggle = document.getElementById('theme-toggle');
+const body = document.body;
+const brandLogo = document.querySelector('.brand-logo');
+
+function applyTheme(isLight) {
+    if (isLight) {
+        body.classList.add('light-mode');
+        if (brandLogo) brandLogo.src = '/logo_symbol_dark.webp';
+    } else {
+        body.classList.remove('light-mode');
+        if (brandLogo) brandLogo.src = '/logo_symbol_light.webp';
+    }
+}
+
+// 1. Check Local Storage
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    applyTheme(savedTheme === 'light');
+} else {
+    // 2. Check System Preference
+    const systemPrefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    applyTheme(systemPrefersLight);
+}
+
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('light-mode');
+        const isLight = body.classList.contains('light-mode');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        
+        // Update Logo
+        if (brandLogo) {
+            brandLogo.src = isLight ? '/logo_symbol_dark.webp' : '/logo_symbol_light.webp';
+        }
+    });
+} else {
+    // Fallback for pages without toggle button (e.g., history page)
+    // to ensure theme consistency even if toggle is absent initially
+    const isLight = localStorage.getItem('theme') === 'light';
+    applyTheme(isLight);
+}
