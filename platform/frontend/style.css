@@ -717,8 +717,7 @@ body {
 }
 
 .project-demo-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(8px);
+    background: #000;
 }
 
 .project-demo-header {
