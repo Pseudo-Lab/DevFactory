@@ -21,6 +21,83 @@ mobileLinks.forEach(link => {
     link.addEventListener('click', closeMenu);
 });
 
+// Retired GetCloser: a silent, one-way archive movie, loaded only on open.
+const demoOpener = document.getElementById('getcloser-demo-open');
+const demoDialog = document.getElementById('getcloser-demo-dialog');
+const demoVideo = document.getElementById('getcloser-demo-video');
+const demoClose = document.getElementById('getcloser-demo-close');
+const demoStatus = document.getElementById('getcloser-demo-status');
+
+if (demoOpener && demoDialog && demoVideo && demoClose && demoStatus) {
+    let previousOverflow = '';
+    let playAttempt = 0;
+    let demoActive = false;
+    const stopDemo = () => {
+        if (!demoActive) return;
+        demoActive = false;
+        playAttempt++;
+        demoVideo.pause();
+        demoVideo.removeAttribute('src');
+        demoVideo.load();
+        demoStatus.hidden = true;
+        document.body.style.overflow = previousOverflow;
+        demoOpener.focus({ preventScroll: true });
+    };
+    const closeDemo = () => {
+        demoDialog.close();
+        stopDemo();
+    };
+    const showVideoError = () => {
+        if (!demoDialog.open) return;
+        demoStatus.textContent = '영상을 불러오지 못했습니다. 잠시 후 다시 열어주세요.';
+        demoStatus.hidden = false;
+    };
+
+    demoOpener.addEventListener('click', () => {
+        if (demoDialog.open) return;
+        const attempt = ++playAttempt;
+        const version = window.matchMedia('(max-width: 600px)').matches ? 'mobile' : 'desktop';
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        demoVideo.poster = `/media/getcloser-demo-${version}.webp`;
+        demoVideo.style.aspectRatio = version === 'mobile' ? '372 / 484' : '798 / 504';
+        demoVideo.muted = true;
+        demoStatus.hidden = true;
+        previousOverflow = document.body.style.overflow;
+        demoDialog.showModal();
+        demoActive = true;
+        document.body.style.overflow = 'hidden';
+
+        if (reducedMotion) {
+            demoStatus.textContent = '동작 줄이기 설정에 따라 영상 자동 재생을 생략했습니다.';
+            demoStatus.hidden = false;
+            return;
+        }
+
+        demoVideo.src = `/media/getcloser-demo-${version}.mp4`;
+        demoVideo.play().catch(error => {
+            if (attempt === playAttempt && error.name !== 'AbortError') showVideoError();
+        });
+    });
+
+    demoClose.addEventListener('click', closeDemo);
+    demoDialog.addEventListener('cancel', event => {
+        event.preventDefault();
+        closeDemo();
+    });
+    demoDialog.addEventListener('click', event => {
+        if (event.target !== demoDialog) return;
+        const bounds = demoDialog.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right ||
+            event.clientY < bounds.top || event.clientY > bounds.bottom) closeDemo();
+    });
+    demoDialog.addEventListener('close', () => {
+        if (!demoDialog.open) stopDemo();
+    });
+    demoVideo.addEventListener('error', () => {
+        if (demoVideo.error) showVideoError();
+    });
+}
+
 // Member Data & Core Functions
 const teamMembers = [
     {
@@ -358,6 +435,7 @@ function animateArrowFeedback(buttonId) {
 
 // Global Keyboard Navigation
 document.addEventListener('keydown', (e) => {
+    if (demoDialog?.open) return;
     if (e.key === 'ArrowLeft') {
         if (typeof prevMember === 'function' && document.getElementById('team')) prevMember();
     } else if (e.key === 'ArrowRight') {
