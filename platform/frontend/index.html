@@ -142,8 +142,8 @@
                     <div class="project-icon">🎮</div>
                     <h3 class="project-name">친해지길바라</h3>
                     <p class="project-desc">참여자 간의 아이스브레이킹을 돕는 퀴즈 기반 네트워킹 프로그램</p>
-                    <a href="https://gg.pseudo-lab.com/event" target="_blank" rel="noopener noreferrer" class="project-link">프로그램 소개 보기
-                        →</a>
+                    <button type="button" id="getcloser-demo-open" class="project-link project-demo-trigger"
+                        aria-haspopup="dialog" aria-controls="getcloser-demo-dialog">데모 영상 보기 →</button>
                 </div>
             </div>
             <div class="scroll-indicator">
@@ -399,6 +399,23 @@
             </div>
         </footer>
     </div>
+
+    <dialog id="getcloser-demo-dialog" class="project-demo-dialog" aria-labelledby="getcloser-demo-title"
+        aria-describedby="getcloser-demo-description getcloser-demo-transcript">
+        <header class="project-demo-header">
+            <h2 id="getcloser-demo-title">친해지길바라 · 대화가 정답이 되는 순간</h2>
+            <button type="button" id="getcloser-demo-close" class="project-demo-close" aria-label="데모 닫기" autofocus>닫기 ×</button>
+        </header>
+        <video id="getcloser-demo-video" class="project-demo-video" muted playsinline autoplay preload="none"
+            aria-label="친해지길바라 서비스 소개 영상">
+            이 브라우저에서는 소개 영상을 재생할 수 없습니다.
+        </video>
+        <div class="project-demo-description">
+            <p id="getcloser-demo-description">종료된 서비스를 가상 참가자로 재구성한 영상입니다. 현장에서 대화하며 서로를 알아간 뒤 팀원에 관한 퀴즈를 풀어요.</p>
+            <p id="getcloser-demo-status" class="project-demo-status" role="status" hidden></p>
+        </div>
+        <p id="getcloser-demo-transcript" class="project-demo-transcript">영상 내용: 다섯 명이 팀을 만듭니다. 민서가 쉬는 날 무엇을 하는지 묻자 지우는 선선해지면 단풍을 보러 간다고 답하고, 도윤은 산책을 좋아한다고 말합니다. 다섯 명이 준비를 마치면 민서에게 지우가 좋아하는 계절을 묻는 퀴즈가 나옵니다. 민서는 대화를 떠올려 가을을 고르고 정답을 맞힙니다. 성공 화면을 보여주고 기념품을 받으러 DevFactory 부스로 오라는 안내로 끝납니다. 대화 장면은 연출이며 실제 앱에는 채팅 기능이 없습니다.</p>
+    </dialog>
 
     <script type="module" src="main.js"></script>
 </body>

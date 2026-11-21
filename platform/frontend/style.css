@@ -692,6 +692,107 @@ body {
     font-size: 0.85rem;
 }
 
+.project-demo-trigger {
+    background: none;
+    border: 0;
+    padding: 0;
+    min-height: 44px;
+    align-self: flex-start;
+    text-align: left;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.project-demo-dialog {
+    width: min(860px, calc(100% - 32px));
+    max-width: none;
+    max-height: calc(100dvh - 32px);
+    margin: auto;
+    padding: 0;
+    overflow: auto;
+    color: var(--text-main);
+    background: var(--bg-dark);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+}
+
+.project-demo-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+}
+
+.project-demo-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--bg-dark);
+}
+
+.project-demo-header h2 {
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.project-demo-close {
+    flex: none;
+    min-height: 44px;
+    padding: 8px 12px;
+    color: var(--text-main);
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    font: inherit;
+    cursor: pointer;
+}
+
+.project-demo-trigger:focus-visible,
+.project-demo-close:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 3px;
+}
+
+.project-demo-video {
+    display: block;
+    width: 100%;
+    max-height: calc(100dvh - 210px);
+    object-fit: contain;
+    background: #0d1b29;
+}
+
+.project-demo-description {
+    padding: 16px 20px;
+    font-size: 0.85rem;
+    line-height: 1.65;
+    color: var(--text-dim);
+}
+
+.project-demo-status {
+    margin-top: 8px;
+}
+
+.project-demo-transcript {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .project-demo-video {
+        max-height: calc(100dvh - 290px);
+    }
+}
+
 .btn-primary,
 .btn-secondary,
 .btn-discord {
