@@ -58,7 +58,7 @@ if (demoOpener && demoDialog && demoVideo && demoClose && demoStatus) {
         const attempt = ++playAttempt;
         const version = window.matchMedia('(max-width: 600px)').matches ? 'mobile' : 'desktop';
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        demoVideo.poster = `/media/getcloser-demo-${version}.webp`;
+        demoVideo.poster = `/media/getcloser-demo-${version}-v2.webp`;
         demoVideo.style.aspectRatio = version === 'mobile' ? '372 / 484' : '798 / 504';
         demoVideo.muted = true;
         demoStatus.hidden = true;
@@ -73,7 +73,7 @@ if (demoOpener && demoDialog && demoVideo && demoClose && demoStatus) {
             return;
         }
 
-        demoVideo.src = `/media/getcloser-demo-${version}.mp4`;
+        demoVideo.src = `/media/getcloser-demo-${version}-v2.mp4`;
         demoVideo.play().catch(error => {
             if (attempt === playAttempt && error.name !== 'AbortError') showVideoError();
         });
